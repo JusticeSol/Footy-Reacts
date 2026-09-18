@@ -57,8 +57,21 @@ export async function loadDb(): Promise<Database> {
 }
 
 export async function saveDb(db: Database): Promise<void> {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  await fs.writeFile(STORE_PATH, JSON.stringify(db, null, 2), "utf8");
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    await fs.writeFile(STORE_PATH, JSON.stringify(db, null, 2), "utf8");
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === "EROFS" || code === "EACCES") {
+      // Serverless filesystems are read-only. This store is a dev convenience;
+      // writes in a deployed environment need the Supabase implementation.
+      throw new Error(
+        "Cannot write the JSON store: this filesystem is read-only. " +
+          "The sync jobs only run locally until db/schema.sql is wired to Supabase.",
+      );
+    }
+    throw err;
+  }
   cache = null;
 }
 
