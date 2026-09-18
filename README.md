@@ -32,8 +32,22 @@ GET /api/cron/fixtures?key=$CRON_SECRET
 GET /api/cron/takes?key=$CRON_SECRET
 ```
 
-`vercel.json` already schedules them — fixtures daily at 05:00, takes every 15
-minutes.
+### Cron schedules are deliberately not set
+
+`vercel.json` carries no `crons` block. The jobs write through
+[`src/lib/store.ts`](src/lib/store.ts), which is a JSON file — unwritable on a
+serverless filesystem, so a schedule would just 500 every 15 minutes and persist
+nothing. Restore this block once `db/schema.sql` is live on Supabase and
+`store.ts` talks to it:
+
+```json
+"crons": [
+  { "path": "/api/cron/fixtures", "schedule": "0 5 * * *" },
+  { "path": "/api/cron/takes", "schedule": "*/15 * * * *" }
+]
+```
+
+Until then, run the syncs locally.
 
 ## Keys you need
 

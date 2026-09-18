@@ -1,5 +1,3 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "_crons_note": "Schedules are intentionally disabled. The cron jobs write through src/lib/store.ts, which is a JSON file — unwritable on a serverless filesystem. Restore the entries below once db/schema.sql is live on Supabase and store.ts talks to it: { \"path\": \"/api/cron/fixtures\", \"schedule\": \"0 5 * * *\" } and { \"path\": \"/api/cron/takes\", \"schedule\": \"*/15 * * * *\" }",
-  "crons": []
+  "$schema": "https://openapi.vercel.sh/vercel.json"
 }
