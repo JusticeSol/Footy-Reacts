@@ -1,4 +1,4 @@
-import { loadDb } from "../src/lib/store";
+import { getRepo } from "../src/lib/repo";
 import { prefilter } from "../src/lib/tagger";
 
 /**
@@ -19,9 +19,12 @@ interface Case {
 }
 
 async function main() {
-  const db = await loadDb();
-  const teams = new Map(db.teams.map((t) => [t.id, t]));
-  const byId = new Map(db.fixtures.map((f) => [f.id, f]));
+  // Always runs against the local seed/JSON store: these are fixed cases, not
+  // a check of whatever happens to be in the database.
+  const repo = getRepo();
+  const [teamList, fixtures] = await Promise.all([repo.listTeams(), repo.listFixtures()]);
+  const teams = new Map(teamList.map((t) => [t.id, t]));
+  const byId = new Map(fixtures.map((f) => [f.id, f]));
 
   // Cases are written relative to kickoff so they never go stale.
   //   seed-1 = Arsenal v Chelsea, seed-2 = Liverpool v Man United
@@ -87,7 +90,7 @@ async function main() {
     const candidates = prefilter(
       { title: c.title, description: c.description ?? "", publishedAt: c.publishedAt },
       c.clubs,
-      db.fixtures,
+      fixtures,
       teams,
     );
 

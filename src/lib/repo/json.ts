@@ -1,0 +1,218 @@
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import type {
+  Creator,
+  Database,
+  Fixture,
+  HydratedFixture,
+  HydratedTake,
+  Phase,
+  Take,
+  Team,
+} from "../types";
+import type { Repo } from "./types";
+import {
+  boardWindow,
+  byMatchdayOrder,
+  countTakes,
+  hydrateFixture,
+  indexTeams,
+  isVisible,
+} from "./shared";
+
+/**
+ * JSON-file repo for local development.
+ *
+ * Writes go to src/data/store.json (gitignored). Falls back to the committed
+ * seed so the app always renders, even on a clean checkout.
+ */
+
+const DATA_DIR = path.join(process.cwd(), "src", "data");
+const STORE_PATH = path.join(DATA_DIR, "store.json");
+const SEED_PATH = path.join(DATA_DIR, "seed.json");
+
+const EMPTY: Database = {
+  competitions: [],
+  teams: [],
+  fixtures: [],
+  creators: [],
+  takes: [],
+};
+
+let cache: { db: Database; mtimeMs: number } | null = null;
+
+async function read(): Promise<Database> {
+  try {
+    const stat = await fs.stat(STORE_PATH);
+    if (cache && cache.mtimeMs === stat.mtimeMs) return cache.db;
+    const db = JSON.parse(await fs.readFile(STORE_PATH, "utf8")) as Database;
+    cache = { db, mtimeMs: stat.mtimeMs };
+    return db;
+  } catch {
+    try {
+      const db = JSON.parse(await fs.readFile(SEED_PATH, "utf8")) as Database;
+      return { ...EMPTY, ...db };
+    } catch {
+      return EMPTY;
+    }
+  }
+}
+
+async function write(db: Database): Promise<void> {
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    await fs.writeFile(STORE_PATH, JSON.stringify(db, null, 2), "utf8");
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === "EROFS" || code === "EACCES") {
+      throw new Error(
+        "Cannot write the JSON store: this filesystem is read-only. " +
+          "Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to use the Supabase repo instead.",
+      );
+    }
+    throw err;
+  }
+  cache = null;
+}
+
+async function mutate(fn: (db: Database) => void): Promise<void> {
+  const db = structuredClone(await read());
+  fn(db);
+  await write(db);
+}
+
+function visibleTakes(db: Database): Take[] {
+  return db.takes.filter(isVisible);
+}
+
+export const jsonRepo: Repo = {
+  kind: "json",
+
+  async getFixtureBoard(opts = {}) {
+    const db = await read();
+    const teams = indexTeams(db.teams);
+    const takes = visibleTakes(db);
+    const { floor, horizon } = boardWindow(opts.days ?? 10);
+
+    return db.fixtures
+      .filter((f) => {
+        const ko = Date.parse(f.kickoffUtc);
+        return ko >= floor && ko <= horizon;
+      })
+      .sort(byMatchdayOrder)
+      .map((f) => hydrateFixture(f, teams, countTakes(takes, f.id)))
+      .filter((f): f is HydratedFixture => f !== null);
+  },
+
+  async getFixtureBySlug(slug) {
+    const db = await read();
+    const fixture = db.fixtures.find((f) => f.slug === slug);
+    if (!fixture) return null;
+    return hydrateFixture(
+      fixture,
+      indexTeams(db.teams),
+      countTakes(visibleTakes(db), fixture.id),
+    );
+  },
+
+  async getTakes(fixtureId, phase: Phase) {
+    const db = await read();
+    const creators = new Map(db.creators.map((c) => [c.id, c]));
+    return visibleTakes(db)
+      .filter((t) => t.fixtureId === fixtureId && t.phase === phase)
+      .map((t) => {
+        const creator = creators.get(t.creatorId);
+        return creator ? { ...t, creator } : null;
+      })
+      .filter((t): t is HydratedTake => t !== null)
+      .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+  },
+
+  async getRecentTakes(limit = 12) {
+    const db = await read();
+    const teams = indexTeams(db.teams);
+    const creators = new Map(db.creators.map((c) => [c.id, c]));
+    const fixtures = new Map(db.fixtures.map((f) => [f.id, f]));
+
+    return visibleTakes(db)
+      .slice()
+      .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+      .slice(0, limit)
+      .map((take) => {
+        const creator = creators.get(take.creatorId);
+        const raw = fixtures.get(take.fixtureId);
+        if (!creator || !raw) return null;
+        const fixture = hydrateFixture(raw, teams, { pre: 0, post: 0 });
+        if (!fixture) return null;
+        return { take: { ...take, creator }, fixture };
+      })
+      .filter((x): x is { take: HydratedTake; fixture: HydratedFixture } => x !== null);
+  },
+
+  async listTeams(): Promise<Team[]> {
+    return (await read()).teams;
+  },
+
+  async listFixtures(): Promise<Fixture[]> {
+    return (await read()).fixtures;
+  },
+
+  async listCreators(): Promise<Creator[]> {
+    return (await read()).creators;
+  },
+
+  async listTakeKeys() {
+    const db = await read();
+    return new Set(db.takes.map((t) => `${t.source}:${t.externalId}`));
+  },
+
+  async upsertTeams(teams) {
+    await mutate((db) => {
+      for (const team of teams) {
+        const i = db.teams.findIndex((t) => t.id === team.id);
+        if (i === -1) db.teams.push(team);
+        else db.teams[i] = { ...db.teams[i], ...team };
+      }
+    });
+  },
+
+  async upsertFixtures(fixtures) {
+    await mutate((db) => {
+      for (const fixture of fixtures) {
+        const i = db.fixtures.findIndex((f) => f.id === fixture.id || f.slug === fixture.slug);
+        // Keep our own id so existing takes stay attached when a kickoff moves.
+        if (i === -1) db.fixtures.push(fixture);
+        else db.fixtures[i] = { ...db.fixtures[i], ...fixture, id: db.fixtures[i].id };
+      }
+    });
+  },
+
+  async upsertCreators(creators) {
+    await mutate((db) => {
+      for (const creator of creators) {
+        const i = db.creators.findIndex((c) => c.id === creator.id);
+        if (i === -1) db.creators.push(creator);
+        else db.creators[i] = { ...db.creators[i], ...creator };
+      }
+    });
+  },
+
+  async upsertTakes(takes) {
+    await mutate((db) => {
+      for (const take of takes) {
+        const i = db.takes.findIndex((t) => t.id === take.id);
+        if (i === -1) db.takes.push(take);
+        else if (db.takes[i].taggedBy !== "manual") db.takes[i] = { ...db.takes[i], ...take };
+      }
+    });
+  },
+
+  async setCreatorYouTube(creatorId, channelId, playlistId) {
+    await mutate((db) => {
+      const creator = db.creators.find((c) => c.id === creatorId);
+      if (!creator) return;
+      creator.youtubeChannelId = channelId;
+      creator.uploadsPlaylistId = playlistId;
+    });
+  },
+};

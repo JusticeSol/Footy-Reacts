@@ -1,8 +1,27 @@
 -- Footy Reacts — Postgres/Supabase schema.
 --
--- Mirrors src/lib/types.ts field for field. Not wired up yet: the app currently
--- reads through src/lib/store.ts (JSON file). Swapping backends means
--- reimplementing that one module against these tables.
+-- Paste this whole file into the Supabase SQL editor and run it. It is
+-- idempotent: re-running it is safe and changes nothing.
+--
+-- Mirrors src/lib/types.ts field for field; src/lib/repo/supabase.ts is the
+-- only place that knows these columns are snake_case.
+
+-- Enum types, guarded so a second run does not error.
+do $$ begin
+  create type fixture_status as enum ('scheduled', 'live', 'finished', 'postponed');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type take_phase as enum ('pre', 'post');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type take_source as enum ('youtube', 'x');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type tagged_by as enum ('heuristic', 'agent', 'manual');
+exception when duplicate_object then null; end $$;
 
 create table if not exists competition (
   id   text primary key,
@@ -18,12 +37,10 @@ create table if not exists team (
   crest_url  text
 );
 
-create type fixture_status as enum ('scheduled', 'live', 'finished', 'postponed');
-
 create table if not exists fixture (
   id             text primary key,
   slug           text not null unique,
-  competition_id text not null references competition (id),
+  competition_id text,
   home_team_id   text not null references team (id),
   away_team_id   text not null references team (id),
   kickoff_utc    timestamptz not null,
@@ -54,26 +71,22 @@ create table if not exists creator (
   created_at           timestamptz not null default now()
 );
 
-create type take_phase  as enum ('pre', 'post');
-create type take_source as enum ('youtube', 'x');
-create type tagged_by   as enum ('heuristic', 'agent', 'manual');
-
 create table if not exists take (
-  id           text primary key,
-  fixture_id   text not null references fixture (id) on delete cascade,
-  creator_id   text not null references creator (id) on delete cascade,
-  phase        take_phase not null,
-  source       take_source not null default 'youtube',
-  external_id  text not null,
-  title        text not null,
-  url          text not null,
+  id            text primary key,
+  fixture_id    text not null references fixture (id) on delete cascade,
+  creator_id    text not null references creator (id) on delete cascade,
+  phase         take_phase not null,
+  source        take_source not null default 'youtube',
+  external_id   text not null,
+  title         text not null,
+  url           text not null,
   thumbnail_url text,
-  published_at timestamptz not null,
-  duration_sec int,
-  confidence   real not null default 0,
-  tagged_by    tagged_by not null default 'heuristic',
-  unmatched    boolean not null default false,
-  created_at   timestamptz not null default now(),
+  published_at  timestamptz not null,
+  duration_sec  int,
+  confidence    real not null default 0,
+  tagged_by     tagged_by not null default 'heuristic',
+  unmatched     boolean not null default false,
+  created_at    timestamptz not null default now(),
   unique (source, external_id)
 );
 
@@ -83,3 +96,19 @@ create index if not exists take_fixture_phase_idx
 
 -- The vidiprinter: newest published takes across all fixtures.
 create index if not exists take_published_idx on take (published_at desc);
+
+-- --- Row level security ------------------------------------------------------
+--
+-- RLS is enabled with NO policies, which denies every anon and authenticated
+-- request outright. That is deliberate: all reads happen in server components
+-- and jobs using the service-role key, which bypasses RLS. Nothing should ever
+-- reach these tables straight from a browser.
+--
+-- If a future feature needs client-side reads, add explicit `for select`
+-- policies here rather than turning RLS off.
+
+alter table competition enable row level security;
+alter table team        enable row level security;
+alter table fixture     enable row level security;
+alter table creator     enable row level security;
+alter table take        enable row level security;

@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit",
     "sync:fixtures": "tsx scripts/sync-fixtures.ts",
     "sync:takes": "tsx scripts/sync-takes.ts",
-    "check:tagger": "tsx scripts/check-tagger.ts"
+    "check:tagger": "tsx scripts/check-tagger.ts",
+    "db:seed": "tsx scripts/db-seed.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
     "next": "^15.5.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
