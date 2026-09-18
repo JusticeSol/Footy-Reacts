@@ -39,7 +39,7 @@ export default async function HomePage() {
 
       <footer className="mx-auto max-w-5xl px-4 py-10 sm:px-5">
         <p className="font-mono text-[10px] uppercase leading-relaxed tracking-wider text-ink-3">
-          Red React embeds — it never re-hosts. Every view counts on the creator&apos;s own channel.
+          Footy Reacts embeds — it never re-hosts. Every view counts on the creator&apos;s own channel.
         </p>
       </footer>
     </main>

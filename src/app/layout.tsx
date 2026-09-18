@@ -11,7 +11,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Red React — every take on every match",
+  title: "Footy Reacts — every take on every match",
   description:
     "Pre- and post-match reactions from every creator, organised by fixture. Stop scrolling, start watching.",
 };

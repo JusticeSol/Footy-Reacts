@@ -1,4 +1,4 @@
--- Red React — Postgres/Supabase schema.
+-- Footy Reacts — Postgres/Supabase schema.
 --
 -- Mirrors src/lib/types.ts field for field. Not wired up yet: the app currently
 -- reads through src/lib/store.ts (JSON file). Swapping backends means

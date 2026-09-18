@@ -1,4 +1,4 @@
-# Red React — MVP Spec
+# Footy Reacts — MVP Spec
 
 **Status:** in build · **Last updated:** 2026-09-18
 
@@ -16,8 +16,8 @@ channels and feeds.
 ### Why it isn't just an aggregator
 
 A pure aggregator has a value-capture problem: it embeds other people's videos,
-the host platform keeps the ad money, and the aggregator owns nothing. Red React
-pairs aggregation with a creator payment rail:
+the host platform keeps the ad money, and the aggregator owns nothing. Footy
+Reacts pairs aggregation with a creator payment rail:
 
 - **Aggregation is the distribution.** Fans arrive for the convenience.
 - **The rail is the revenue.** Fans tip or subscribe to creators in-page.

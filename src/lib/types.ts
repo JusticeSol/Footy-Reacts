@@ -1,5 +1,5 @@
 /**
- * Core domain model for Red React.
+ * Core domain model for Footy Reacts.
  *
  * Field names deliberately mirror the Postgres schema in db/schema.sql so the
  * JSON dev store and a future Supabase backend stay interchangeable.

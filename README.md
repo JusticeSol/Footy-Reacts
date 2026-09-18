@@ -1,4 +1,4 @@
-# Red React
+# Footy Reacts
 
 Every take on every match, organised by fixture. Pre- and post-match reaction
 content from football creators, in one place — so fans stop hunting across
@@ -61,6 +61,6 @@ db/schema.sql               Postgres schema, ready for Supabase
 
 ## Ground rule
 
-Red React **embeds, never re-hosts**. Every play counts on the creator's own
+Footy Reacts **embeds, never re-hosts**. Every play counts on the creator's own
 channel; their monetisation is untouched. We add distribution — and, in Phase 2,
 a payment rail.
