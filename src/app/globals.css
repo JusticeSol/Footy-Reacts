@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/*
+ * Red React design tokens.
+ *
+ * Built from football's own printed world rather than generic app UI: the
+ * results coupon, the teletext vidiprinter, the matchday programme. Red is the
+ * field, not an accent — the masthead and the active phase tab wear it fully,
+ * and everything else stays paper-and-ink quiet so the red keeps meaning
+ * something.
+ */
+
+@theme {
+  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
+  --font-body: var(--font-work-sans), system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+
+  --color-paper: #f4f1ea;
+  --color-paper-2: #ebe7dd;
+  --color-ink: #16130f;
+  --color-ink-2: #4a443c;
+  --color-ink-3: #8a8175;
+  --color-rule: #d6d0c4;
+  --color-red: #d5202a;
+  --color-red-dark: #a8161e;
+  --color-live: #1c8a4b;
+}
+
+:root {
+  --color-scheme: light;
+}
+
+html {
+  background: var(--color-paper);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Teletext strip: the ingestion pipeline made visible as matchday energy. */
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: ticker-scroll 48s linear infinite;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.live-dot {
+  animation: live-pulse 1.6s ease-in-out infinite;
+}

@@ -1,0 +1,125 @@
+{
+  "_note": "Placeholder calendar so the app renders before any API key is set. `npm run sync:fixtures` replaces every fixture here with the real calendar (ids are football-data.org team ids, so the merge is clean). Creator handles are resolved to channel ids by `npm run sync:takes` — any handle that fails to resolve is logged, not fatal.",
+  "competitions": [{ "id": "comp-pl", "code": "PL", "name": "Premier League" }],
+  "teams": [
+    { "id": "fd-57", "name": "Arsenal FC", "shortName": "Arsenal", "abbr": "ARS" },
+    { "id": "fd-61", "name": "Chelsea FC", "shortName": "Chelsea", "abbr": "CHE" },
+    { "id": "fd-64", "name": "Liverpool FC", "shortName": "Liverpool", "abbr": "LIV" },
+    { "id": "fd-65", "name": "Manchester City FC", "shortName": "Man City", "abbr": "MCI" },
+    { "id": "fd-66", "name": "Manchester United FC", "shortName": "Man United", "abbr": "MUN" },
+    { "id": "fd-73", "name": "Tottenham Hotspur FC", "shortName": "Tottenham", "abbr": "TOT" },
+    { "id": "fd-67", "name": "Newcastle United FC", "shortName": "Newcastle", "abbr": "NEW" },
+    { "id": "fd-58", "name": "Aston Villa FC", "shortName": "Aston Villa", "abbr": "AVL" },
+    { "id": "fd-563", "name": "West Ham United FC", "shortName": "West Ham", "abbr": "WHU" },
+    { "id": "fd-62", "name": "Everton FC", "shortName": "Everton", "abbr": "EVE" },
+    { "id": "fd-397", "name": "Brighton & Hove Albion FC", "shortName": "Brighton", "abbr": "BHA" },
+    { "id": "fd-351", "name": "Nottingham Forest FC", "shortName": "Nottingham Forest", "abbr": "NFO" }
+  ],
+  "fixtures": [
+    {
+      "id": "seed-1",
+      "slug": "arsenal-vs-chelsea-2026-09-19",
+      "competitionId": "comp-pl",
+      "homeTeamId": "fd-57",
+      "awayTeamId": "fd-61",
+      "kickoffUtc": "2026-09-19T11:30:00Z",
+      "status": "scheduled",
+      "matchday": 5
+    },
+    {
+      "id": "seed-2",
+      "slug": "liverpool-vs-man-united-2026-09-19",
+      "competitionId": "comp-pl",
+      "homeTeamId": "fd-64",
+      "awayTeamId": "fd-66",
+      "kickoffUtc": "2026-09-19T14:00:00Z",
+      "status": "scheduled",
+      "matchday": 5
+    },
+    {
+      "id": "seed-3",
+      "slug": "brighton-vs-everton-2026-09-19",
+      "competitionId": "comp-pl",
+      "homeTeamId": "fd-397",
+      "awayTeamId": "fd-62",
+      "kickoffUtc": "2026-09-19T14:00:00Z",
+      "status": "scheduled",
+      "matchday": 5
+    },
+    {
+      "id": "seed-4",
+      "slug": "tottenham-vs-newcastle-2026-09-19",
+      "competitionId": "comp-pl",
+      "homeTeamId": "fd-73",
+      "awayTeamId": "fd-67",
+      "kickoffUtc": "2026-09-19T16:30:00Z",
+      "status": "scheduled",
+      "matchday": 5
+    },
+    {
+      "id": "seed-5",
+      "slug": "man-city-vs-aston-villa-2026-09-20",
+      "competitionId": "comp-pl",
+      "homeTeamId": "fd-65",
+      "awayTeamId": "fd-58",
+      "kickoffUtc": "2026-09-20T13:00:00Z",
+      "status": "scheduled",
+      "matchday": 5
+    },
+    {
+      "id": "seed-6",
+      "slug": "west-ham-vs-nottingham-forest-2026-09-20",
+      "competitionId": "comp-pl",
+      "homeTeamId": "fd-563",
+      "awayTeamId": "fd-351",
+      "kickoffUtc": "2026-09-20T15:30:00Z",
+      "status": "scheduled",
+      "matchday": 5
+    }
+  ],
+  "creators": [
+    {
+      "id": "creator-aftv",
+      "name": "AFTV",
+      "handle": "@AFTVMedia",
+      "clubAffinity": ["fd-57"],
+      "claimed": false
+    },
+    {
+      "id": "creator-united-stand",
+      "name": "The United Stand",
+      "handle": "@TheUnitedStand",
+      "clubAffinity": ["fd-66"],
+      "claimed": false
+    },
+    {
+      "id": "creator-redmen",
+      "name": "The Redmen TV",
+      "handle": "@TheRedmenTV",
+      "clubAffinity": ["fd-64"],
+      "claimed": false
+    },
+    {
+      "id": "creator-chelsea-fan-tv",
+      "name": "Chelsea Fan TV",
+      "handle": "@ChelseaFanTV",
+      "clubAffinity": ["fd-61"],
+      "claimed": false
+    },
+    {
+      "id": "creator-spurs-web",
+      "name": "The Spurs Web",
+      "handle": "@TheSpursWeb",
+      "clubAffinity": ["fd-73"],
+      "claimed": false
+    },
+    {
+      "id": "creator-city-xtra",
+      "name": "City Xtra",
+      "handle": "@CityXtra",
+      "clubAffinity": ["fd-65"],
+      "claimed": false
+    }
+  ],
+  "takes": []
+}
