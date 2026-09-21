@@ -98,6 +98,15 @@ async function main() {
       expectBelowFloor: true,
     },
     {
+      // "FT." here is "featuring", not full time — it used to score as match
+      // content and reached the match page.
+      name: "guest credits are not a full-time marker",
+      title: "SUPER EAGLES CALL UP LIST (FT. Kurotams, Henry, Cali & Mekele)",
+      publishedAt: at("seed-1", 300),
+      clubs: ["fd-57", "fd-66", "fd-61"],
+      expectBelowFloor: true,
+    },
+    {
       name: "on-topic club, not about the match",
       title: "International Break Is A Good Thing For Chelsea!",
       publishedAt: at("seed-1", 400),

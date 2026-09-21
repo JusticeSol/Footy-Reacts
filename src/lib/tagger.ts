@@ -61,6 +61,11 @@ const OFF_TOPIC_WORDS = [
   "international break",
   "transfer window",
   "deadline day",
+  // National-team content: squad announcements and friendlies are not club
+  // match reactions, whichever country the channel follows.
+  "call up",
+  "squad announcement",
+  "friendly",
 ];
 
 const PRE_WORDS = [
@@ -88,7 +93,8 @@ const POST_WORDS = [
   "post-match",
   "full time",
   "fulltime",
-  "ft",
+  // Not "ft": on YouTube it means "featuring" far more often than full time,
+  // so a guest credit list read as match content.
   "player ratings",
   "ratings",
   "rant",
