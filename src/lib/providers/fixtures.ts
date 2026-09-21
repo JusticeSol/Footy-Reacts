@@ -232,7 +232,9 @@ async function syncApiFootball(opts: {
 export async function syncFixtures(
   opts: { daysBack?: number; daysAhead?: number } = {},
 ): Promise<FixtureSyncResult> {
-  const { daysBack = 3, daysAhead = 14 } = opts;
+  // daysBack must cover BOARD_FLOOR_DAYS so results and statuses keep
+  // refreshing for every fixture still visible on the board.
+  const { daysBack = 5, daysAhead = 14 } = opts;
   const now = Date.now();
   const from = new Date(now - daysBack * 86_400_000);
   const to = new Date(now + daysAhead * 86_400_000);

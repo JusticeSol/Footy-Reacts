@@ -51,8 +51,17 @@ export function byMatchdayOrder(a: Fixture, b: Fixture): number {
   return Date.parse(a.kickoffUtc) - Date.parse(b.kickoffUtc);
 }
 
-/** The board window: yesterday's games stay so post-match takes have a home. */
+/**
+ * The board window.
+ *
+ * The floor must outlast the tagger's post-match window (3 days after the
+ * whistle), or a fixture drops off the board while reactions to it are still
+ * being filed — they would be ingested and tagged correctly, and then be
+ * unreachable. Four days gives that a day of margin.
+ */
+export const BOARD_FLOOR_DAYS = 4;
+
 export function boardWindow(days: number): { floor: number; horizon: number } {
   const now = Date.now();
-  return { floor: now - 2 * 86_400_000, horizon: now + days * 86_400_000 };
+  return { floor: now - BOARD_FLOOR_DAYS * 86_400_000, horizon: now + days * 86_400_000 };
 }

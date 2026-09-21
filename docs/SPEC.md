@@ -190,10 +190,13 @@ the teletext vidiprinter, the matchday programme — rather than generic app UI.
 - [x] **Day 2** — fixture sync (both providers), YouTube poller, quota-safe polling
 - [x] **Day 3** — tagging agent: pre-filter + model tie-breaker
 - [x] **Day 4** — fixture board, match page, phase tabs, take cards, vidiprinter
-- [ ] **Day 5** — run against live keys; hand-correct mis-tags; tune
-      `TAG_MIN_CONFIDENCE` against real matchday output
-- [ ] **Day 6** — deploy (Vercel), wire cron schedules, point a domain
-- [ ] **Day 7** — creator outreach: DM 15–20 channels with their own page link
+- [x] **Day 5** — first live ingestion. 22 takes across 6 creators, nearly all
+      tagged at 1.00 confidence by the heuristic alone; the model was never
+      needed. See §9 for what real data broke.
+- [x] **Day 6** — deployed to Vercel, Supabase live, ingestion scheduled on
+      GitHub Actions (see [DEPLOY.md](DEPLOY.md))
+- [ ] **Day 7** — grow the roster to 15–20 creators, then outreach: DM each
+      channel a link to their own takes on the site
 
 ### Then: prove retention before building the rail
 
@@ -222,7 +225,27 @@ Sequenced after retention is proven:
 
 ---
 
-## 9. Known open questions
+## 9. What the first live run taught us
+
+Real data broke three things that no amount of local testing would have caught,
+all now fixed:
+
+- **The seeder poisoned the database.** `db:seed` pushed the placeholder
+  calendar into Supabase, where invented fixtures sat beside synced ones
+  permanently — the provider assigns different ids, so nothing overwrote them.
+- **The two repos had silently diverged.** Supabase's `upsertCreators` nulled
+  the cached channel and playlist ids when a caller did not carry them; the JSON
+  repo merged. Identical behaviour across implementations is the whole point of
+  the interface, so this was a design failure, not a typo.
+- **The board outlived its own window.** Fixtures dropped off after 2 days while
+  the tagger still accepted reactions for 3 — takes were ingested, tagged
+  correctly, and unreachable. `BOARD_FLOOR_DAYS` is now 4.
+
+Tagging itself needed no changes. Titles with no club named ("Pecked By The
+Seagulls!") and venue-only titles ("HEADLOSS AT CRAVEN COTTAGE") both landed
+correctly on creator affinity plus timing.
+
+## 10. Known open questions
 
 - **Handles in the seed are unverified.** `sync:takes` logs any handle that
   fails to resolve rather than failing the run; verify the real roster before

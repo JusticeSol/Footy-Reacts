@@ -1,0 +1,35 @@
+name: Sync fixtures
+
+# The calendar changes slowly: kickoff times move, matches get postponed, and
+# full-time scores land. Once a day before the early kickoffs is plenty.
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: sync-fixtures
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Sync the fixture calendar
+        run: npm run sync:fixtures
+        env:
+          FIXTURES_PROVIDER: ${{ vars.FIXTURES_PROVIDER || 'footballdata' }}
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+          FOOTBALL_DATA_COMPETITION: ${{ vars.FOOTBALL_DATA_COMPETITION || 'PL' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

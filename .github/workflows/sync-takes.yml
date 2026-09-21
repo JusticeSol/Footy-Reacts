@@ -1,0 +1,50 @@
+name: Sync takes
+
+# Scheduled around when reaction content actually appears, not around the clock.
+# A private repo bills Actions minutes, and polling every 15 minutes all week
+# would burn roughly 2,900 minutes a month against a 2,000 free allowance —
+# so the frequency follows the football.
+#
+#   weekends      every 15 min, 11:00-23:00 UTC (the matchday window)
+#   weekday eves  every 30 min, 17:00-22:00 UTC (midweek European and cup ties)
+#
+# GitHub may delay scheduled runs when it is busy; nothing here assumes an
+# exact cadence, and the job is idempotent, so a late or doubled run is safe.
+on:
+  schedule:
+    - cron: "*/15 11-23 * * 6,0"
+    - cron: "*/30 17-22 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "How many hours back to look for uploads"
+        required: false
+        default: "48"
+
+concurrency:
+  group: sync-takes
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Poll creator uploads and tag them
+        run: npm run sync:takes -- ${{ github.event.inputs.hours || '48' }}
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Optional: without it the tagger uses the heuristic alone.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TAGGER_MODEL: ${{ vars.TAGGER_MODEL || 'claude-haiku-4-5-20251001' }}
