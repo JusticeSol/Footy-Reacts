@@ -24,6 +24,17 @@ npm run sync:fixtures   # pulls the real calendar: 3 days back, 14 ahead
 npm run sync:takes      # polls every creator's uploads and tags them
 ```
 
+### Inspecting what happened
+
+```bash
+npm run db:status              # counts, recent takes, unresolved creators
+npm run debug:uploads 48       # per-video: duration, tag decision, why it was dropped
+npm run find:channel "AFTV"    # channel id lookup when a @handle will not resolve
+```
+
+`find:channel` uses `search.list` at 100 quota units — fine while building the
+roster, never on a schedule.
+
 `sync:takes 72` widens the lookback to 72 hours. Both jobs are idempotent, write
 to `src/data/store.json` (gitignored), and are also exposed as cron endpoints:
 

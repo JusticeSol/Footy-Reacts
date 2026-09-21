@@ -28,14 +28,26 @@ async function main() {
   const fixtures = seed.fixtures as Fixture[];
   const creators = seed.creators as Creator[];
 
-  // Order matters: fixtures reference teams, takes reference both.
+  // Order matters: fixtures reference teams.
   await repo.upsertTeams(teams);
-  await repo.upsertFixtures(fixtures);
+
+  // The placeholder calendar exists so a keyless checkout renders something.
+  // Pushing it into a real database would leave invented matches sitting beside
+  // the synced ones forever — nothing overwrites them, since the provider
+  // assigns different ids.
+  if (repo.kind === "json") {
+    await repo.upsertFixtures(fixtures);
+  } else {
+    await repo.deleteFixtures(fixtures.map((f) => f.id));
+  }
+
   await repo.upsertCreators(creators);
 
   console.log(
-    `[seed] ${teams.length} teams, ${fixtures.length} placeholder fixtures, ` +
-      `${creators.length} creators`,
+    `[seed] ${teams.length} teams, ${creators.length} creators` +
+      (repo.kind === "json"
+        ? `, ${fixtures.length} placeholder fixtures`
+        : `, placeholder fixtures skipped and removed (run sync:fixtures for the real calendar)`),
   );
 }
 

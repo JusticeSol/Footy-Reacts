@@ -191,8 +191,22 @@ export const jsonRepo: Repo = {
     await mutate((db) => {
       for (const creator of creators) {
         const i = db.creators.findIndex((c) => c.id === creator.id);
-        if (i === -1) db.creators.push(creator);
-        else db.creators[i] = { ...db.creators[i], ...creator };
+        if (i === -1) {
+          db.creators.push(creator);
+          continue;
+        }
+        const prior = db.creators[i];
+        const merged = { ...prior, ...creator };
+        // A corrected channel id invalidates the playlist cached from the old
+        // one; keeping it would poll the wrong (or a dead) playlist forever.
+        if (
+          creator.youtubeChannelId !== undefined &&
+          prior.youtubeChannelId != null &&
+          creator.youtubeChannelId !== prior.youtubeChannelId
+        ) {
+          merged.uploadsPlaylistId = creator.uploadsPlaylistId;
+        }
+        db.creators[i] = merged;
       }
     });
   },
@@ -213,6 +227,16 @@ export const jsonRepo: Repo = {
       if (!creator) return;
       creator.youtubeChannelId = channelId;
       creator.uploadsPlaylistId = playlistId;
+    });
+  },
+
+  async deleteFixtures(ids) {
+    if (ids.length === 0) return;
+    const doomed = new Set(ids);
+    await mutate((db) => {
+      db.fixtures = db.fixtures.filter((f) => !doomed.has(f.id));
+      // No cascade in a flat file, so takes are removed explicitly.
+      db.takes = db.takes.filter((t) => !doomed.has(t.fixtureId));
     });
   },
 };

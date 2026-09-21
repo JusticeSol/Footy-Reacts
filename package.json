@@ -11,7 +11,10 @@
     "sync:fixtures": "tsx scripts/sync-fixtures.ts",
     "sync:takes": "tsx scripts/sync-takes.ts",
     "check:tagger": "tsx scripts/check-tagger.ts",
-    "db:seed": "tsx scripts/db-seed.ts"
+    "db:seed": "tsx scripts/db-seed.ts",
+    "db:status": "tsx scripts/db-status.ts",
+    "debug:uploads": "tsx scripts/debug-uploads.ts",
+    "find:channel": "tsx scripts/find-channel.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

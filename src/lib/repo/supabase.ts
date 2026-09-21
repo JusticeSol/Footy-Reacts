@@ -378,7 +378,49 @@ export const supabaseRepo: Repo = {
 
   async upsertCreators(creators) {
     if (creators.length === 0) return;
-    const res = await db().from("creator").upsert(creators.map(fromCreator), { onConflict: "id" });
+
+    // An upsert replaces the whole row, so a caller that does not carry the
+    // resolved YouTube ids (the seeder, for one) would null them out and force
+    // every channel to be resolved again at quota cost. Merge instead, matching
+    // what the JSON repo does — the two must not diverge in behaviour.
+    const existingRes = await db()
+      .from("creator")
+      .select("id,youtube_channel_id,uploads_playlist_id")
+      .in(
+        "id",
+        creators.map((c) => c.id),
+      );
+    fail("read creators", existingRes.error);
+
+    const existing = new Map(
+      (
+        existingRes.data as Array<{
+          id: string;
+          youtube_channel_id: string | null;
+          uploads_playlist_id: string | null;
+        }>
+      ).map((r) => [r.id, r]),
+    );
+
+    const rows = creators.map((c) => {
+      const prior = existing.get(c.id);
+      // A corrected channel id invalidates the playlist cached from the old
+      // one; keeping it would poll the wrong (or a dead) playlist forever.
+      const channelChanged =
+        c.youtubeChannelId !== undefined &&
+        prior?.youtube_channel_id != null &&
+        c.youtubeChannelId !== prior.youtube_channel_id;
+
+      return {
+        ...fromCreator(c),
+        youtube_channel_id: c.youtubeChannelId ?? prior?.youtube_channel_id ?? null,
+        uploads_playlist_id: channelChanged
+          ? null
+          : (c.uploadsPlaylistId ?? prior?.uploads_playlist_id ?? null),
+      };
+    });
+
+    const res = await db().from("creator").upsert(rows, { onConflict: "id" });
     fail("upsert creators", res.error);
   },
 
@@ -411,5 +453,12 @@ export const supabaseRepo: Repo = {
       .update({ youtube_channel_id: channelId, uploads_playlist_id: playlistId })
       .eq("id", creatorId);
     fail("update creator", res.error);
+  },
+
+  async deleteFixtures(ids) {
+    if (ids.length === 0) return;
+    // take.fixture_id is ON DELETE CASCADE, so attached takes go with them.
+    const res = await db().from("fixture").delete().in("id", ids);
+    fail("delete fixtures", res.error);
   },
 };

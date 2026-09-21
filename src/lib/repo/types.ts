@@ -42,4 +42,6 @@ export interface Repo {
   /** Must never overwrite a take whose `taggedBy` is "manual". */
   upsertTakes(takes: Take[]): Promise<void>;
   setCreatorYouTube(creatorId: string, channelId: string, playlistId: string): Promise<void>;
+  /** Removes fixtures and, by cascade, any takes attached to them. */
+  deleteFixtures(ids: string[]): Promise<void>;
 }
