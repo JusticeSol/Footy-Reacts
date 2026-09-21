@@ -12,8 +12,11 @@ loadEnv();
  * roster is version controlled) and upserts them into the active store.
  *
  * Usage:
- *   npm run creator:add -- --name "AFTV" --handle @AFTVMedia --clubs ARS
+ *   npm run creator:add -- --name "AFTV" --handle "@AFTVMedia" --clubs ARS
  *   npm run creator:add -- --name "City Xtra" --channel UCxxxx --clubs MCI
+ *
+ * Quote the handle: in PowerShell a bare @word is the splatting operator and
+ * never reaches this script.
  *
  * --clubs takes the three-letter abbreviations shown on the fixture board, so
  * you never need to look up an internal team id. Multiple clubs are comma
@@ -44,7 +47,8 @@ async function main() {
 
   if (!name || (!handle && !channel)) {
     console.error(
-      'Usage: npm run creator:add -- --name "Channel Name" --handle @handle --clubs ARS,CHE\n' +
+      'Usage: npm run creator:add -- --name "Channel Name" --handle "@handle" --clubs ARS,CHE\n' +
+        "       (quote the handle — PowerShell eats a bare @word)\n" +
         "       (use --channel UC... instead of --handle when a handle will not resolve)",
     );
     process.exit(1);

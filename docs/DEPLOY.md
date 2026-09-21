@@ -85,8 +85,12 @@ move to Vercel Pro, the block to restore is in the README.
 ## 3. Adding creators
 
 ```bash
-npm run creator:add -- --name "AFTV" --handle @AFTVMedia --clubs ARS
+npm run creator:add -- --name "AFTV" --handle "@AFTVMedia" --clubs ARS
 ```
+
+**Quote the handle.** In PowerShell a bare `@word` is the splatting operator, so
+`--handle @AFTVMedia` fails with "the variable cannot be retrieved" before the
+script sees it.
 
 Clubs are the three-letter abbreviations from the fixture board. The command
 resolves the channel immediately, so a wrong handle fails right there instead of
