@@ -143,6 +143,40 @@ export async function fetchDurations(videoIds: string[]): Promise<Map<string, nu
   return out;
 }
 
+/**
+ * Title, description and publish time for up to 50 videos per call (1 unit).
+ *
+ * Used when re-scoring stored takes: the take row keeps the title but not the
+ * description, and the tagger reads both — re-scoring without the description
+ * would quietly drop takes that were matched on it.
+ */
+export async function fetchSnippets(
+  videoIds: string[],
+): Promise<Map<string, { title: string; description: string; publishedAt: string }>> {
+  const out = new Map<string, { title: string; description: string; publishedAt: string }>();
+
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
+    const body = await call<{
+      items?: Array<{
+        id?: string;
+        snippet?: { title?: string; description?: string; publishedAt?: string };
+      }>;
+    }>("videos", { part: "snippet", id: batch.join(",") });
+
+    for (const item of body.items ?? []) {
+      if (!item.id || !item.snippet) continue;
+      out.set(item.id, {
+        title: item.snippet.title ?? "",
+        description: item.snippet.description ?? "",
+        publishedAt: item.snippet.publishedAt ?? new Date().toISOString(),
+      });
+    }
+  }
+
+  return out;
+}
+
 export function youtubeWatchUrl(videoId: string): string {
   return `https://www.youtube.com/watch?v=${videoId}`;
 }

@@ -362,6 +362,12 @@ export const supabaseRepo: Repo = {
     );
   },
 
+  async listTakes() {
+    const res = await db().from("take").select("*");
+    fail("list takes", res.error);
+    return (res.data as TakeRow[]).map(toTake);
+  },
+
   async upsertTeams(teams) {
     if (teams.length === 0) return;
     const res = await db().from("team").upsert(teams.map(fromTeam), { onConflict: "id" });

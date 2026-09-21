@@ -166,6 +166,10 @@ export const jsonRepo: Repo = {
     return new Set(db.takes.map((t) => `${t.source}:${t.externalId}`));
   },
 
+  async listTakes() {
+    return (await read()).takes;
+  },
+
   async upsertTeams(teams) {
     await mutate((db) => {
       for (const team of teams) {

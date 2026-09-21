@@ -1,4 +1,4 @@
-import { getRepo } from "../src/lib/repo";
+import { getRepo, TAG_MIN_CONFIDENCE } from "../src/lib/repo";
 import { prefilter } from "../src/lib/tagger";
 
 /**
@@ -14,8 +14,11 @@ interface Case {
   description?: string;
   publishedAt: string;
   clubs: string[];
-  expectFixture: string | null;
+  /** Omit when the fixture does not matter, only that it stays unpublished. */
+  expectFixture?: string | null;
   expectPhase?: "pre" | "post";
+  /** Asserts the top candidate scores under TAG_MIN_CONFIDENCE, so the UI hides it. */
+  expectBelowFloor?: boolean;
 }
 
 async function main() {
@@ -82,6 +85,25 @@ async function main() {
       clubs: ["fd-57"],
       expectFixture: null,
     },
+    // Both of the following were live false positives found by debug:uploads
+    // on the first multi-club creator. Affinity plus proximity alone reached
+    // the 0.55 publish floor with nothing else going for them.
+    {
+      name: "unrelated international, multi-club creator",
+      title: "NIGERIA 0-1 COLOMBIA U20 Women's World Cup #falconets",
+      publishedAt: at("seed-2", -70),
+      clubs: ["fd-57", "fd-66", "fd-61", "fd-64", "fd-65"],
+      // A candidate may still be produced — what matters is that it scores too
+      // low to ever be shown.
+      expectBelowFloor: true,
+    },
+    {
+      name: "on-topic club, not about the match",
+      title: "International Break Is A Good Thing For Chelsea!",
+      publishedAt: at("seed-1", 400),
+      clubs: ["fd-61"],
+      expectBelowFloor: true,
+    },
   ];
 
   let failures = 0;
@@ -97,15 +119,21 @@ async function main() {
     const best = candidates[0];
     const gotFixture = best?.fixture.id ?? null;
     const gotPhase = best?.phase;
-    const ok = gotFixture === c.expectFixture && (!c.expectPhase || gotPhase === c.expectPhase);
+    const score = best?.score ?? 0;
+
+    const okFixture = c.expectFixture === undefined || gotFixture === c.expectFixture;
+    const okPhase = !c.expectPhase || gotPhase === c.expectPhase;
+    const okFloor = !c.expectBelowFloor || score < TAG_MIN_CONFIDENCE;
+    const ok = okFixture && okPhase && okFloor;
     if (!ok) failures += 1;
 
     const margin = candidates.length > 1 ? (best.score - candidates[1].score).toFixed(2) : "n/a";
 
+    const shown = score >= TAG_MIN_CONFIDENCE ? "SHOWN " : "hidden";
     console.log(
       `${ok ? "PASS" : "FAIL"}  ${c.name}\n` +
         `      → ${gotFixture ?? "none"} ${gotPhase ?? ""} ` +
-        `score=${best?.score.toFixed(2) ?? "0.00"} margin=${margin}` +
+        `score=${score.toFixed(2)} ${shown} margin=${margin}` +
         (best ? `\n      reasons: ${best.reasons.join(", ")}` : ""),
     );
   }

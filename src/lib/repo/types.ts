@@ -34,6 +34,8 @@ export interface Repo {
   listCreators(): Promise<Creator[]>;
   /** Keys of takes already stored, as `${source}:${externalId}`. */
   listTakeKeys(): Promise<Set<string>>;
+  /** Every stored take, including ones withheld from the UI. For re-scoring. */
+  listTakes(): Promise<Take[]>;
 
   // --- writes ---
   upsertTeams(teams: Team[]): Promise<void>;

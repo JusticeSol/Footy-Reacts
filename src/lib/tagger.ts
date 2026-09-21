@@ -41,6 +41,28 @@ const ALIASES: Record<string, string[]> = {
   burnley: ["burnley", "clarets"],
 };
 
+/**
+ * Markers of football that is not the club fixture we track. A creator who
+ * covers five clubs posts plenty of this, and it otherwise scores just high
+ * enough on affinity and timing alone to be published.
+ *
+ * Matched against the title only — a passing mention in a description should
+ * not condemn a genuine match reaction.
+ */
+const OFF_TOPIC_WORDS = [
+  "u17",
+  "u18",
+  "u20",
+  "u21",
+  "u23",
+  "world cup",
+  "afcon",
+  "olympic",
+  "international break",
+  "transfer window",
+  "deadline day",
+];
+
 const PRE_WORDS = [
   "preview",
   "prediction",
@@ -217,6 +239,22 @@ export function prefilter(
     } else if (textPhase.hit) {
       score += 0.1;
       reasons.push(`"${textPhase.hit}"`);
+    }
+
+    // Football that is plainly not this fixture: youth, international or
+    // transfer content from a club channel.
+    if (OFF_TOPIC_WORDS.some((w) => containsWord(title, w))) {
+      score -= 0.25;
+      reasons.push("off-topic marker in title");
+    }
+
+    // Affinity plus timing alone must never be enough to publish. Without a
+    // club named anywhere, or wording that marks it as match content, all we
+    // actually know is that this creator posted near a kickoff — which is true
+    // of everything they post on a matchday.
+    if (!homeHit && !awayHit && !textPhase.hit) {
+      score = Math.min(score, 0.4);
+      reasons.push("no team or phase signal — capped");
     }
 
     if (score <= 0) continue;

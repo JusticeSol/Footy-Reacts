@@ -15,7 +15,8 @@
     "db:status": "tsx scripts/db-status.ts",
     "debug:uploads": "tsx scripts/debug-uploads.ts",
     "find:channel": "tsx scripts/find-channel.ts",
-    "creator:add": "tsx scripts/creator-add.ts"
+    "creator:add": "tsx scripts/creator-add.ts",
+    "retag": "tsx scripts/retag.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

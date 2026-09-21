@@ -200,6 +200,21 @@
         "fd-65"
       ],
       "claimed": false
+    },
+    {
+      "id": "creator-football-fans-tribe",
+      "name": "Football Fans Tribe",
+      "handle": "@FansTribeHQ",
+      "youtubeChannelId": "UCY5WC1pD89U8qGUOrF1zXuw",
+      "uploadsPlaylistId": "UUY5WC1pD89U8qGUOrF1zXuw",
+      "clubAffinity": [
+        "fd-57",
+        "fd-66",
+        "fd-61",
+        "fd-64",
+        "fd-65"
+      ],
+      "claimed": false
     }
   ],
   "takes": []
