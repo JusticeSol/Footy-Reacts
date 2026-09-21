@@ -44,6 +44,66 @@ export function countTakes(
   return { pre, post };
 }
 
+/**
+ * Round-robin takes across creators, preserving newest-first within each.
+ *
+ * A creator who uploads fifteen reactions in an hour would otherwise own the
+ * whole match page, which reads as their page rather than the fixture's. One
+ * from each creator, then the next from each, and so on.
+ */
+export function interleaveByCreator<T extends { creatorId: string; publishedAt: string }>(
+  takes: T[],
+): T[] {
+  const queues = new Map<string, T[]>();
+  for (const take of takes) {
+    const queue = queues.get(take.creatorId);
+    if (queue) queue.push(take);
+    else queues.set(take.creatorId, [take]);
+  }
+
+  // Creator with the newest take leads, so the page still opens on what just
+  // landed rather than on whoever sorts first.
+  const ordered = [...queues.values()].sort(
+    (a, b) => Date.parse(b[0].publishedAt) - Date.parse(a[0].publishedAt),
+  );
+  for (const queue of ordered) {
+    queue.sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+  }
+
+  const out: T[] = [];
+  for (let round = 0; out.length < takes.length; round += 1) {
+    for (const queue of ordered) {
+      if (round < queue.length) out.push(queue[round]);
+    }
+  }
+  return out;
+}
+
+/**
+ * Thins a newest-first list so the ticker shows breadth rather than one
+ * creator's upload spree. At most `perPair` entries for any one
+ * fixture-and-creator combination.
+ */
+export function diversify<T extends { fixtureId: string; creatorId: string }>(
+  takes: T[],
+  limit: number,
+  perPair = 1,
+): T[] {
+  const seen = new Map<string, number>();
+  const out: T[] = [];
+
+  for (const take of takes) {
+    const key = `${take.fixtureId}:${take.creatorId}`;
+    const count = seen.get(key) ?? 0;
+    if (count >= perPair) continue;
+    seen.set(key, count + 1);
+    out.push(take);
+    if (out.length >= limit) break;
+  }
+
+  return out;
+}
+
 /** Live games first, then soonest kickoff. */
 export function byMatchdayOrder(a: Fixture, b: Fixture): number {
   if (a.status === "live" && b.status !== "live") return -1;

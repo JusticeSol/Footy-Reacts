@@ -15,8 +15,10 @@ import {
   boardWindow,
   byMatchdayOrder,
   countTakes,
+  diversify,
   hydrateFixture,
   indexTeams,
+  interleaveByCreator,
   isVisible,
 } from "./shared";
 
@@ -118,14 +120,15 @@ export const jsonRepo: Repo = {
   async getTakes(fixtureId, phase: Phase) {
     const db = await read();
     const creators = new Map(db.creators.map((c) => [c.id, c]));
-    return visibleTakes(db)
+    const takes = visibleTakes(db)
       .filter((t) => t.fixtureId === fixtureId && t.phase === phase)
       .map((t) => {
         const creator = creators.get(t.creatorId);
         return creator ? { ...t, creator } : null;
       })
-      .filter((t): t is HydratedTake => t !== null)
-      .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+      .filter((t): t is HydratedTake => t !== null);
+
+    return interleaveByCreator(takes);
   },
 
   async getRecentTakes(limit = 12) {
@@ -134,10 +137,11 @@ export const jsonRepo: Repo = {
     const creators = new Map(db.creators.map((c) => [c.id, c]));
     const fixtures = new Map(db.fixtures.map((f) => [f.id, f]));
 
-    return visibleTakes(db)
+    const newest = visibleTakes(db)
       .slice()
-      .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
-      .slice(0, limit)
+      .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+
+    return diversify(newest, limit)
       .map((take) => {
         const creator = creators.get(take.creatorId);
         const raw = fixtures.get(take.fixtureId);

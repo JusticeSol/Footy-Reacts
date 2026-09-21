@@ -63,6 +63,7 @@ export async function resolveChannelIdFromHandle(handle: string): Promise<string
 }
 
 interface PlaylistItemsResponse {
+  nextPageToken?: string;
   items?: Array<{
     snippet?: {
       publishedAt?: string;
@@ -78,38 +79,63 @@ interface PlaylistItemsResponse {
 
 /**
  * Recent uploads for one creator, newest first, limited to videos published
- * after `since` (the poller passes the last successful run time).
+ * after `since` (the poller passes the start of its lookback window).
+ *
+ * Pages until it reaches a video older than `since`. A page of 50 costs the
+ * same 1 unit as a page of 5, so the page size is the maximum — and paging
+ * matters: a channel posting fifteen reactions on a Sunday would otherwise
+ * push Saturday's matches off the end of a single page and they would never
+ * be fetched at all.
  */
 export async function fetchRecentUploads(
   uploadsPlaylistId: string,
-  opts: { since?: Date; maxResults?: number } = {},
+  opts: { since?: Date; maxPages?: number } = {},
 ): Promise<YouTubeVideo[]> {
-  const { since, maxResults = 15 } = opts;
-
-  const body = await call<PlaylistItemsResponse>("playlistItems", {
-    part: "snippet,contentDetails",
-    playlistId: uploadsPlaylistId,
-    maxResults: String(Math.min(maxResults, 50)),
-  });
+  const { since, maxPages = 3 } = opts;
 
   const videos: YouTubeVideo[] = [];
-  for (const item of body.items ?? []) {
-    const s = item.snippet;
-    const videoId = item.contentDetails?.videoId ?? s?.resourceId?.videoId;
-    const publishedAt = item.contentDetails?.videoPublishedAt ?? s?.publishedAt;
-    if (!videoId || !publishedAt || !s) continue;
-    if (since && Date.parse(publishedAt) <= since.getTime()) continue;
+  let pageToken: string | undefined;
 
-    const thumbs = s.thumbnails ?? {};
-    videos.push({
-      videoId,
-      channelId: s.channelId ?? "",
-      title: s.title ?? "",
-      description: s.description ?? "",
-      publishedAt,
-      thumbnailUrl:
-        thumbs.maxres?.url ?? thumbs.high?.url ?? thumbs.medium?.url ?? thumbs.default?.url,
-    });
+  for (let page = 0; page < maxPages; page += 1) {
+    const params: Record<string, string> = {
+      part: "snippet,contentDetails",
+      playlistId: uploadsPlaylistId,
+      maxResults: "50",
+    };
+    if (pageToken) params.pageToken = pageToken;
+
+    const body = await call<PlaylistItemsResponse>("playlistItems", params);
+    const items = body.items ?? [];
+    if (items.length === 0) break;
+
+    let reachedCutoff = false;
+
+    for (const item of items) {
+      const s = item.snippet;
+      const videoId = item.contentDetails?.videoId ?? s?.resourceId?.videoId;
+      const publishedAt = item.contentDetails?.videoPublishedAt ?? s?.publishedAt;
+      if (!videoId || !publishedAt || !s) continue;
+
+      if (since && Date.parse(publishedAt) <= since.getTime()) {
+        // Uploads playlists are newest-first, so everything after this is older.
+        reachedCutoff = true;
+        continue;
+      }
+
+      const thumbs = s.thumbnails ?? {};
+      videos.push({
+        videoId,
+        channelId: s.channelId ?? "",
+        title: s.title ?? "",
+        description: s.description ?? "",
+        publishedAt,
+        thumbnailUrl:
+          thumbs.maxres?.url ?? thumbs.high?.url ?? thumbs.medium?.url ?? thumbs.default?.url,
+      });
+    }
+
+    pageToken = body.nextPageToken;
+    if (reachedCutoff || !pageToken) break;
   }
 
   return videos.sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));

@@ -16,8 +16,10 @@ import {
   boardWindow,
   byMatchdayOrder,
   countTakes,
+  diversify,
   hydrateFixture,
   indexTeams,
+  interleaveByCreator,
   TAG_MIN_CONFIDENCE,
 } from "./shared";
 
@@ -280,21 +282,25 @@ export const supabaseRepo: Repo = {
       (creatorsRes.data as CreatorRow[]).map((r) => [r.id, toCreator(r)]),
     );
 
-    return takes
+    const hydrated = takes
       .map((t) => {
         const creator = creators.get(t.creatorId);
         return creator ? { ...t, creator } : null;
       })
       .filter((t): t is HydratedTake => t !== null);
+
+    return interleaveByCreator(hydrated);
   },
 
   async getRecentTakes(limit = 12) {
+    // Over-fetch, because thinning happens after: one creator's upload spree
+    // would otherwise fill the whole ticker before any other fixture appeared.
     const takesRes = await visibleTakesQuery("take")
       .order("published_at", { ascending: false })
-      .limit(limit);
+      .limit(limit * 6);
     fail("recent takes", takesRes.error);
 
-    const takes = (takesRes.data as TakeRow[]).map(toTake);
+    const takes = diversify((takesRes.data as TakeRow[]).map(toTake), limit);
     if (takes.length === 0) return [];
 
     const [creatorsRes, fixturesRes] = await Promise.all([
