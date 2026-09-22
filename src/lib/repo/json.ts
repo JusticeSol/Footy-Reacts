@@ -238,6 +238,14 @@ export const jsonRepo: Repo = {
     });
   },
 
+  async deleteTakes(ids) {
+    if (ids.length === 0) return;
+    const doomed = new Set(ids);
+    await mutate((db) => {
+      db.takes = db.takes.filter((t) => !doomed.has(t.id));
+    });
+  },
+
   async deleteFixtures(ids) {
     if (ids.length === 0) return;
     const doomed = new Set(ids);

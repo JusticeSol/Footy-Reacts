@@ -219,13 +219,14 @@
     {
       "id": "creator-stretford-paddock",
       "name": "Stretford Paddock",
-      "handle": "@StretfordPaddock",
-      "youtubeChannelId": "UCOfN8RocOxUmvEBoaBIi18g",
-      "uploadsPlaylistId": "UUOfN8RocOxUmvEBoaBIi18g",
+      "handle": "@fulltimedevils",
+      "youtubeChannelId": "UC7w8GnTF2Sp3wldDMtCCtVw",
+      "uploadsPlaylistId": "UU7w8GnTF2Sp3wldDMtCCtVw",
       "clubAffinity": [
         "fd-66"
       ],
-      "claimed": false
+      "claimed": false,
+      "avatarUrl": "https://yt3.ggpht.com/ytc/AIdro_nzhhmafrjcDPkncmVmIVPwXd2aXXRhWIzGHCaSoomx1v0=s800-c-k-c0x00ffffff-no-rj"
     },
     {
       "id": "creator-utv-aston-villa",

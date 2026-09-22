@@ -95,12 +95,16 @@ async function main() {
     process.exit(1);
   }
 
-  // The handle appears on every take card, so fetch the channel's real one
-  // rather than inventing it from the display name.
-  const profile = handle ? null : await fetchChannelProfile(channelId!);
+  // Always fetch the profile, even when a handle was given: the resolved
+  // channel's own title is the only way to see what you actually got. A
+  // channel id tells a human nothing, which is how "@StretfordPaddock"
+  // silently resolved to their Sunday-league team's channel.
+  const profile = await fetchChannelProfile(channelId!);
+
+  const id = `creator-${slugify(name)}`;
 
   const creator: Creator = {
-    id: `creator-${slugify(name)}`,
+    id,
     name,
     handle: handle ?? profile?.handle ?? `@${slugify(name)}`,
     youtubeChannelId: channelId,
@@ -109,6 +113,20 @@ async function main() {
     clubAffinity,
     claimed: false,
   };
+
+  // Re-pointing an existing creator at a different channel: their stored takes
+  // came from the old one, so leaving them would credit this creator with
+  // another channel's videos.
+  const existing = (await repo.listCreators()).find((c) => c.id === id);
+  if (existing?.youtubeChannelId && existing.youtubeChannelId !== channelId) {
+    const stale = (await repo.listTakes()).filter((t) => t.creatorId === id);
+    if (stale.length > 0) {
+      await repo.deleteTakes(stale.map((t) => t.id));
+      console.log(
+        `channel changed — removed ${stale.length} take(s) ingested from ${existing.youtubeChannelId}`,
+      );
+    }
+  }
 
   // Keep the roster in version control as well as in the database.
   const seedPath = path.join(process.cwd(), "src", "data", "seed.json");
@@ -120,9 +138,17 @@ async function main() {
 
   await repo.upsertCreators([creator]);
 
+  const titleMatches =
+    profile?.title &&
+    profile.title.toLowerCase().replace(/[^a-z0-9]/g, "").includes(
+      name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 10),
+    );
+
   console.log(
     `added ${creator.name} (${creator.id})\n` +
-      `  channel  ${channelId}\n` +
+      `  channel  ${profile?.title ?? "?"} (${channelId})\n` +
+      (titleMatches ? "" : `  ⚠ resolved channel name differs from "${name}" — check it is right\n`) +
+      `  handle   ${creator.handle}\n` +
       `  uploads  ${uploadsPlaylistId}\n` +
       `  clubs    ${clubs.length > 0 ? clubs.join(", ") : "none"}\n` +
       `  store    ${repo.kind}\n\n` +

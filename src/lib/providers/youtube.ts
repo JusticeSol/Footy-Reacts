@@ -207,17 +207,30 @@ export async function fetchDurations(videoIds: string[]): Promise<Map<string, nu
  * description, and the tagger reads both — re-scoring without the description
  * would quietly drop takes that were matched on it.
  */
-export async function fetchSnippets(
-  videoIds: string[],
-): Promise<Map<string, { title: string; description: string; publishedAt: string }>> {
-  const out = new Map<string, { title: string; description: string; publishedAt: string }>();
+export interface VideoSnippet {
+  title: string;
+  description: string;
+  publishedAt: string;
+  /** The channel that actually owns the video — used to audit attribution. */
+  channelId: string;
+  channelTitle: string;
+}
+
+export async function fetchSnippets(videoIds: string[]): Promise<Map<string, VideoSnippet>> {
+  const out = new Map<string, VideoSnippet>();
 
   for (let i = 0; i < videoIds.length; i += 50) {
     const batch = videoIds.slice(i, i + 50);
     const body = await call<{
       items?: Array<{
         id?: string;
-        snippet?: { title?: string; description?: string; publishedAt?: string };
+        snippet?: {
+          title?: string;
+          description?: string;
+          publishedAt?: string;
+          channelId?: string;
+          channelTitle?: string;
+        };
       }>;
     }>("videos", { part: "snippet", id: batch.join(",") });
 
@@ -227,6 +240,8 @@ export async function fetchSnippets(
         title: item.snippet.title ?? "",
         description: item.snippet.description ?? "",
         publishedAt: item.snippet.publishedAt ?? new Date().toISOString(),
+        channelId: item.snippet.channelId ?? "",
+        channelTitle: item.snippet.channelTitle ?? "",
       });
     }
   }

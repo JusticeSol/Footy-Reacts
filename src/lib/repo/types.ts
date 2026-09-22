@@ -46,4 +46,6 @@ export interface Repo {
   setCreatorYouTube(creatorId: string, channelId: string, playlistId: string): Promise<void>;
   /** Removes fixtures and, by cascade, any takes attached to them. */
   deleteFixtures(ids: string[]): Promise<void>;
+  /** Removes takes outright. Used when a creator is re-pointed at a different channel. */
+  deleteTakes(ids: string[]): Promise<void>;
 }

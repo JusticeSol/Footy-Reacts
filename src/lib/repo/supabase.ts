@@ -467,6 +467,12 @@ export const supabaseRepo: Repo = {
     fail("update creator", res.error);
   },
 
+  async deleteTakes(ids) {
+    if (ids.length === 0) return;
+    const res = await db().from("take").delete().in("id", ids);
+    fail("delete takes", res.error);
+  },
+
   async deleteFixtures(ids) {
     if (ids.length === 0) return;
     // take.fixture_id is ON DELETE CASCADE, so attached takes go with them.
