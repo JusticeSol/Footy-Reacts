@@ -48,4 +48,6 @@ export interface Repo {
   deleteFixtures(ids: string[]): Promise<void>;
   /** Removes takes outright. Used when a creator is re-pointed at a different channel. */
   deleteTakes(ids: string[]): Promise<void>;
+  /** Removes creators and, by cascade, their takes. Honours an opt-out request. */
+  deleteCreators(ids: string[]): Promise<void>;
 }

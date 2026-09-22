@@ -16,7 +16,12 @@
     "debug:uploads": "tsx scripts/debug-uploads.ts",
     "find:channel": "tsx scripts/find-channel.ts",
     "creator:add": "tsx scripts/creator-add.ts",
-    "retag": "tsx scripts/retag.ts"
+    "creator:remove": "tsx scripts/creator-remove.ts",
+    "retag": "tsx scripts/retag.ts",
+    "probe": "tsx scripts/probe-channel.ts",
+    "coverage": "tsx scripts/coverage.ts",
+    "creator:list": "tsx scripts/creator-list.ts",
+    "verify:attribution": "tsx scripts/verify-attribution.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

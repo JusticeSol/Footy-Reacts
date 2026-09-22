@@ -183,16 +183,6 @@
       "youtubeChannelId": "UCrqLlEb8x9sePxwLgo0EmrA"
     },
     {
-      "id": "creator-spurs-web",
-      "name": "The Spurs Web",
-      "handle": "@TheSpursWeb",
-      "clubAffinity": [
-        "fd-73"
-      ],
-      "claimed": false,
-      "youtubeChannelId": "UCfUpTxe2PCZAqyEeo24Tgfw"
-    },
-    {
       "id": "creator-city-xtra",
       "name": "City Xtra",
       "handle": "@CityXtra",
@@ -337,18 +327,6 @@
       "claimed": false
     },
     {
-      "id": "creator-beestv",
-      "name": "BeesTV",
-      "handle": "@beestv",
-      "youtubeChannelId": "UCwQVz6HFOjlCSuEC1xsAG1A",
-      "uploadsPlaylistId": "UUwQVz6HFOjlCSuEC1xsAG1A",
-      "avatarUrl": "https://yt3.ggpht.com/ytc/AIdro_n0f4jemAVVuY_8E4B7rYnkBSkyOF6kiK0oIOqybZWA1A=s800-c-k-c0x00ffffff-no-rj",
-      "clubAffinity": [
-        "fd-402"
-      ],
-      "claimed": false
-    },
-    {
       "id": "creator-back-of-the-net-bournemouth",
       "name": "Back of the Net Bournemouth",
       "handle": "@afcbpodcast",
@@ -394,6 +372,68 @@
       "clubAffinity": [
         "fd-349"
       ],
+      "claimed": false
+    },
+    {
+      "id": "creator-adikastakes",
+      "name": "Adikastakes",
+      "handle": "@adikatakes",
+      "youtubeChannelId": "UCMCNDW3uarK9vwNBaqZ2NbQ",
+      "uploadsPlaylistId": "UUMCNDW3uarK9vwNBaqZ2NbQ",
+      "avatarUrl": "https://yt3.ggpht.com/8V4Sm9zDNq9fIen9WcbCtZga0gTP1EhANVT3XqBV9PO-iDO-eZMjPg_qRpkaadOGQk9nTGxT=s800-c-k-c0x00ffffff-no-rj",
+      "clubAffinity": [
+        "fd-57",
+        "fd-66",
+        "fd-61",
+        "fd-64",
+        "fd-65"
+      ],
+      "claimed": false
+    },
+    {
+      "id": "creator-stephen-howson",
+      "name": "Stephen Howson",
+      "handle": "@StephenHowson",
+      "youtubeChannelId": "UCmX3073pl-9ASXYaWDrEAHw",
+      "uploadsPlaylistId": "UUmX3073pl-9ASXYaWDrEAHw",
+      "avatarUrl": "https://yt3.ggpht.com/3Bw2rQKdIa6XJNrujitQSqDT-A2E6b_GYTyFD5M2Id0foDiiogBRLNOk4KQ_i9YHMo4LyRNu7w=s800-c-k-c0x00ffffff-no-rj",
+      "clubAffinity": [
+        "fd-66"
+      ],
+      "claimed": false
+    },
+    {
+      "id": "creator-wearetottenhamtv",
+      "name": "WeAreTottenhamTV",
+      "handle": "@wearetottenhamtv",
+      "youtubeChannelId": "UCUz_XIKFQOrliSqPZWJBq2g",
+      "uploadsPlaylistId": "UUUz_XIKFQOrliSqPZWJBq2g",
+      "avatarUrl": "https://yt3.ggpht.com/Akc4qjwZJVwoUfupgNBMrKN7l1b0yXNN6tytMCAnBygAp8_wgJO3H4DmsUhB-lH0M1riexFAgb0=s800-c-k-c0x00ffffff-no-rj",
+      "clubAffinity": [
+        "fd-73"
+      ],
+      "claimed": false
+    },
+    {
+      "id": "creator-expressions-oozing",
+      "name": "Expressions Oozing",
+      "handle": "@expressionsoozing",
+      "youtubeChannelId": "UC-HSLEEHVlnqlgTB7UptLeg",
+      "uploadsPlaylistId": "UU-HSLEEHVlnqlgTB7UptLeg",
+      "avatarUrl": "https://yt3.ggpht.com/qy1ZsbNZtgtqUnJEqS2273oo00ukIpl5semQmq3Uy64QB5232mVzVgDwRKbK8waslyxU_ej-7A=s800-c-k-c0x00ffffff-no-rj",
+      "clubAffinity": [
+        "fd-73"
+      ],
+      "claimed": false
+    },
+    {
+      "id": "creator-fan-reaction-tv",
+      "name": "FAN REACTION TV",
+      "handle": "@fanreaction-tv",
+      "youtubeChannelId": "UCs1M0wmfxAbv7m5TCoQYtGw",
+      "uploadsPlaylistId": "UUs1M0wmfxAbv7m5TCoQYtGw",
+      "avatarUrl": "https://yt3.ggpht.com/M0A52wSHW02WcRXH_gWrmai72r1i1HY4AyWEutzWsQCtrQHEPHuJvxYdUp0QXtQoS73UU6Kg26U=s800-c-k-c0x00ffffff-no-rj",
+      "clubAffinity": [],
       "claimed": false
     }
   ],
