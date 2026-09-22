@@ -2,7 +2,11 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { loadEnv } from "./env";
 import { getRepo } from "../src/lib/repo";
-import { resolveChannelIdFromHandle, resolveUploadsPlaylistId } from "../src/lib/providers/youtube";
+import {
+  fetchChannelProfile,
+  resolveChannelIdFromHandle,
+  resolveUploadsPlaylistId,
+} from "../src/lib/providers/youtube";
 import type { Creator } from "../src/lib/types";
 
 loadEnv();
@@ -91,12 +95,17 @@ async function main() {
     process.exit(1);
   }
 
+  // The handle appears on every take card, so fetch the channel's real one
+  // rather than inventing it from the display name.
+  const profile = handle ? null : await fetchChannelProfile(channelId!);
+
   const creator: Creator = {
     id: `creator-${slugify(name)}`,
     name,
-    handle: handle ?? `@${slugify(name)}`,
+    handle: handle ?? profile?.handle ?? `@${slugify(name)}`,
     youtubeChannelId: channelId,
     uploadsPlaylistId,
+    avatarUrl: profile?.avatarUrl,
     clubAffinity,
     claimed: false,
   };

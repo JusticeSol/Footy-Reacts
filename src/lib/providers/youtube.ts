@@ -52,6 +52,37 @@ export async function resolveUploadsPlaylistId(channelId: string): Promise<strin
   return body.items?.[0]?.contentDetails?.relatedPlaylists?.uploads ?? null;
 }
 
+/**
+ * The channel's own @handle and display title (1 unit).
+ *
+ * Used when a creator is added by channel id: the handle is shown on every
+ * take card, so inventing one from the display name would put a wrong address
+ * in front of fans.
+ */
+export async function fetchChannelProfile(
+  channelId: string,
+): Promise<{ handle?: string; title?: string; avatarUrl?: string } | null> {
+  const body = await call<{
+    items?: Array<{
+      snippet?: {
+        title?: string;
+        customUrl?: string;
+        thumbnails?: Record<string, { url?: string }>;
+      };
+    }>;
+  }>("channels", { part: "snippet", id: channelId });
+
+  const snippet = body.items?.[0]?.snippet;
+  if (!snippet) return null;
+
+  const thumbs = snippet.thumbnails ?? {};
+  return {
+    handle: snippet.customUrl?.startsWith("@") ? snippet.customUrl : undefined,
+    title: snippet.title,
+    avatarUrl: thumbs.high?.url ?? thumbs.medium?.url ?? thumbs.default?.url,
+  };
+}
+
 /** Accepts a @handle and returns the channel id (1 unit). */
 export async function resolveChannelIdFromHandle(handle: string): Promise<string | null> {
   const clean = handle.replace(/^@/, "");
