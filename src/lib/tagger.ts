@@ -307,12 +307,17 @@ Answer with JSON only: {"choice": <number>, "phase": "pre"|"post", "confidence":
 "pre" = published before kickoff (preview, team news, predictions).
 "post" = published after the final whistle (reaction, review, ratings).`;
 
+  // An organisation-scoped key must name the workspace to bill against; a
+  // workspace-scoped key already implies one and needs no header.
+  const workspaceId = process.env.ANTHROPIC_WORKSPACE_ID;
+
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-api-key": key,
       "anthropic-version": "2023-06-01",
+      ...(workspaceId ? { "anthropic-workspace-id": workspaceId } : {}),
     },
     body: JSON.stringify({
       model: process.env.TAGGER_MODEL ?? "claude-haiku-4-5-20251001",

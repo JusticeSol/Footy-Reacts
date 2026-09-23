@@ -47,4 +47,6 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           # Optional: without it the tagger uses the heuristic alone.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Only needed for an organisation-scoped key; harmless when unset.
+          ANTHROPIC_WORKSPACE_ID: ${{ secrets.ANTHROPIC_WORKSPACE_ID }}
           TAGGER_MODEL: ${{ vars.TAGGER_MODEL || 'claude-haiku-4-5-20251001' }}
