@@ -112,23 +112,33 @@ export function diversify<T extends { fixtureId: string; creatorId: string }>(
  * that does not exist in the competition.
  */
 export function summariseMatchdays(
-  fixtures: Array<{ matchday?: number; kickoffUtc: string }>,
-): Array<{ matchday: number; fixtures: number; firstKickoff: string; lastKickoff: string }> {
-  const byMatchday = new Map<number, string[]>();
+  fixtures: Array<{ id?: string; matchday?: number; kickoffUtc: string }>,
+  /** Visible takes per fixture id; omitted when the caller has no counts. */
+  takesByFixture?: Map<string, number>,
+): Array<{
+  matchday: number;
+  fixtures: number;
+  takes: number;
+  firstKickoff: string;
+  lastKickoff: string;
+}> {
+  const byMatchday = new Map<number, { kickoffs: string[]; takes: number }>();
 
   for (const fixture of fixtures) {
     if (fixture.matchday === undefined || fixture.matchday === null) continue;
-    const kickoffs = byMatchday.get(fixture.matchday) ?? [];
-    kickoffs.push(fixture.kickoffUtc);
-    byMatchday.set(fixture.matchday, kickoffs);
+    const entry = byMatchday.get(fixture.matchday) ?? { kickoffs: [], takes: 0 };
+    entry.kickoffs.push(fixture.kickoffUtc);
+    entry.takes += (fixture.id && takesByFixture?.get(fixture.id)) || 0;
+    byMatchday.set(fixture.matchday, entry);
   }
 
   return [...byMatchday.entries()]
-    .map(([matchday, kickoffs]) => {
+    .map(([matchday, { kickoffs, takes }]) => {
       const sorted = kickoffs.slice().sort();
       return {
         matchday,
         fixtures: kickoffs.length,
+        takes,
         firstKickoff: sorted[0],
         lastKickoff: sorted[sorted.length - 1],
       };
@@ -137,12 +147,27 @@ export function summariseMatchdays(
 }
 
 /**
- * The matchday a visitor should land on: the one currently being played, or
- * else whichever is nearest in time. During a matchday weekend that is the
- * live one; midweek it is whichever edge is closer.
+ * The matchday a visitor should land on.
+ *
+ *   1. The one being played.
+ *   2. Otherwise the latest matchday that has takes.
+ *   3. Otherwise the nearest in time.
+ *
+ * Rule 2 is what carries the site through an international break. Landing on
+ * the nearest matchday by date would, a week before the league returns, show
+ * ten fixtures all reading "no takes yet" — the emptiest the site ever looks,
+ * during exactly the lull when someone is most likely to be sent a link. The
+ * last played round keeps its content on the front page instead, and the
+ * moment previews for the new round arrive it becomes the latest with takes
+ * and takes over on its own.
  */
 export function currentMatchday(
-  summaries: Array<{ matchday: number; firstKickoff: string; lastKickoff: string }>,
+  summaries: Array<{
+    matchday: number;
+    takes?: number;
+    firstKickoff: string;
+    lastKickoff: string;
+  }>,
   now: number = Date.now(),
 ): number | null {
   if (summaries.length === 0) return null;
@@ -153,6 +178,13 @@ export function currentMatchday(
     // time to attract reactions.
     const end = Date.parse(s.lastKickoff) + MATCH_DURATION_MS + 2 * 86_400_000;
     if (now >= start && now <= end) return s.matchday;
+  }
+
+  const withTakes = summaries.filter((s) => (s.takes ?? 0) > 0);
+  if (withTakes.length > 0) {
+    return withTakes.reduce((latest, s) =>
+      Date.parse(s.firstKickoff) > Date.parse(latest.firstKickoff) ? s : latest,
+    ).matchday;
   }
 
   let nearest = summaries[0];

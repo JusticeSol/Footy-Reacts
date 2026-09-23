@@ -21,6 +21,8 @@ import type {
 export interface MatchdaySummary {
   matchday: number;
   fixtures: number;
+  /** Visible takes across the matchday — decides which one a visitor lands on. */
+  takes: number;
   /** Earliest kickoff in the matchday — used to pick the current one. */
   firstKickoff: string;
   lastKickoff: string;

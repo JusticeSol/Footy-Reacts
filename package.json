@@ -11,6 +11,7 @@
     "sync:fixtures": "tsx scripts/sync-fixtures.ts",
     "sync:takes": "tsx scripts/sync-takes.ts",
     "check:tagger": "tsx scripts/check-tagger.ts",
+    "check:landing": "tsx scripts/check-landing.ts",
     "db:seed": "tsx scripts/db-seed.ts",
     "db:status": "tsx scripts/db-status.ts",
     "debug:uploads": "tsx scripts/debug-uploads.ts",

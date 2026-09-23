@@ -108,7 +108,12 @@ export const jsonRepo: Repo = {
   },
 
   async listMatchdays() {
-    return summariseMatchdays((await read()).fixtures);
+    const db = await read();
+    const takesByFixture = new Map<string, number>();
+    for (const take of visibleTakes(db)) {
+      takesByFixture.set(take.fixtureId, (takesByFixture.get(take.fixtureId) ?? 0) + 1);
+    }
+    return summariseMatchdays(db.fixtures, takesByFixture);
   },
 
   async getMatchdayFixtures(matchday) {

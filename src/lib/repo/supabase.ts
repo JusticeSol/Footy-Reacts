@@ -246,13 +246,31 @@ export const supabaseRepo: Repo = {
   },
 
   async listMatchdays() {
-    const res = await db().from("fixture").select("matchday,kickoff_utc");
-    fail("list matchdays", res.error);
+    const [fixturesRes, takesRes] = await Promise.all([
+      db().from("fixture").select("id,matchday,kickoff_utc"),
+      db()
+        .from("take")
+        .select("fixture_id")
+        .eq("unmatched", false)
+        .gte("confidence", TAG_MIN_CONFIDENCE),
+    ]);
+    fail("list matchdays", fixturesRes.error);
+    fail("matchday take counts", takesRes.error);
+
+    const takesByFixture = new Map<string, number>();
+    for (const row of takesRes.data as Array<{ fixture_id: string }>) {
+      takesByFixture.set(row.fixture_id, (takesByFixture.get(row.fixture_id) ?? 0) + 1);
+    }
+
     return summariseMatchdays(
-      (res.data as Array<{ matchday: number | null; kickoff_utc: string }>).map((r) => ({
-        matchday: r.matchday ?? undefined,
-        kickoffUtc: new Date(r.kickoff_utc).toISOString(),
-      })),
+      (fixturesRes.data as Array<{ id: string; matchday: number | null; kickoff_utc: string }>).map(
+        (r) => ({
+          id: r.id,
+          matchday: r.matchday ?? undefined,
+          kickoffUtc: new Date(r.kickoff_utc).toISOString(),
+        }),
+      ),
+      takesByFixture,
     );
   },
 
