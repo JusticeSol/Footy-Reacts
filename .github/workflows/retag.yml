@@ -1,0 +1,46 @@
+name: Retag stored takes
+
+# Re-scores everything already in the database against the current tagger.
+#
+# Run this after changing src/lib/tagger.ts, or after adding ANTHROPIC_API_KEY:
+# the sync only ever looks at videos it has not seen, so stored takes keep the
+# score they were given when they were ingested.
+#
+# Runs here rather than locally so the Anthropic key can stay in GitHub secrets
+# instead of on a laptop. Dry run by default — it prints what would change and
+# writes nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      write:
+        description: "Apply the changes (otherwise dry run)"
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: retag
+  cancel-in-progress: false
+
+jobs:
+  retag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Re-score stored takes
+        run: npm run retag ${{ inputs.write && '-- --write' || '' }}
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TAGGER_MODEL: ${{ vars.TAGGER_MODEL || 'claude-haiku-4-5-20251001' }}
