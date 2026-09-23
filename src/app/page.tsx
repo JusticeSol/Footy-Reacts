@@ -1,14 +1,22 @@
 import { Masthead } from "@/components/Masthead";
 import { Ticker } from "@/components/Ticker";
 import { FixtureRow } from "@/components/FixtureRow";
-import { getFixtureBoard, getRecentTakes } from "@/lib/store";
+import { MatchdayNav } from "@/components/MatchdayNav";
+import { getBoard, getRecentTakes } from "@/lib/store";
 import { dayHeading, groupByDay } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
-  const [fixtures, recent] = await Promise.all([getFixtureBoard({ days: 10 }), getRecentTakes(12)]);
-  const days = groupByDay(fixtures, (f) => f.kickoffUtc);
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ md?: string }>;
+}) {
+  const { md } = await searchParams;
+  const requested = md && /^\d+$/.test(md) ? Number(md) : undefined;
+
+  const [board, recent] = await Promise.all([getBoard(requested), getRecentTakes(12)]);
+  const days = groupByDay(board.fixtures, (f) => f.kickoffUtc);
 
   return (
     <main className="min-h-screen">
@@ -16,6 +24,10 @@ export default async function HomePage() {
       <Ticker items={recent} />
 
       <div className="mx-auto max-w-5xl">
+        {board.matchday !== null && (
+          <MatchdayNav matchdays={board.matchdays} active={board.matchday} />
+        )}
+
         {days.length === 0 ? (
           <div className="px-4 py-16 text-center">
             <p className="font-display text-2xl text-ink-2">NO FIXTURES LOADED</p>
@@ -39,7 +51,8 @@ export default async function HomePage() {
 
       <footer className="mx-auto max-w-5xl px-4 py-10 sm:px-5">
         <p className="font-mono text-[10px] uppercase leading-relaxed tracking-wider text-ink-3">
-          Footy Reacts embeds — it never re-hosts. Every view counts on the creator&apos;s own channel.
+          Footy Reacts embeds — it never re-hosts. Every view counts on the creator&apos;s own
+          channel.
         </p>
       </footer>
     </main>

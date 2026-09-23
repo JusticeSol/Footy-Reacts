@@ -24,9 +24,11 @@ export interface FixturesJobResult {
   fixturesUpserted: number;
 }
 
-export async function runFixturesSync(): Promise<FixturesJobResult> {
+export async function runFixturesSync(
+  opts: { daysBack?: number; daysAhead?: number } = {},
+): Promise<FixturesJobResult> {
   const repo = getRepo();
-  const { teams, fixtures } = await syncFixtures();
+  const { teams, fixtures } = await syncFixtures(opts);
 
   await repo.upsertTeams(teams);
   await repo.upsertFixtures(fixtures);

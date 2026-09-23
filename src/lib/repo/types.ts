@@ -18,12 +18,23 @@ import type {
  * a read-modify-write of the whole database. That is what makes the same code
  * work against a file and against Postgres.
  */
+export interface MatchdaySummary {
+  matchday: number;
+  fixtures: number;
+  /** Earliest kickoff in the matchday — used to pick the current one. */
+  firstKickoff: string;
+  lastKickoff: string;
+}
+
 export interface Repo {
   /** Human-readable name of the backing store, for job logs. */
   readonly kind: "json" | "supabase";
 
   // --- reads for the UI ---
   getFixtureBoard(opts?: { days?: number }): Promise<HydratedFixture[]>;
+  /** Every matchday held in the store, oldest first, for the archive nav. */
+  listMatchdays(): Promise<MatchdaySummary[]>;
+  getMatchdayFixtures(matchday: number): Promise<HydratedFixture[]>;
   getFixtureBySlug(slug: string): Promise<HydratedFixture | null>;
   getTakes(fixtureId: string, phase: Phase): Promise<HydratedTake[]>;
   getRecentTakes(limit?: number): Promise<Array<{ take: HydratedTake; fixture: HydratedFixture }>>;

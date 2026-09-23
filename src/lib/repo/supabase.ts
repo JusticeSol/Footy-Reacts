@@ -20,6 +20,7 @@ import {
   hydrateFixture,
   indexTeams,
   interleaveByCreator,
+  summariseMatchdays,
   TAG_MIN_CONFIDENCE,
 } from "./shared";
 
@@ -225,6 +226,42 @@ export const supabaseRepo: Repo = {
       db().from("team").select("*"),
     ]);
     fail("fixture board", fixturesRes.error);
+    fail("teams", teamsRes.error);
+
+    const fixtures = (fixturesRes.data as FixtureRow[]).map(toFixture);
+    const teams = indexTeams((teamsRes.data as TeamRow[]).map(toTeam));
+    if (fixtures.length === 0) return [];
+
+    const takesRes = await visibleTakesQuery("take").in(
+      "fixture_id",
+      fixtures.map((f) => f.id),
+    );
+    fail("take counts", takesRes.error);
+    const takes = (takesRes.data as TakeRow[]).map(toTake);
+
+    return fixtures
+      .sort(byMatchdayOrder)
+      .map((f) => hydrateFixture(f, teams, countTakes(takes, f.id)))
+      .filter((f): f is HydratedFixture => f !== null);
+  },
+
+  async listMatchdays() {
+    const res = await db().from("fixture").select("matchday,kickoff_utc");
+    fail("list matchdays", res.error);
+    return summariseMatchdays(
+      (res.data as Array<{ matchday: number | null; kickoff_utc: string }>).map((r) => ({
+        matchday: r.matchday ?? undefined,
+        kickoffUtc: new Date(r.kickoff_utc).toISOString(),
+      })),
+    );
+  },
+
+  async getMatchdayFixtures(matchday) {
+    const [fixturesRes, teamsRes] = await Promise.all([
+      db().from("fixture").select("*").eq("matchday", matchday),
+      db().from("team").select("*"),
+    ]);
+    fail("matchday fixtures", fixturesRes.error);
     fail("teams", teamsRes.error);
 
     const fixtures = (fixturesRes.data as FixtureRow[]).map(toFixture);

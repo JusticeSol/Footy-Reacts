@@ -20,6 +20,7 @@ import {
   indexTeams,
   interleaveByCreator,
   isVisible,
+  summariseMatchdays,
 } from "./shared";
 
 /**
@@ -101,6 +102,22 @@ export const jsonRepo: Repo = {
         const ko = Date.parse(f.kickoffUtc);
         return ko >= floor && ko <= horizon;
       })
+      .sort(byMatchdayOrder)
+      .map((f) => hydrateFixture(f, teams, countTakes(takes, f.id)))
+      .filter((f): f is HydratedFixture => f !== null);
+  },
+
+  async listMatchdays() {
+    return summariseMatchdays((await read()).fixtures);
+  },
+
+  async getMatchdayFixtures(matchday) {
+    const db = await read();
+    const teams = indexTeams(db.teams);
+    const takes = visibleTakes(db);
+
+    return db.fixtures
+      .filter((f) => f.matchday === matchday)
       .sort(byMatchdayOrder)
       .map((f) => hydrateFixture(f, teams, countTakes(takes, f.id)))
       .filter((f): f is HydratedFixture => f !== null);

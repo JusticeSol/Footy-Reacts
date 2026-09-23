@@ -1,4 +1,6 @@
 import { getRepo } from "./repo";
+import { currentMatchday } from "./repo/shared";
+import type { MatchdaySummary } from "./repo/types";
 import type { HydratedFixture, HydratedTake, Phase } from "./types";
 
 /**
@@ -10,6 +12,41 @@ export { TAG_MIN_CONFIDENCE } from "./repo";
 
 export function getFixtureBoard(opts: { days?: number } = {}): Promise<HydratedFixture[]> {
   return getRepo().getFixtureBoard(opts);
+}
+
+export type { MatchdaySummary } from "./repo/types";
+
+export function listMatchdays(): Promise<MatchdaySummary[]> {
+  return getRepo().listMatchdays();
+}
+
+export function getMatchdayFixtures(matchday: number): Promise<HydratedFixture[]> {
+  return getRepo().getMatchdayFixtures(matchday);
+}
+
+/**
+ * The board a visitor lands on: the requested matchday if it exists, otherwise
+ * the one being played. Falls back to the rolling date window when no fixture
+ * carries a matchday number, so the page still works for a competition that
+ * does not number its rounds.
+ */
+export async function getBoard(requested?: number): Promise<{
+  fixtures: HydratedFixture[];
+  matchdays: MatchdaySummary[];
+  matchday: number | null;
+}> {
+  const matchdays = await listMatchdays();
+  const fallback = currentMatchday(matchdays);
+  const matchday =
+    requested !== undefined && matchdays.some((m) => m.matchday === requested)
+      ? requested
+      : fallback;
+
+  if (matchday === null) {
+    return { fixtures: await getFixtureBoard(), matchdays, matchday: null };
+  }
+
+  return { fixtures: await getMatchdayFixtures(matchday), matchdays, matchday };
 }
 
 export function getFixtureBySlug(slug: string): Promise<HydratedFixture | null> {
