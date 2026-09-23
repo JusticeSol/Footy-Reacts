@@ -322,7 +322,11 @@ Answer with JSON only: {"choice": <number>, "phase": "pre"|"post", "confidence":
   });
 
   if (!res.ok) {
-    console.warn(`[tagger] Claude ${res.status}, falling back to heuristic`);
+    // Include the body: a bare status turns a fixable configuration problem
+    // (wrong model id, bad key, no credit) into a silent fallback that looks
+    // like the model simply agreeing with the heuristic.
+    const detail = (await res.text().catch(() => "")).slice(0, 300);
+    console.warn(`[tagger] Claude ${res.status}: ${detail}`);
     return null;
   }
 
