@@ -2,6 +2,7 @@ import { loadEnv } from "./env";
 import {
   fetchChannelProfile,
   fetchRecentUploads,
+  resolveChannelIdFromHandle,
   resolveUploadsPlaylistId,
 } from "../src/lib/providers/youtube";
 
@@ -18,10 +19,26 @@ loadEnv();
  *   npm run probe -- UCpHumbIRd4VuwfRtc6YXGBQ [more ids...]
  */
 async function main() {
-  const ids = process.argv.slice(2).filter((a) => a.startsWith("UC"));
-  if (ids.length === 0) {
-    console.error("Usage: npm run probe -- UCxxxx [UCyyyy ...]");
+  const args = process.argv.slice(2).filter((a) => a.startsWith("UC") || a.startsWith("@"));
+  if (args.length === 0) {
+    console.error('Usage: npm run probe -- UCxxxx | "@handle" [...]');
     process.exit(1);
+  }
+
+  // Handles are accepted too, since that is how a channel is usually named to
+  // you — quote them in PowerShell, where a bare @word is splatting.
+  const ids: string[] = [];
+  for (const arg of args) {
+    if (arg.startsWith("UC")) {
+      ids.push(arg);
+      continue;
+    }
+    const resolved = await resolveChannelIdFromHandle(arg);
+    if (!resolved) {
+      console.log(`\n${arg}: handle did not resolve`);
+      continue;
+    }
+    ids.push(resolved);
   }
 
   for (const channelId of ids) {

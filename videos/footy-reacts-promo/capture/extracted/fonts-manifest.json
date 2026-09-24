@@ -1,0 +1,204 @@
+{
+  "files": [
+    {
+      "file": "10f65c94012f0d89-s.woff2",
+      "family": "Work Sans",
+      "rawFamily": "Work Sans",
+      "subfamily": "Regular",
+      "postscript": "WorkSans-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [
+        "wght"
+      ],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "281dae1e814de8c6-s.woff2",
+      "family": "Space Mono",
+      "rawFamily": "Space Mono",
+      "subfamily": "Bold",
+      "postscript": "SpaceMono-Bold",
+      "weight": 700,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "3c70c5716f1730b3-s.woff2",
+      "family": "Space Mono",
+      "rawFamily": "Space Mono",
+      "subfamily": "Regular",
+      "postscript": "SpaceMono-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "62c97acc3aa63787-s.p.woff2",
+      "family": "Anton",
+      "rawFamily": "Anton",
+      "subfamily": "Regular",
+      "postscript": "Anton-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "6ced06489fd81a3f-s.woff2",
+      "family": "Anton",
+      "rawFamily": "Anton",
+      "subfamily": "Regular",
+      "postscript": "Anton-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "77fb5eec12c66d49-s.woff2",
+      "family": "Space Mono",
+      "rawFamily": "Space Mono",
+      "subfamily": "Bold",
+      "postscript": "SpaceMono-Bold",
+      "weight": 700,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "806de4d605d3ad01-s.p.woff2",
+      "family": "Space Mono",
+      "rawFamily": "Space Mono",
+      "subfamily": "Bold",
+      "postscript": "SpaceMono-Bold",
+      "weight": 700,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "aa5f74293546f6d0-s.woff2",
+      "family": "Anton",
+      "rawFamily": "Anton",
+      "subfamily": "Regular",
+      "postscript": "Anton-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "ae822095a172cc5c-s.woff2",
+      "family": "Space Mono",
+      "rawFamily": "Space Mono",
+      "subfamily": "Regular",
+      "postscript": "SpaceMono-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "c9e6921c7fc300d8-s.p.woff2",
+      "family": "Work Sans",
+      "rawFamily": "Work Sans",
+      "subfamily": "Regular",
+      "postscript": "WorkSans-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [
+        "wght"
+      ],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "f0a6239bc4153746-s.woff2",
+      "family": "Work Sans",
+      "rawFamily": "Work Sans",
+      "subfamily": "Regular",
+      "postscript": "WorkSans-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [
+        "wght"
+      ],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "fc727f226c737876-s.p.woff2",
+      "family": "Space Mono",
+      "rawFamily": "Space Mono",
+      "subfamily": "Regular",
+      "postscript": "SpaceMono-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    }
+  ],
+  "families": [
+    {
+      "family": "Anton",
+      "weights": [
+        400
+      ],
+      "variable": false,
+      "fileCount": 3,
+      "files": [
+        "62c97acc3aa63787-s.p.woff2",
+        "6ced06489fd81a3f-s.woff2",
+        "aa5f74293546f6d0-s.woff2"
+      ]
+    },
+    {
+      "family": "Space Mono",
+      "weights": [
+        400,
+        700
+      ],
+      "variable": false,
+      "fileCount": 6,
+      "files": [
+        "281dae1e814de8c6-s.woff2",
+        "3c70c5716f1730b3-s.woff2",
+        "77fb5eec12c66d49-s.woff2",
+        "806de4d605d3ad01-s.p.woff2",
+        "ae822095a172cc5c-s.woff2",
+        "fc727f226c737876-s.p.woff2"
+      ]
+    },
+    {
+      "family": "Work Sans",
+      "weights": [
+        400
+      ],
+      "variable": true,
+      "fileCount": 3,
+      "files": [
+        "10f65c94012f0d89-s.woff2",
+        "c9e6921c7fc300d8-s.p.woff2",
+        "f0a6239bc4153746-s.woff2"
+      ]
+    }
+  ],
+  "unidentified": [],
+  "meta": {
+    "generatedAt": "2026-09-24T04:05:18.284Z",
+    "tool": "fontkit"
+  }
+}

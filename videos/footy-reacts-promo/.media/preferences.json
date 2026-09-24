@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "preferences": {
+    "destination": {
+      "value": "x-feed",
+      "confirmed_in": [
+        "footy-reacts-promo"
+      ],
+      "updated_at": "2026-09-24T04:02:36.855Z"
+    },
+    "aspect": {
+      "value": "1080x1080",
+      "confirmed_in": [
+        "footy-reacts-promo"
+      ],
+      "updated_at": "2026-09-24T04:02:37.006Z"
+    },
+    "language": {
+      "value": "en",
+      "confirmed_in": [
+        "footy-reacts-promo"
+      ],
+      "updated_at": "2026-09-24T04:02:37.231Z"
+    },
+    "flow": {
+      "value": "automation",
+      "confirmed_in": [
+        "footy-reacts-promo"
+      ],
+      "updated_at": "2026-09-24T04:02:37.410Z"
+    },
+    "storyboard": {
+      "value": "yes",
+      "confirmed_in": [
+        "footy-reacts-promo"
+      ],
+      "updated_at": "2026-09-24T04:02:37.535Z"
+    },
+    "style_preset.product-launch-video": {
+      "value": "coral",
+      "confirmed_in": [
+        "footy-reacts-promo"
+      ],
+      "updated_at": "2026-09-24T04:08:11.377Z"
+    }
+  },
+  "sightings": {}
+}

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Footy Reacts — The whistle, then the flood · v1</title>
+<style>
+@font-face{font-family:Anton;font-weight:400;font-display:block;src:url("assets/fonts/captured-62c97acc3aa63787-s.p.woff2") format("woff2")}
+@font-face{font-family:Anton;font-weight:400;font-display:block;src:url("assets/fonts/captured-aa5f74293546f6d0-s.woff2") format("woff2")}
+@font-face{font-family:"Work Sans";font-weight:100 900;font-display:block;src:url("assets/fonts/captured-c9e6921c7fc300d8-s.p.woff2") format("woff2")}
+@font-face{font-family:"Space Mono";font-weight:400;font-display:block;src:url("assets/fonts/captured-fc727f226c737876-s.p.woff2") format("woff2")}
+@font-face{font-family:"Space Mono";font-weight:700;font-display:block;src:url("assets/fonts/captured-806de4d605d3ad01-s.p.woff2") format("woff2")}
+:root{
+  --coral:#D5202A; --coral-dark:#A5181F; --cream:#F4F1EA; --cream-dark:#EBE7DD;
+  --black:#16130F; --gray:#6B6B6B; --light-gray:#B0B0B0; --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--black);color:var(--cream);font-family:"Work Sans",system-ui,sans-serif;padding:48px 40px 80px}
+header{max-width:1560px;margin:0 auto 40px}
+h1{font-family:Anton,sans-serif;font-size:46px;letter-spacing:2px;text-transform:uppercase;line-height:1}
+h1 em{font-style:normal;color:var(--coral)}
+.dek{margin-top:12px;color:var(--light-gray);font-size:15px;max-width:70ch;line-height:1.6}
+.tag{margin-top:16px;display:inline-block;font-family:"Space Mono",monospace;font-size:11px;font-weight:700;
+ letter-spacing:3px;text-transform:uppercase;color:var(--black);background:var(--coral);padding:7px 12px}
+.meta{margin-top:14px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:2px;color:var(--gray);text-transform:uppercase}
+.grid{max-width:1560px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:38px 30px}
+figure{margin:0}
+.cell{aspect-ratio:1/1;container-type:inline-size;position:relative;overflow:hidden;background:var(--cream);color:var(--black)}
+.label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:12px;
+ font-family:"Space Mono",monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.label .r{color:var(--gray);font-weight:400;letter-spacing:1px}
+.note{margin-top:8px;font-size:13px;line-height:1.55;color:#CFCAC2}
+.note b{color:var(--cream)}
+.chip{margin-top:9px;display:inline-block;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:2px;
+ text-transform:uppercase;color:var(--light-gray);border:1px solid #3A3630;padding:4px 8px}
+.stand{outline:1px dashed var(--gray);outline-offset:-1px}
+.standtag{position:absolute;left:0;bottom:0;font-family:"Space Mono",monospace;font-size:2.4cqw;letter-spacing:.5px;
+ background:var(--black);color:var(--cream);padding:.7cqw 1.2cqw}
+/* ---------- 01 ---------- */
+.c1{display:grid;place-items:center}
+.wall{position:absolute;font-family:Anton;font-size:52cqw;line-height:.8;color:rgba(22,19,15,.10);user-select:none}
+.score{position:relative;text-align:center}
+.score .teams{font-family:Anton;font-size:15cqw;line-height:1;letter-spacing:.5cqw;display:flex;align-items:center;gap:3cqw}
+.score .n{color:var(--coral)}
+.rule{height:.7cqw;background:var(--black);margin:3cqw auto 0;width:34cqw}
+.kick{font-family:"Space Mono";font-weight:700;font-size:2.9cqw;letter-spacing:.6cqw;margin-top:2.6cqw;color:var(--gray)}
+/* ---------- 02 ---------- */
+.c2{position:relative;background:var(--cream)}
+.card{position:absolute;background:var(--white);border:.55cqw solid var(--black);padding:1.6cqw 2cqw;
+ font-family:Anton;font-size:3.5cqw;letter-spacing:.2cqw;text-transform:uppercase;white-space:nowrap}
+.card.red{background:var(--coral);color:var(--cream);border-color:var(--black)}
+.far{opacity:.30;filter:blur(.35cqw);font-size:2.6cqw;border-width:.4cqw}
+/* ---------- 03 ---------- */
+.c3{display:flex;flex-direction:column;justify-content:center;padding:9cqw 7cqw}
+.tabs{position:absolute;top:0;left:0;right:0;display:flex;gap:.5cqw;padding:2.2cqw 2.2cqw 0}
+.tab{flex:1;height:3.4cqw;background:var(--cream-dark);border:.35cqw solid var(--black);border-bottom:none;
+ font-family:"Space Mono";font-size:1.5cqw;display:grid;place-items:center;color:var(--gray);overflow:hidden}
+.line{font-family:Anton;font-size:9.4cqw;line-height:1.08;text-transform:uppercase;letter-spacing:.2cqw}
+.line.dim{color:var(--light-gray)}
+.line.hit{color:var(--coral)}
+/* ---------- 04 ---------- */
+.c4{padding:7cqw 6cqw;display:flex;flex-direction:column;justify-content:center;gap:0}
+.row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2cqw;
+ padding:2.5cqw 0;border-bottom:.35cqw solid rgba(22,19,15,.18);font-family:Anton;font-size:5.2cqw;letter-spacing:.2cqw}
+.row .sc{font-family:"Space Mono";font-weight:700;font-size:3.6cqw;color:var(--coral)}
+.row .away{text-align:right}
+.row.first{border-left:.9cqw solid var(--coral);padding-left:2cqw}
+/* ---------- 05 ---------- */
+.c5{padding:5cqw}
+.board{height:100%;border:.55cqw solid var(--black);background:var(--white);display:flex;flex-direction:column;position:relative}
+.bhead{background:var(--black);color:var(--cream);padding:2.2cqw 2.6cqw;font-family:Anton;font-size:4.4cqw;letter-spacing:.35cqw}
+.bsub{font-family:"Space Mono";font-size:2.1cqw;color:var(--light-gray);letter-spacing:.3cqw;margin-top:.6cqw}
+.bbody{flex:1;padding:2.4cqw 2.6cqw;display:flex;flex-direction:column;gap:1.5cqw}
+.day{font-family:"Space Mono";font-weight:700;font-size:2.1cqw;letter-spacing:.35cqw;color:var(--gray)}
+.fix{display:flex;align-items:center;gap:1.6cqw}
+.fix .t{font-family:"Space Mono";font-size:2.2cqw;color:var(--gray);width:9cqw}
+.fix .m{flex:1;height:4.2cqw;background:var(--cream-dark)}
+.pill{font-family:"Space Mono";font-weight:700;font-size:1.7cqw;letter-spacing:.2cqw;border:.3cqw solid var(--black);padding:.5cqw 1.1cqw}
+.pill.on{background:var(--coral);color:var(--cream);border-color:var(--coral)}
+/* ---------- 06 ---------- */
+.c6{padding:6cqw 5.5cqw;display:flex;flex-direction:column;gap:2.4cqw}
+.fixhead{font-family:Anton;font-size:7.6cqw;letter-spacing:.3cqw;display:flex;align-items:baseline;gap:2cqw}
+.fixhead .sc{font-family:"Space Mono";font-weight:700;font-size:4cqw;color:var(--coral)}
+.takes{display:flex;flex-direction:column;gap:1.7cqw;flex:1}
+.take{display:flex;align-items:center;gap:2cqw;border:.45cqw solid var(--black);background:var(--white);padding:1.5cqw 1.8cqw}
+.take .thumb{width:12cqw;height:7cqw;background:var(--cream-dark);outline:.3cqw solid var(--black);outline-offset:-.3cqw;flex:none}
+.take .nm{font-family:Anton;font-size:3.5cqw;letter-spacing:.15cqw;text-transform:uppercase}
+.take.sel{background:var(--coral);color:var(--cream)}
+.take.sel .thumb{background:var(--coral-dark)}
+.cursor{position:absolute;right:9cqw;top:41cqw;width:0;height:0;border-left:2.4cqw solid var(--black);
+ border-top:1.3cqw solid transparent;border-bottom:1.3cqw solid transparent;transform:rotate(38deg)}
+/* ---------- 07 ---------- */
+.c7{display:flex;flex-direction:column;justify-content:center;padding:8cqw 7cqw;gap:4cqw;background:var(--black);color:var(--cream)}
+.claim{font-family:Anton;font-size:6.6cqw;line-height:1.1;text-transform:uppercase;letter-spacing:.2cqw}
+.claim u{text-decoration:none;color:var(--coral)}
+.mark{font-family:Anton;font-size:11cqw;letter-spacing:.6cqw;line-height:1}
+.url{font-family:"Space Mono";font-weight:700;font-size:2.7cqw;letter-spacing:.45cqw;color:var(--light-gray)}
+/* ---------- closing cells ---------- */
+.seam,.tok{aspect-ratio:1/1;container-type:inline-size;background:#221F1A;padding:6cqw;display:flex;flex-direction:column;gap:3cqw;color:var(--cream)}
+.seam h3,.tok h3{font-family:Anton;font-size:5cqw;letter-spacing:.3cqw;text-transform:uppercase;color:var(--coral)}
+.strip{display:flex;height:9cqw;border:.4cqw solid var(--cream)}
+.seg{display:grid;place-items:center;font-family:"Space Mono";font-weight:700;font-size:2.2cqw;
+ border-right:.4cqw solid var(--cream);background:var(--black)}
+.seg:last-child{border-right:none}
+.seg.turn{background:var(--coral);color:var(--cream)}
+.seamlist{font-family:"Space Mono";font-size:2.3cqw;line-height:1.85;color:#CFCAC2}
+.seamlist b{color:var(--coral)}
+.sw{display:flex;gap:1.4cqw}
+.sw div{flex:1;height:8cqw;outline:.3cqw solid #4A443C;outline-offset:-.3cqw}
+.tokrow{font-family:"Space Mono";font-size:2.3cqw;line-height:1.9;color:#CFCAC2}
+.tokrow b{color:var(--cream)}
+.ban{font-family:"Space Mono";font-size:2.2cqw;line-height:1.8;color:#E3908F}
+</style>
+</head>
+<body>
+<header>
+  <h1>The whistle, <em>then the flood</em> <span style="color:var(--gray)">&middot; v1</span></h1>
+  <p class="dek">Sketch pass for the Footy Reacts 60-second promo. Layout, copy and brand treatment are locked here; motion arrives with the build. Hatched blocks stand in for captured screenshots the frame workers will place.</p>
+  <div class="tag">1080&times;1080 &middot; 60s &middot; 7 beats</div>
+  <div class="meta">PAS arc &middot; coral bones remixed onto captured brand &middot; Anton / Work Sans / Space Mono</div>
+</header>
+
+<div class="grid">
+
+<figure>
+  <div class="cell c1" id="frame-01">
+    <div class="wall">90</div>
+    <div class="score">
+      <div class="teams"><span>FUL</span><span class="n">2</span><span>&mdash;</span><span class="n">1</span><span>MUN</span></div>
+      <div class="rule"></div>
+      <div class="kick">16:30 &middot; FULL TIME</div>
+    </div>
+  </div>
+  <div class="label"><span>01 &middot; FULL TIME</span><span class="r">titlecard-reveal &middot; 0&ndash;6s</span></div>
+  <p class="note"><b>Nothing moves for two seconds.</b> The scoreline is already on screen at t=0; the only move is the red rule drawing outward from centre, then a hold that runs deliberately long. The wallpaper 90 sits at 10% ink behind it.</p>
+  <span class="chip">out: hard cut on the whistle</span>
+</figure>
+
+<figure>
+  <div class="cell c2" id="frame-02">
+    <div class="card far" style="left:4%;top:9%">TALKING TOWN</div>
+    <div class="card far" style="right:5%;top:15%">TOFFEE TV</div>
+    <div class="card far" style="left:11%;bottom:12%">ONLY FOOLS AND SAFC</div>
+    <div class="card far" style="right:8%;bottom:18%">BACK OF THE NEST</div>
+    <div class="card" style="left:6%;top:26%;transform:rotate(-4deg)">THE UNITED STAND</div>
+    <div class="card" style="right:4%;top:36%;transform:rotate(3deg)">STRETFORD PADDOCK</div>
+    <div class="card red" style="left:14%;top:46%;transform:rotate(-1.5deg)">FULHAMISH</div>
+    <div class="card" style="right:9%;bottom:28%;transform:rotate(2.5deg)">THE REDMEN TV</div>
+    <div class="card" style="left:8%;bottom:14%;transform:rotate(1deg)">FOOTBALL FANS TRIBE</div>
+  </div>
+  <div class="label"><span>02 &middot; THE FLOOD</span><span class="r">overwhelm-surround &middot; 6&ndash;16s</span></div>
+  <p class="note"><b>Cards arrive from outside every edge and close inward.</b> Seven legible in the foreground, the rest blurred to 30% implying hundreds. The accumulation accelerates; the frame ends crowded, not resolved.</p>
+  <span class="chip">out: hard cut, mid-pile</span>
+</figure>
+
+<figure>
+  <div class="cell c3" id="frame-03">
+    <div class="tabs">
+      <div class="tab">FUL v MUN re&hellip;</div><div class="tab">MUN REACTION</div><div class="tab">post match&hellip;</div>
+      <div class="tab">LIVE: FULHAM</div><div class="tab">watch later</div><div class="tab">+12</div>
+    </div>
+    <div class="line dim">SO YOU SCROLL.</div>
+    <div class="line">CHANNEL TO CHANNEL.</div>
+    <div class="line">TAB TO TAB.</div>
+    <div class="line hit">AND YOU STILL<br>MISS HALF.</div>
+  </div>
+  <div class="label"><span>03 &middot; THE HUNT</span><span class="r">kinetic-type-beats &middot; 16&ndash;24s</span></div>
+  <p class="note"><b>One line lands per spoken cue.</b> Each arrives on its own hard move, no crossfades between them; the tab rail keeps accreting across the top as the lines stack. The final line is the only red.</p>
+  <span class="chip">out: hard cut on the downbeat</span>
+</figure>
+
+<figure>
+  <div class="cell c4" id="frame-04">
+    <div class="row first"><span>FUL</span><span class="sc">2 &mdash; 1</span><span class="away">MUN</span></div>
+    <div class="row"><span>BOU</span><span class="sc">0 &mdash; 2</span><span class="away">LIV</span></div>
+    <div class="row"><span>LEE</span><span class="sc">1 &mdash; 1</span><span class="away">CRY</span></div>
+    <div class="row"><span>MCI</span><span class="sc">3 &mdash; 0</span><span class="away">SUN</span></div>
+    <div class="row"><span>BHA</span><span class="sc">1 &mdash; 2</span><span class="away">ARS</span></div>
+    <div class="row"><span>EVE</span><span class="sc">2 &mdash; 2</span><span class="away">IPS</span></div>
+  </div>
+  <div class="label"><span>04 &middot; THE SNAP</span><span class="r">grid-card-assemble &middot; 24&ndash;32s</span></div>
+  <p class="note"><b>The same objects, suddenly ordered.</b> On one beat the scattered cards of 02 cascade top-to-bottom into these rows, staggered ~60ms apart, and hold. The red leftbar marks the fixture 06 will open.</p>
+  <span class="chip">in: hard cut (the turn)</span>
+</figure>
+
+<figure>
+  <div class="cell c5" id="frame-05">
+    <div class="board stand">
+      <div class="bhead">MATCHDAY<div class="bsub">18 SEPTEMBER &mdash; 20 SEPTEMBER</div></div>
+      <div class="bbody">
+        <div class="day">FRIDAY 18 SEPTEMBER</div>
+        <div class="fix"><span class="t">20:00</span><span class="m"></span><span class="pill">PRE</span><span class="pill on">POST</span></div>
+        <div class="day">SATURDAY 19 SEPTEMBER</div>
+        <div class="fix"><span class="t">12:30</span><span class="m"></span><span class="pill">PRE</span><span class="pill on">POST</span></div>
+        <div class="fix"><span class="t">15:00</span><span class="m"></span><span class="pill">PRE</span><span class="pill on">POST</span></div>
+        <div class="day">SUNDAY 20 SEPTEMBER</div>
+        <div class="fix"><span class="t">16:30</span><span class="m"></span><span class="pill">PRE</span><span class="pill on">POST</span></div>
+      </div>
+      <span class="standtag">stand-in &rarr; capture/screenshots/full-page.png</span>
+    </div>
+  </div>
+  <div class="label"><span>05 &middot; THE BOARD</span><span class="r">device-surface-showcase &middot; 32&ndash;42s</span></div>
+  <p class="note"><b>The captured plate replaces this block at build.</b> The frame holds the real page as hero and travels down it; PRE/POST chips light per spoken cue. Workers must not redraw the site &mdash; the screenshot is the truth here.</p>
+  <span class="chip">out: hard cut into the fixture</span>
+</figure>
+
+<figure>
+  <div class="cell c6" id="frame-06">
+    <div class="fixhead"><span>FUL</span><span class="sc">2 &mdash; 1</span><span>MUN</span></div>
+    <div class="takes">
+      <div class="take sel"><span class="thumb"></span><span class="nm">The United Stand</span></div>
+      <div class="take"><span class="thumb"></span><span class="nm">Stephen Howson</span></div>
+      <div class="take"><span class="thumb"></span><span class="nm">Stretford Paddock</span></div>
+      <div class="take"><span class="thumb"></span><span class="nm">Football Fans Tribe</span></div>
+      <div class="take"><span class="thumb"></span><span class="nm">Fulhamish</span></div>
+    </div>
+    <div class="cursor"></div>
+  </div>
+  <div class="label"><span>06 &middot; ONE FIXTURE</span><span class="r">cursor-ui-demo &middot; 42&ndash;51s</span></div>
+  <p class="note"><b>The cursor lands, then the stack fills downward.</b> Five real takes for this fixture arrive one per beat under the header; the top one is selected. Thumbs are stand-ins for captured creator tiles.</p>
+  <span class="chip">out: crossfade &mdash; the only soft seam</span>
+</figure>
+
+<figure>
+  <div class="cell c7" id="frame-07">
+    <div class="claim">It never re-hosts.<br>Every view counts on the <u>creator&rsquo;s own channel</u>.</div>
+    <div>
+      <div class="mark">FOOTY REACTS</div>
+      <div class="url">footy-reacts.vercel.app</div>
+    </div>
+  </div>
+  <div class="label"><span>07 &middot; EVERY VIEW COUNTS</span><span class="r">logo-assemble-lockup &middot; 51&ndash;60s</span></div>
+  <p class="note"><b>Ground inverts to ink &mdash; the only dark frame.</b> The claim types in, clears, and the wordmark assembles letter-by-letter in its place, URL fading under it. Wordmark is live Anton type; no logo SVG was captured, so nothing is traced.</p>
+  <span class="chip">in: crossfade &middot; ends on a still hold</span>
+</figure>
+
+<figure>
+  <div class="seam">
+    <h3>Seam map</h3>
+    <div class="strip">
+      <div class="seg" style="flex:6">01</div>
+      <div class="seg" style="flex:10">02</div>
+      <div class="seg" style="flex:8">03</div>
+      <div class="seg turn" style="flex:8">04</div>
+      <div class="seg" style="flex:10">05</div>
+      <div class="seg" style="flex:9">06</div>
+      <div class="seg" style="flex:9">07</div>
+    </div>
+    <div class="seamlist">
+      01&rarr;02 <b>cut</b> &middot; on the whistle<br>
+      02&rarr;03 <b>cut</b> &middot; mid-pile, deliberately early<br>
+      03&rarr;04 <b>cut</b> &middot; the downbeat, the turn<br>
+      04&rarr;05 <b>cut</b> &middot; chaos already resolved<br>
+      05&rarr;06 <b>cut</b> &middot; into the fixture<br>
+      06&rarr;07 <b>crossfade</b> &middot; the only soft seam<br><br>
+      Six hard cuts, one crossfade. The shader wipe was offered and declined on render cost.
+    </div>
+  </div>
+  <div class="label"><span>SEAMS</span><span class="r">6 cuts &middot; 1 crossfade</span></div>
+  <p class="note"><b>Widths are proportional to duration.</b> The red segment is frame 04 &mdash; the turn the whole video pivots on.</p>
+</figure>
+
+<figure>
+  <div class="tok">
+    <h3>Tokens</h3>
+    <div class="sw">
+      <div style="background:#F4F1EA"></div><div style="background:#EBE7DD"></div>
+      <div style="background:#D5202A"></div><div style="background:#A5181F"></div>
+      <div style="background:#16130F"></div>
+    </div>
+    <div class="tokrow">
+      <b>cream</b> #F4F1EA &middot; <b>cream-dark</b> #EBE7DD<br>
+      <b>coral</b> #D5202A &middot; <b>coral-dark</b> #A5181F<br>
+      <b>ink</b> #16130F<br><br>
+      <b>Anton</b> &mdash; scorelines, headlines, wordmark<br>
+      <b>Work Sans</b> &mdash; body, pull-quote<br>
+      <b>Space Mono 700</b> &mdash; kickoffs, labels, chips, URL
+    </div>
+    <div class="ban">no radius &middot; no shadow &middot; no gradient except the 135&deg; coral region &middot; one accent per frame</div>
+  </div>
+  <div class="label"><span>TOKENS</span><span class="r">frame.md &middot; coral remix</span></div>
+  <p class="note"><b>Two roles were hand-corrected after the remix:</b> coral-dark was a stone grey (would have made a red&rarr;grey gradient) and cream-dark was pink. Both now come from your captured palette.</p>
+</figure>
+
+</div>
+</body>
+</html>

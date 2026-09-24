@@ -1,0 +1,154 @@
+[a] FOOTY REACTS
+[span] every take, by fixture
+[span] FUL
+[span] MUN
+[span] The United Stand
+[span] ///
+[span] LEE
+[span] CRY
+[span] Back of The Nest
+[span] ///
+[span] FUL
+[span] MUN
+[span] Stephen Howson
+[span] ///
+[span] FUL
+[span] MUN
+[span] Stretford Paddock
+[span] ///
+[span] FUL
+[span] MUN
+[span] Football Fans Tribe
+[span] ///
+[span] BHA
+[span] ARS
+[span] Football Fans Tribe
+[span] ///
+[span] EVE
+[span] IPS
+[span] Talking Town
+[span] ///
+[span] BOU
+[span] LIV
+[span] Back of the Net Bournemouth
+[span] ///
+[span] EVE
+[span] IPS
+[span] Toffee TV
+[span] ///
+[span] FUL
+[span] MUN
+[span] Fulhamish
+[span] ///
+[span] BOU
+[span] LIV
+[span] The Redmen TV
+[span] ///
+[span] MCI
+[span] SUN
+[span] Only Fools and SAFC
+[span] ///
+[span] FUL
+[span] MUN
+[span] The United Stand
+[span] ///
+[span] LEE
+[span] CRY
+[span] Back of The Nest
+[span] ///
+[span] FUL
+[span] MUN
+[span] Stephen Howson
+[span] ///
+[span] FUL
+[span] MUN
+[span] Stretford Paddock
+[span] ///
+[span] FUL
+[span] MUN
+[span] Football Fans Tribe
+[span] ///
+[span] BHA
+[span] ARS
+[span] Football Fans Tribe
+[span] ///
+[span] EVE
+[span] IPS
+[span] Talking Town
+[span] ///
+[span] BOU
+[span] LIV
+[span] Back of the Net Bournemouth
+[span] ///
+[span] EVE
+[span] IPS
+[span] Toffee TV
+[span] ///
+[span] FUL
+[span] MUN
+[span] Fulhamish
+[span] ///
+[span] BOU
+[span] LIV
+[span] The Redmen TV
+[span] ///
+[span] MCI
+[span] SUN
+[span] Only Fools and SAFC
+[span] ///
+[p] MATCHDAY
+[p] 18 SEPTEMBER — 20 SEPTEMBER
+[h2] FRIDAY 18 SEPTEMBER
+[div] 20:00
+[span] BRE
+[span] CHE
+[span] pre
+[span] post
+[h2] SATURDAY 19 SEPTEMBER
+[div] 12:30
+[span] TOT
+[span] AVL
+[span] pre
+[span] post
+[div] 15:00
+[span] EVE
+[span] IPS
+[span] pre
+[span] post
+[div] 15:00
+[span] BHA
+[span] ARS
+[span] pre
+[span] post
+[div] 15:00
+[span] NEW
+[span] HUL
+[span] pre
+[span] post
+[div] 17:30
+[span] NOT
+[span] COV
+[span] pre
+[span] post
+[h2] SUNDAY 20 SEPTEMBER
+[div] 14:00
+[span] BOU
+[span] LIV
+[span] pre
+[span] post
+[div] 14:00
+[span] LEE
+[span] CRY
+[span] pre
+[span] post
+[div] 14:00
+[span] MCI
+[span] SUN
+[span] pre
+[span] post
+[div] 16:30
+[span] FUL
+[span] MUN
+[span] pre
+[span] post
+[p] Footy Reacts embeds — it never re-hosts. Every view counts on the creator's own channel.

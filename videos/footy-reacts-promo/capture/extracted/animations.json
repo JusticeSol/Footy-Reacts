@@ -1,0 +1,54 @@
+{
+  "summary": {
+    "webAnimations": 1,
+    "cssDeclarations": 23,
+    "scrollTargets": 36,
+    "cdpAnimations": 1,
+    "canvases": 0
+  },
+  "namedAnimations": [
+    "ticker-scroll"
+  ],
+  "scrollTriggeredElements": 36,
+  "representativeAnimations": [
+    {
+      "type": "CSSAnimation",
+      "playState": "running",
+      "animationName": "ticker-scroll",
+      "targetSelector": "div.ticker-track",
+      "targetRect": {
+        "x": -914.3133544921875,
+        "y": 90,
+        "width": 7225.21875,
+        "height": 16,
+        "top": 90,
+        "right": 6310.9053955078125,
+        "bottom": 106,
+        "left": -914.3133544921875
+      },
+      "keyframes": [
+        {
+          "offset": 0,
+          "easing": "linear",
+          "composite": "auto",
+          "transform": "translate(0px)",
+          "computedOffset": 0
+        },
+        {
+          "offset": 1,
+          "easing": "linear",
+          "composite": "auto",
+          "transform": "translate(-50%)",
+          "computedOffset": 1
+        }
+      ],
+      "timing": {
+        "duration": 48000,
+        "delay": 0,
+        "iterations": null,
+        "easing": "linear",
+        "direction": "normal"
+      }
+    }
+  ]
+}
