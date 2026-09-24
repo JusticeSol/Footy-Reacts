@@ -15,7 +15,7 @@ export interface ContactLink {
 }
 
 export const CONTACTS: ContactLink[] = [
-  // Fill these in and the CONTACT button appears. For example:
-  // { label: "X", value: "@yourhandle", href: "https://x.com/yourhandle" },
+  { label: "X", value: "@affanyjoe", href: "https://x.com/affanyjoe" },
+  // Add an email here too if outreach starts arriving by mail:
   // { label: "Email", value: "you@example.com", href: "mailto:you@example.com" },
 ];
