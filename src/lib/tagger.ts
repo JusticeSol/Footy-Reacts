@@ -292,16 +292,30 @@ async function askClaude(
     })
     .join("\n");
 
+  // The question has to be "is this a reaction to that match", not "is this
+  // about that match". Asked the looser way, the model reasonably counted
+  // transfer news, injury updates and international call-ups as being about
+  // the fixture whose aftermath they followed, and promoted them onto match
+  // pages the heuristic had correctly kept out.
   const prompt = `A football creator published this video:
 
 TITLE: ${video.title}
 PUBLISHED: ${video.publishedAt}
 DESCRIPTION: ${video.description.slice(0, 600)}
 
-Which of these fixtures is it about?
+Which of these matches is it a pre-match or post-match reaction to?
 
 ${options}
 ${candidates.length + 1}. None of these
+
+Pick a match ONLY if the video is about that specific game: a preview, build-up,
+team news for it, watchalong, live reaction, review, player ratings, or analysis
+of that match.
+
+Pick "None of these" for everything else, even when a listed club is named or
+discussed at length — transfer news and rumours, injury news, contract news,
+international call-ups and squad announcements, general club or manager news,
+season-long opinion, other competitions, and other matches.
 
 Answer with JSON only: {"choice": <number>, "phase": "pre"|"post", "confidence": <0-1>, "reason": "<8 words max>"}
 "pre" = published before kickoff (preview, team news, predictions).
