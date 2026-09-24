@@ -16,9 +16,6 @@ export interface ContactLink {
 
 export const CONTACTS: ContactLink[] = [
   { label: "X", value: "@affanyjoe", href: "https://x.com/affanyjoe" },
-  {
-    label: "Email",
-    value: "justiceundie@gmail.com",
-    href: "mailto:justiceundie@gmail.com?subject=Footy%20Reacts",
-  },
+  // Email deliberately left off a public page for now. To add it back:
+  // { label: "Email", value: "you@example.com", href: "mailto:you@example.com?subject=Footy%20Reacts" },
 ];
