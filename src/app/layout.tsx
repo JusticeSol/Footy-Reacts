@@ -10,10 +10,28 @@ const spaceMono = Space_Mono({
   variable: "--font-space-mono",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footy-reacts.vercel.app";
+const TAGLINE =
+  "Pre- and post-match reactions from every creator, organised by fixture. Stop scrolling, start watching.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Footy Reacts — every take on every match",
-  description:
-    "Pre- and post-match reactions from every creator, organised by fixture. Stop scrolling, start watching.",
+  description: TAGLINE,
+  // Without these a shared link unfurls as a bare URL, which wastes the one
+  // impression a post gets.
+  openGraph: {
+    type: "website",
+    siteName: "Footy Reacts",
+    title: "Footy Reacts — every take on every match",
+    description: TAGLINE,
+    url: SITE_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Footy Reacts — every take on every match",
+    description: TAGLINE,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

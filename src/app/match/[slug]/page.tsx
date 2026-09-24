@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Masthead } from "@/components/Masthead";
@@ -8,6 +9,33 @@ import { dayHeading, kickoffTime } from "@/lib/format";
 import type { Phase } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const fixture = await getFixtureBySlug(slug);
+  if (!fixture) return { title: "Match not found — Footy Reacts" };
+
+  const scoreline = fixture.score
+    ? `${fixture.homeTeam.shortName} ${fixture.score.home}-${fixture.score.away} ${fixture.awayTeam.shortName}`
+    : `${fixture.homeTeam.shortName} v ${fixture.awayTeam.shortName}`;
+
+  const total = fixture.counts.pre + fixture.counts.post;
+  const description =
+    total > 0
+      ? `${total} creator takes on ${scoreline}, pre-match and post-match, on one page.`
+      : `Every creator's take on ${scoreline}, pre-match and post-match, on one page.`;
+
+  return {
+    title: `${scoreline} — every take | Footy Reacts`,
+    description,
+    openGraph: { title: `${scoreline} — every take`, description, type: "article" },
+    twitter: { card: "summary_large_image", title: `${scoreline} — every take`, description },
+  };
+}
 
 export default async function MatchPage({
   params,
