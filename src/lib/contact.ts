@@ -16,6 +16,9 @@ export interface ContactLink {
 
 export const CONTACTS: ContactLink[] = [
   { label: "X", value: "@affanyjoe", href: "https://x.com/affanyjoe" },
-  // Add an email here too if outreach starts arriving by mail:
-  // { label: "Email", value: "you@example.com", href: "mailto:you@example.com" },
+  {
+    label: "Email",
+    value: "justiceundie@gmail.com",
+    href: "mailto:justiceundie@gmail.com?subject=Footy%20Reacts",
+  },
 ];
