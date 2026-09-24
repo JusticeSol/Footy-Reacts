@@ -19,6 +19,7 @@
     "creator:add": "tsx scripts/creator-add.ts",
     "creator:remove": "tsx scripts/creator-remove.ts",
     "retag": "tsx scripts/retag.ts",
+    "outreach": "tsx scripts/outreach.ts",
     "probe": "tsx scripts/probe-channel.ts",
     "coverage": "tsx scripts/coverage.ts",
     "creator:list": "tsx scripts/creator-list.ts",

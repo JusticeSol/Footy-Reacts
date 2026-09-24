@@ -12,3 +12,4 @@ src/data/store.json
 .agents/
 .claude/skills/
 skills-lock.json
+outreach-messages.txt
