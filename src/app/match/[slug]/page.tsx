@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Masthead } from "@/components/Masthead";
 import { PhaseTabs } from "@/components/PhaseTabs";
-import { TakeCard } from "@/components/TakeCard";
+import { TakeList } from "@/components/TakeList";
 import { getFixtureBySlug, getTakes } from "@/lib/store";
 import { dayHeading, kickoffTime } from "@/lib/format";
 import type { Phase } from "@/lib/types";
@@ -87,11 +87,7 @@ export default async function MatchPage({
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 px-4 py-6 sm:grid-cols-2 sm:px-5 sm:py-8">
-            {takes.map((take) => (
-              <TakeCard key={take.id} take={take} />
-            ))}
-          </div>
+          <TakeList takes={takes} />
         )}
       </div>
     </main>
