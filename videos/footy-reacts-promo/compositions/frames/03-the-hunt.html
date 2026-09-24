@@ -1,0 +1,182 @@
+<template>
+  <style>
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-62c97acc3aa63787-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-aa5f74293546f6d0-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:"Space Mono";font-style:normal;font-weight:700;font-display:block;src:url("assets/fonts/captured-806de4d605d3ad01-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+    @font-face{font-family:"Space Mono";font-style:normal;font-weight:700;font-display:block;src:url("assets/fonts/captured-281dae1e814de8c6-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+
+    #root{
+      position:relative;
+      width:1080px;
+      height:1080px;
+      overflow:hidden;
+      container-type:size;
+      --f03-cream:#F4F1EA;
+      --f03-cream-dark:#EBE7DD;
+      --f03-ink:#16130F;
+      --f03-gray:#686868;
+      --f03-light:#8B8B8B;
+      --f03-coral:#D5202A;
+    }
+
+    .f03-ground{
+      position:absolute;
+      inset:0;
+      background:var(--f03-cream);
+    }
+
+    /* ---- tab rail (hand-authored; no registry block fits an accumulating rail) ---- */
+    .f03-rail{
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:72px;
+      padding:24px 24px 0;
+      display:flex;
+      gap:6px;
+      align-items:flex-start;
+      box-sizing:border-box;
+    }
+    .f03-tab{
+      flex:1 1 0;
+      height:40px;
+      background:var(--f03-cream-dark);
+      border:4px solid var(--f03-ink);
+      border-bottom:none;
+      font-family:"Space Mono",monospace;
+      font-weight:700;
+      font-size:15px;
+      letter-spacing:.5px;
+      color:var(--f03-gray);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      white-space:nowrap;
+      box-sizing:border-box;
+      opacity:0;
+    }
+    .f03-tab-last{
+      flex:0 0 96px;
+      color:var(--f03-ink);
+    }
+
+    /* ---- the stack ---- */
+    .f03-stage{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:flex-start;
+      padding:0 76px;
+      box-sizing:border-box;
+    }
+    .f03-line{
+      font-family:Anton,sans-serif;
+      font-weight:400;
+      font-size:101px;
+      line-height:1.08;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--f03-ink);
+      opacity:0;
+      will-change:transform,opacity;
+    }
+    .f03-l1{color:var(--f03-light)}
+    .f03-l4{color:var(--f03-coral)}
+  </style>
+
+  <div data-hf-id="hf-5cwl" id="root" data-composition-id="03-the-hunt" data-width="1080" data-height="1080">
+
+    <div data-hf-id="hf-2uws" id="f03-ground" class="clip f03-ground" data-start="0" data-duration="8" data-track-index="0"></div>
+
+    <div data-hf-id="hf-fz1p" id="f03-rail" class="clip f03-rail" data-start="0" data-duration="8" data-track-index="1">
+      <div data-hf-id="hf-j3hm" class="f03-tab" id="f03-tab-1">FUL v MUN re…</div>
+      <div data-hf-id="hf-y18y" class="f03-tab" id="f03-tab-2">MUN REACTION</div>
+      <div data-hf-id="hf-0qdf" class="f03-tab" id="f03-tab-3">post match…</div>
+      <div data-hf-id="hf-8vhk" class="f03-tab" id="f03-tab-4">LIVE: FULHAM</div>
+      <div data-hf-id="hf-ctx7" class="f03-tab" id="f03-tab-5">watch later</div>
+      <div data-hf-id="hf-31ef" class="f03-tab f03-tab-last" id="f03-tab-6">+12</div>
+    </div>
+
+    <div data-hf-id="hf-wyma" id="f03-stage" class="clip f03-stage" data-start="0" data-duration="8" data-track-index="2">
+      <div data-hf-id="hf-6zpr" class="f03-line f03-l1" id="f03-line-1">So you scroll.</div>
+      <div data-hf-id="hf-bwdu" class="f03-line" id="f03-line-2">Channel to channel.</div>
+      <div data-hf-id="hf-j0rx" class="f03-line" id="f03-line-3">Tab to tab.</div>
+      <div data-hf-id="hf-v7us" class="f03-line f03-l4" id="f03-line-4">And you still<br data-hf-id="hf-x5px">miss half.</div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+
+      // ---- ONE tempo grid drives every phrase and every tab (kinetic-beat-slam) ----
+      var PULSE = 0.5;
+      var BEATS = [0.12, 1.55, 3.05, 4.50];   // the four phrase onsets, on the grid
+
+      // ---- Scene 1 (0.0-1.5s): "So you scroll." slams in; two tabs snap ----
+      // slam: scale + blur collapse (distinct axis #1)
+      tl.fromTo("#f03-line-1",
+        { scale: 1.5, filter: "blur(16px)", opacity: 0 },
+        { scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.50, ease: "power4.out" },
+        BEATS[0]);
+      tl.fromTo("#f03-tab-1",
+        { y: -18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.28, ease: "power3.out" },
+        BEATS[0]);
+      tl.fromTo("#f03-tab-2",
+        { y: -18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.28, ease: "power3.out" },
+        BEATS[0] + PULSE * 0.28);
+
+      // ---- Scene 2 (1.5-3.0s): "Channel to channel." side-snaps; two more tabs ----
+      // side snap from the left (distinct axis #2)
+      tl.fromTo("#f03-line-2",
+        { x: -320, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.45, ease: "expo.out" },
+        BEATS[1]);
+      tl.fromTo("#f03-tab-3",
+        { y: -18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.28, ease: "power3.out" },
+        BEATS[1]);
+      tl.fromTo("#f03-tab-4",
+        { y: -18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.28, ease: "power3.out" },
+        BEATS[1] + PULSE * 0.28);
+
+      // ---- Scene 3 (3.0-4.4s): "Tab to tab." rises + rotates; rail goes overfull ----
+      // rise + rotate (distinct axis #3)
+      tl.fromTo("#f03-line-3",
+        { y: 90, rotation: 4, opacity: 0 },
+        { y: 0, rotation: 0, opacity: 1, duration: 0.55, ease: "circ.out" },
+        BEATS[2]);
+      tl.fromTo("#f03-tab-5",
+        { y: -18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.28, ease: "power3.out" },
+        BEATS[2]);
+      tl.fromTo("#f03-tab-6",
+        { y: -18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.28, ease: "power3.out" },
+        BEATS[2] + PULSE * 0.28);
+
+      // ---- Scene 4 (4.4-6.2s): the payoff line, the frame's single accent ----
+      // heaviest slam of the four, landing on its own cue (distinct axis #4)
+      tl.fromTo("#f03-line-4",
+        { scale: 0.82, filter: "blur(10px)", opacity: 0 },
+        { scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.60, ease: "power4.out" },
+        BEATS[3]);
+
+      // ---- Scene 5 (6.2-8.0s): held read. Nothing moves, nothing exits. ----
+      // The stack and the overfull rail simply sit. No exit tween: this is not
+      // the final frame, so the root transition is this frame's exit.
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["03-the-hunt"] = tl;
+    })();
+  </script>
+</template>

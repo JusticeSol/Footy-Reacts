@@ -1,0 +1,281 @@
+<template>
+  <style>
+    /* ---- brand fonts: local files only, never Google Fonts ---- */
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-6ced06489fd81a3f-s.woff2") format("woff2");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-aa5f74293546f6d0-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-62c97acc3aa63787-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+    @font-face{font-family:"Space Mono";font-style:normal;font-weight:700;font-display:block;src:url("assets/fonts/captured-77fb5eec12c66d49-s.woff2") format("woff2");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}
+    @font-face{font-family:"Space Mono";font-style:normal;font-weight:700;font-display:block;src:url("assets/fonts/captured-281dae1e814de8c6-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:"Space Mono";font-style:normal;font-weight:700;font-display:block;src:url("assets/fonts/captured-806de4d605d3ad01-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+
+    /* root: styled by #root only — NEVER a class on the composition-id element */
+    #root {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      /* no background here — the ink ground rides on a .clip layer below */
+    }
+    #root * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ---- Scene 1 · the ground inversion: the only dark frame in the video ---- */
+    .f07-ground {
+      position: absolute;
+      inset: 0;
+      background: #16130F;
+    }
+
+    /* ---- Scene 2 · the claim ---- */
+    .f07-claim {
+      position: absolute;
+      inset: 0;
+    }
+    .f07-claim-inner {
+      position: absolute;
+      left: 7cqw;
+      top: 24cqw;
+      width: 86cqw;
+      transform-origin: 30% 50%;
+      will-change: transform, opacity, filter;
+    }
+    .f07-line {
+      display: block;
+      position: absolute;
+      left: 0;
+      height: 7.2cqw;
+      font-family: Anton, sans-serif;
+      font-weight: 400;
+      font-size: 6.2cqw;
+      line-height: 1.16;
+      white-space: nowrap;
+      letter-spacing: 0.2cqw;
+      text-transform: uppercase;
+      color: #F4F1EA;
+    }
+    .f07-line:nth-of-type(1) { top: 0; }
+    .f07-line:nth-of-type(2) { top: 7.6cqw; }
+    .f07-line:nth-of-type(3) { top: 15.2cqw; }
+    .f07-line.f07-hot { color: #D5202A; transform-origin: 0% 50%; }
+    .f07-cur {
+      display: inline-block;
+      width: 0.3em;
+      height: 0.7em;
+      margin-left: 0.1em;
+      vertical-align: -0.02em;
+      background: #D5202A;
+      opacity: 0;
+    }
+    .f07-line.f07-hot .f07-cur { background: #F4F1EA; }
+
+    /* ---- Scene 3 · the lockup: LIVE Anton type, no traced logo mark ---- */
+    .f07-lock {
+      position: absolute;
+      inset: 0;
+    }
+    .f07-mark {
+      position: absolute;
+      left: 7cqw;
+      top: 38.5cqw;
+      font-family: Anton, sans-serif;
+      font-weight: 400;
+      font-size: 11cqw;
+      line-height: 1.12;
+      letter-spacing: 0.6cqw;
+      text-transform: uppercase;
+      color: #F4F1EA;
+      white-space: nowrap;
+    }
+    /* bottom-up-letters: each glyph rides up out of its own mask */
+    .f07-g {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: top;
+    }
+    .f07-g > i {
+      display: block;
+      font-style: normal;
+      will-change: transform;
+    }
+    .f07-sp { display: inline-block; width: 0.3em; }
+
+    .f07-url {
+      position: absolute;
+      left: 7cqw;
+      top: 53.8cqw;
+      min-width: 52cqw;   /* >= widest state — stops right-edge jitter */
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+      font-size: 2.7cqw;
+      line-height: 1.2;
+      letter-spacing: 0.45cqw;
+      color: #B0B0B0;
+      white-space: nowrap;
+      opacity: 0;
+    }
+  </style>
+
+  <div data-hf-id="hf-iuju" id="root" data-composition-id="07-every-view-counts" data-width="1080" data-height="1080">
+
+    <!-- Scene 1 (0.0–1.2s) — the crossfade completes onto ink. Full-duration ground clip. -->
+    <div data-hf-id="hf-i1te" class="f07-ground clip" data-start="0" data-duration="9" data-track-index="0"></div>
+
+    <!-- Scene 2 (1.2–4.0s) — the claim types on -->
+    <div data-hf-id="hf-rpv8" class="f07-claim clip" data-start="0" data-duration="9" data-track-index="1">
+      <div data-hf-id="hf-hq6k" class="f07-claim-inner" id="f07-claim-inner">
+        <span data-hf-id="hf-fj7p" class="f07-line"><span data-hf-id="hf-75jd" id="f07-l1"></span><span data-hf-id="hf-dygv" class="f07-cur" id="f07-c1"></span></span>
+        <span data-hf-id="hf-sg9l" class="f07-line"><span data-hf-id="hf-b3ne" id="f07-l2"></span><span data-hf-id="hf-5al0" class="f07-cur" id="f07-c2"></span></span>
+        <span data-hf-id="hf-ykb3" class="f07-line f07-hot" id="f07-line3"><span data-hf-id="hf-f1rf" id="f07-l3"></span><span data-hf-id="hf-628t" class="f07-cur" id="f07-c3"></span></span>
+      </div>
+    </div>
+
+    <!-- Scene 3 (4.0–6.2s) — the wordmark assembles into the vacated centre, URL beneath -->
+    <div data-hf-id="hf-r3qo" class="f07-lock clip" data-start="0" data-duration="9" data-track-index="2">
+      <div data-hf-id="hf-6liu" class="f07-mark" id="f07-mark"><span data-hf-id="hf-bqsq" class="f07-g"><i data-hf-id="hf-xqq6">F</i></span><span data-hf-id="hf-a69a" class="f07-g"><i data-hf-id="hf-0ivd">O</i></span><span data-hf-id="hf-akkb" class="f07-g"><i data-hf-id="hf-vhq5">O</i></span><span data-hf-id="hf-ayvc" class="f07-g"><i data-hf-id="hf-4w8o">T</i></span><span data-hf-id="hf-86q5" class="f07-g"><i data-hf-id="hf-635r">Y</i></span><span data-hf-id="hf-q9ca" class="f07-sp"></span><span data-hf-id="hf-8l16" class="f07-g"><i data-hf-id="hf-2iei">R</i></span><span data-hf-id="hf-8zc7" class="f07-g"><i data-hf-id="hf-y517">E</i></span><span data-hf-id="hf-9dn8" class="f07-g"><i data-hf-id="hf-wjt3">A</i></span><span data-hf-id="hf-cyeh" class="f07-g"><i data-hf-id="hf-vr71">C</i></span><span data-hf-id="hf-dcpi" class="f07-g"><i data-hf-id="hf-19n4">T</i></span><span data-hf-id="hf-66uy" class="f07-g"><i data-hf-id="hf-243h">S</i></span></div>
+      <div data-hf-id="hf-wufk" class="f07-url" id="f07-url"><span data-hf-id="hf-d44b" id="f07-urltx"></span></div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+
+      /* ------------------------------------------------------------------
+         Scene 2 (1.2–4.0s) — discrete-text-sequence.
+         Sparse {t, text} states per fixed line; a reverse search on every
+         onUpdate renders the latest state whose t has passed. Lines are
+         pre-broken so nothing ever reflows (the multi-line analogue of the
+         rule's mandatory min-width).
+      ------------------------------------------------------------------ */
+      var SEQ1 = [
+        [1.20, ""],
+        [1.28, "IT"],
+        [1.40, "IT NEV"],
+        [1.52, "IT NEVER"],
+        [1.70, "IT NEVER RE-"],
+        [1.84, "IT NEVER RE-HOSTS"],
+        [1.96, "IT NEVER RE-HOSTS."]
+      ];
+      var SEQ2 = [
+        [2.18, "EVERY"],
+        [2.34, "EVERY VIEW"],
+        [2.52, "EVERY VIEW COUNTS"],
+        [2.70, "EVERY VIEW COUNTS ON"],
+        [2.86, "EVERY VIEW COUNTS ON THE"]
+      ];
+      /* the coral phrase arrives on its own cue */
+      var SEQ3 = [
+        [3.10, "CREATOR'S"],
+        [3.26, "CREATOR'S OWN"],
+        [3.44, "CREATOR'S OWN CHANNEL"],
+        [3.56, "CREATOR'S OWN CHANNEL."]
+      ];
+      /* Scene 3 — the URL builds in Space Mono 700 */
+      var SEQU = [
+        [5.10, "footy-reacts"],
+        [5.34, "footy-reacts.vercel"],
+        [5.58, "footy-reacts.vercel.app"]
+      ];
+
+      function stateAt(seq, t) {
+        for (var i = seq.length - 1; i >= 0; i--) {
+          if (t >= seq[i][0]) return seq[i][1];
+        }
+        return "";
+      }
+
+      var l1 = document.getElementById("f07-l1");
+      var l2 = document.getElementById("f07-l2");
+      var l3 = document.getElementById("f07-l3");
+      var ut = document.getElementById("f07-urltx");
+      var c1 = document.getElementById("f07-c1");
+      var c2 = document.getElementById("f07-c2");
+      var c3 = document.getElementById("f07-c3");
+
+      /* cursor lives on whichever line is currently being typed, and retires
+         for good once the claim is complete — the hold carries no blink */
+      var CUR = [
+        [c1, 1.20, 2.12],
+        [c2, 2.12, 3.04],
+        [c3, 3.04, 3.70]
+      ];
+      var BLINK_PERIOD = 0.55;
+
+      var driver = { t: 0 };
+      tl.to(driver, {
+        t: 9,
+        duration: 9,
+        ease: "none",
+        onUpdate: function () {
+          var t = driver.t;
+          l1.textContent = stateAt(SEQ1, t);
+          l2.textContent = stateAt(SEQ2, t);
+          l3.textContent = stateAt(SEQ3, t);
+          ut.textContent = stateAt(SEQU, t);
+          /* deterministic square wave — never a CSS animation */
+          var on = Math.sin((t / BLINK_PERIOD) * Math.PI * 2) > -0.35 ? 1 : 0;
+          for (var i = 0; i < CUR.length; i++) {
+            var c = CUR[i];
+            c[0].style.opacity = (t >= c[1] && t < c[2]) ? String(on) : "0";
+          }
+        }
+      }, 0);
+
+      /* coral phrase lands — a single state pulse, no repeat/yoyo */
+      tl.fromTo("#f07-line3",
+        { scale: 1 },
+        { scale: 1.030, duration: 0.12, ease: "power2.out" }, 3.56);
+      tl.to("#f07-line3",
+        { scale: 1, duration: 0.20, ease: "power2.inOut" }, 3.68);
+
+      /* ------------------------------------------------------------------
+         Scene 3 (4.0–6.2s) — the claim CLEARS first (read, then vacated),
+         shrink-toward-centre + 10px text-scale blur, opacity on its own
+         linear tween so the dimming is even.
+      ------------------------------------------------------------------ */
+      /* Explicit resting baseline at t=0 so any seek before 4.0s renders the
+         read state, rather than inheriting whichever fromTo authored last
+         (GSAP applies fromTo from-values at authoring time, not at position). */
+      tl.set("#f07-claim-inner", { scale: 1, filter: "blur(0px)", opacity: 1 }, 0);
+
+      tl.fromTo("#f07-claim-inner",
+        { scale: 1, filter: "blur(0px)" },
+        { scale: 0.82, filter: "blur(10px)", duration: 0.34, ease: "power3.in", immediateRender: false }, 4.00);
+      tl.fromTo("#f07-claim-inner",
+        { opacity: 1 },
+        { opacity: 0, duration: 0.34, ease: "none", immediateRender: false }, 4.00);
+
+      /* bottom-up-letters — FOOTY REACTS assembles glyph by glyph out of the
+         masks into the vacated centre. Opacity stays binary (an arrival never
+         fades); travel and settle vary by weight, gaps overlap into a wave. */
+      var glyphs = document.querySelectorAll("#f07-mark .f07-g > i");
+      var TRAVEL = [122, 108, 108, 112, 118, 110, 106, 106, 112, 110, 120];
+      var DUR = [0.34, 0.28, 0.28, 0.29, 0.30, 0.30, 0.27, 0.27, 0.29, 0.28, 0.33];
+      var MARK_T0 = 4.35;
+      for (var g = 0; g < glyphs.length; g++) {
+        tl.fromTo(glyphs[g],
+          { yPercent: TRAVEL[g] },
+          { yPercent: 0, duration: DUR[g], ease: "power4.out" },
+          MARK_T0 + g * 0.055);
+      }
+
+      /* the URL fades up beneath the wordmark */
+      tl.fromTo("#f07-url",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.60, ease: "power3.out" }, 5.05);
+
+      /* ------------------------------------------------------------------
+         Scene 4 (6.2–9.0s) — nothing. The last tween ends at 5.65 and the
+         lockup is dead still to the final frame: no jitter, no breathe, no
+         trailing motion, and no exit. It stops cleanly.
+      ------------------------------------------------------------------ */
+
+      window.__timelines["07-every-view-counts"] = tl;
+      tl.seek(0);
+    })();
+  </script>
+</template>

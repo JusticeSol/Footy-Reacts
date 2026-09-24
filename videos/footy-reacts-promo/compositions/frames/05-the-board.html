@@ -1,0 +1,134 @@
+<template>
+  <style>
+    #root{
+      position:relative;
+      width:1080px;
+      height:1080px;
+      overflow:hidden;
+      container-type:size;
+      --f05-cream:#F4F1EA;
+      --f05-coral:#D5202A;
+    }
+
+    .f05-ground{
+      position:absolute;
+      inset:0;
+      background:var(--f05-cream);
+    }
+
+    /* The camera world: the captured plate in its own 1920x1080 coordinate
+       space. Everything that must ride WITH the page lives in here, so a single
+       transform on this wrapper moves plate and overlays together. */
+    .f05-world{
+      position:absolute;
+      top:0;
+      left:0;
+      width:1920px;
+      height:1080px;
+      transform-origin:0 0;
+      will-change:transform;
+    }
+    .f05-plate{
+      display:block;
+      width:1920px;
+      height:1080px;
+    }
+
+    /* The ONE component rebuilt over the plate: a coral underline that sweeps
+       beneath a row's POST count. The page itself is never redrawn. */
+    .f05-chip{
+      position:absolute;
+      height:6px;
+      background:var(--f05-coral);
+      transform-origin:0 50%;
+      will-change:transform;
+    }
+  </style>
+
+  <div data-hf-id="hf-jor8" id="root" data-composition-id="05-the-board" data-width="1080" data-height="1080">
+
+    <div data-hf-id="hf-cgw9" id="f05-ground" class="clip f05-ground" data-start="0" data-duration="10" data-track-index="0"></div>
+
+    <div data-hf-id="hf-8s7h" id="f05-stage" class="clip" data-start="0" data-duration="10" data-track-index="1" style="position:absolute;inset:0;">
+      <div data-hf-id="hf-nqpu" id="f05-world" class="f05-world">
+        <img data-hf-id="hf-w0yt" id="f05-plate" class="f05-plate" src="assets/full-page.png" alt="">
+        <!-- plate-space coordinates, measured off the 1920x1080 capture -->
+        <div data-hf-id="hf-rsaj" class="f05-chip" id="f05-chip-1" style="left:1366px;top:694px;width:34px;"></div>
+        <div data-hf-id="hf-k27e" class="f05-chip" id="f05-chip-2" style="left:1374px;top:755px;width:22px;"></div>
+        <div data-hf-id="hf-zvoz" class="f05-chip" id="f05-chip-3" style="left:1374px;top:816px;width:22px;"></div>
+        <div data-hf-id="hf-226h" class="f05-chip" id="f05-chip-4" style="left:1366px;top:877px;width:34px;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+
+      // ---- Camera states, in plate space ------------------------------------
+      // The plate is a 1920x1080 single-viewport capture: there is no tall
+      // document to scroll, and pushing past scale 1.0 would upscale the
+      // bitmap (banned). So the travel runs from a wide establishing view UP TO
+      // native 1:1 and no further.
+      var WIDE  = { scale: 0.80, x: -228, y: 16   };   // whole board, filling the frame
+      var MID   = { scale: 0.90, x: -324, y: -114 };   // steady travel, mid-push
+      var LOCK  = { scale: 1.00, x: -420, y: -244 };   // native; FUL row at y=620 (57%)
+
+      // Establishing state is live at t=0 — the plate is this frame's ground,
+      // not an entrance.
+      tl.set("#f05-world", {
+        scale: WIDE.scale, x: WIDE.x, y: WIDE.y,
+        rotationX: 5, transformPerspective: 1600
+      }, 0);
+      tl.set(".f05-chip", { scaleX: 0 }, 0);
+
+      // ---- Scene 1 (0.0-2.0s): held establishing view, slight tilt ----------
+      // No drift, no push. The tilt is set and held.
+
+      // ---- Scene 2 (2.0-4.4s): steady travel into the board -----------------
+      // 3d-page-scroll, adapted: the camera reads the plate; the plate never
+      // re-renders. Linear-ish so the rate reads STEADY, not eased.
+      tl.to("#f05-world", {
+        scale: MID.scale, x: MID.x, y: MID.y, rotationX: 3,
+        duration: 2.4, ease: "none"
+      }, 2.0);
+
+      // ---- Scene 3 (4.4-7.0s): POST chips light in sequence -----------------
+      // Travel continues underneath at the same rate; the chips are inside the
+      // world wrapper, so they ride WITH the plate rather than against it.
+      tl.to("#f05-world", {
+        scale: 0.95, x: -372, y: -172, rotationX: 1.5,
+        duration: 2.6, ease: "none"
+      }, 4.4);
+
+      tl.fromTo("#f05-chip-1", { scaleX: 0 },
+        { scaleX: 1, duration: 0.34, ease: "power2.out" }, 4.70);
+      tl.fromTo("#f05-chip-2", { scaleX: 0 },
+        { scaleX: 1, duration: 0.34, ease: "power2.out" }, 5.36);
+      tl.fromTo("#f05-chip-3", { scaleX: 0 },
+        { scaleX: 1, duration: 0.34, ease: "power2.out" }, 6.02);
+
+      // ---- Scene 4 (7.0-10.0s): decelerate and LOCK, then hold --------------
+      // The handoff into frame 06 is a hard boundary contract: the FUL 1-1 MUN
+      // row must sit at x 50% / y 57% / scale 1.0 / opacity 1.0 with zero
+      // velocity at the cut. Deceleration completes at 8.6s, leaving 1.4s of
+      // genuinely still hold so velocity is 0 at t=10.
+      tl.to("#f05-world", {
+        scale: LOCK.scale, x: LOCK.x, y: LOCK.y, rotationX: 0,
+        duration: 1.6, ease: "power3.out"
+      }, 7.0);
+
+      // The FUL row's own chip lands with the lock, marking the row frame 06 opens.
+      tl.fromTo("#f05-chip-4", { scaleX: 0 },
+        { scaleX: 1, duration: 0.40, ease: "power2.out" }, 7.55);
+
+      // 8.6-10.0s: nothing. No drift, no breathing, no exit tween — the root
+      // transition is this frame's exit, and the handoff needs a clean stop.
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["05-the-board"] = tl;
+    })();
+  </script>
+</template>

@@ -7,3 +7,8 @@ out
 next-env.d.ts
 src/data/store.json
 *.log
+
+# Vendored agent skills — installed tooling, not project source
+.agents/
+.claude/skills/
+skills-lock.json

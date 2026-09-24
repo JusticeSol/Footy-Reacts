@@ -42,7 +42,10 @@ Deliverables: a 60s master, plus a 30s cutdown for feed posting.
   twenty cards become unreadable.
 - Close on the creator line — "it never re-hosts; every view counts on the
   creator's own channel" — the site's stated differentiator.
-- After the 60s master is approved, cut a 30s feed version from the same timeline.
+- ~~After the 60s master is approved, cut a 30s feed version from the same timeline.~~
+  Dropped at delivery by the user: a 30s version would have to drop whole frames
+  (every VO line fills its frame), and none of the three viable beat selections
+  were worth the loss. 60s master is the only deliverable.
 
 ## Notes
 

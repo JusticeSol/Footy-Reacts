@@ -1,0 +1,198 @@
+<template>
+  <style>
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-62c97acc3aa63787-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-aa5f74293546f6d0-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:"Space Mono";font-style:normal;font-weight:700;font-display:block;src:url("assets/fonts/captured-806de4d605d3ad01-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+    @font-face{font-family:"Space Mono";font-style:normal;font-weight:700;font-display:block;src:url("assets/fonts/captured-281dae1e814de8c6-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+
+    #root{
+      position:relative;
+      width:1080px;
+      height:1080px;
+      overflow:hidden;
+      container-type:size;
+      --f06-cream:#F4F1EA;
+      --f06-cream-dark:#EBE7DD;
+      --f06-ink:#16130F;
+      --f06-coral:#D5202A;
+      --f06-coral-dark:#A5181F;
+      --f06-white:#FFFFFF;
+    }
+
+    .f06-ground{
+      position:absolute;
+      inset:0;
+      background:var(--f06-cream);
+    }
+
+    .f06-stage{
+      position:absolute;
+      inset:0;
+      padding:65px 59px 0;
+      box-sizing:border-box;
+    }
+
+    .f06-head{
+      display:flex;
+      align-items:baseline;
+      gap:22px;
+      font-family:Anton,sans-serif;
+      font-weight:400;
+      font-size:82px;
+      line-height:1.05;
+      letter-spacing:3px;
+      text-transform:uppercase;
+      color:var(--f06-ink);
+      height:90px;
+      will-change:transform;
+    }
+    .f06-head .f06-sc{
+      font-family:"Space Mono",monospace;
+      font-weight:700;
+      font-size:43px;
+      letter-spacing:1px;
+      color:var(--f06-coral);
+    }
+
+    .f06-takes{
+      margin-top:26px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .f06-take{
+      display:flex;
+      align-items:center;
+      gap:22px;
+      border:5px solid var(--f06-ink);
+      background:var(--f06-white);
+      padding:16px 19px;
+      box-sizing:border-box;
+      opacity:0;
+      will-change:transform,opacity;
+    }
+    .f06-thumb{
+      width:130px;
+      height:76px;
+      flex:none;
+      background:var(--f06-cream-dark);
+      outline:3px solid var(--f06-ink);
+      outline-offset:-3px;
+    }
+    .f06-name{
+      font-family:Anton,sans-serif;
+      font-weight:400;
+      font-size:38px;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      color:var(--f06-ink);
+    }
+    .f06-sel{
+      background:var(--f06-coral);
+    }
+    .f06-sel .f06-name{color:var(--f06-cream)}
+    .f06-sel .f06-thumb{background:var(--f06-coral-dark)}
+
+    /* cursor-click-ripple — the video's only cursor */
+    .f06-cursor{
+      position:absolute;
+      top:0;
+      left:0;
+      width:0;
+      height:0;
+      border-left:26px solid var(--f06-ink);
+      border-top:14px solid transparent;
+      border-bottom:14px solid transparent;
+      opacity:0;
+      will-change:transform,opacity;
+    }
+    .f06-ripple{
+      position:absolute;
+      top:0;
+      left:0;
+      width:120px;
+      height:120px;
+      margin:-60px 0 0 -60px;
+      border:5px solid var(--f06-coral);
+      border-radius:50%;
+      opacity:0;
+      will-change:transform,opacity;
+    }
+  </style>
+
+  <div data-hf-id="hf-6yff" id="root" data-composition-id="06-one-fixture" data-width="1080" data-height="1080" data-duration="9.5">
+
+    <div data-hf-id="hf-s3em" id="f06-ground" class="clip f06-ground" data-start="0" data-duration="9.5" data-track-index="0"></div>
+
+    <div data-hf-id="hf-tq4v" id="f06-stage" class="clip f06-stage" data-start="0" data-duration="9.5" data-track-index="1">
+      <div data-hf-id="hf-20a2" class="f06-head" id="f06-head">
+        <span data-hf-id="hf-cydw">FUL</span><span data-hf-id="hf-3igi" class="f06-sc">1 — 1</span><span data-hf-id="hf-lad3">MUN</span>
+      </div>
+      <div data-hf-id="hf-2pqs" class="f06-takes" id="f06-takes">
+        <div data-hf-id="hf-n5yz" class="f06-take f06-sel" id="f06-take-1"><span data-hf-id="hf-2d9s" class="f06-thumb"></span><span data-hf-id="hf-2xuj" class="f06-name">The United Stand</span></div>
+        <div data-hf-id="hf-bm83" class="f06-take" id="f06-take-2"><span data-hf-id="hf-nzig" class="f06-thumb"></span><span data-hf-id="hf-71bk" class="f06-name">Stephen Howson</span></div>
+        <div data-hf-id="hf-7o42" class="f06-take" id="f06-take-3"><span data-hf-id="hf-msld" class="f06-thumb"></span><span data-hf-id="hf-i6k6" class="f06-name">Stretford Paddock</span></div>
+        <div data-hf-id="hf-owed" class="f06-take" id="f06-take-4"><span data-hf-id="hf-n6we" class="f06-thumb"></span><span data-hf-id="hf-8r6q" class="f06-name">Football Fans Tribe</span></div>
+        <div data-hf-id="hf-o4qk" class="f06-take" id="f06-take-5"><span data-hf-id="hf-lzzb" class="f06-thumb"></span><span data-hf-id="hf-ncpy" class="f06-name">Fulhamish</span></div>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-7szs" id="f06-chrome" class="clip" data-start="0" data-duration="9.5" data-track-index="2" style="position:absolute;inset:0;pointer-events:none;">
+      <div data-hf-id="hf-910y" class="f06-ripple" id="f06-ripple"></div>
+      <div data-hf-id="hf-jz6q" class="f06-cursor" id="f06-cursor"></div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+
+      // ---- Scene 1 (0.0-1.3s): the inherited header rises into place --------
+      // Hard boundary contract with frame 05: the FUL 1-1 MUN row arrives at
+      // x 50% / y 57% / scale 1.0 / opacity 1.0 with ZERO velocity. Its layout
+      // home puts its centre at y=110, so it enters offset +506px and rises.
+      // The 0.15s of stillness first is what makes the seam read as one object
+      // continuing rather than a new element appearing.
+      tl.set("#f06-head", { y: 506, opacity: 1 }, 0);
+      tl.to("#f06-head", { y: 0, duration: 1.10, ease: "power3.inOut" }, 0.15);
+
+      // ---- Scene 2 (1.3-2.4s): the cursor lands one click -------------------
+      // cursor-click-ripple. This is the only cursor in the whole video.
+      tl.fromTo("#f06-cursor",
+        { x: 1180, y: 250, opacity: 0 },
+        { x: 690, y: 132, opacity: 1, duration: 0.62, ease: "power3.out" },
+        1.30);
+      // depress with the target on the click
+      tl.to("#f06-cursor", { x: 684, y: 138, duration: 0.09, ease: "power2.in" }, 1.94);
+      tl.to("#f06-cursor", { x: 690, y: 132, duration: 0.16, ease: "power2.out" }, 2.03);
+      // the ripple expands from the click point
+      tl.fromTo("#f06-ripple",
+        { x: 690, y: 132, scale: 0.2, opacity: 0.9 },
+        { scale: 2.1, opacity: 0, duration: 0.70, ease: "power2.out" },
+        1.96);
+
+      // ---- Scene 3 (2.4-5.8s): the five takes arrive, one per beat ----------
+      // dynamic-content-sequencing, downward from the click point. Each row
+      // lands on its own cue; nothing is front-loaded.
+      var ROWS = ["#f06-take-1","#f06-take-2","#f06-take-3","#f06-take-4","#f06-take-5"];
+      var ONSET = 1.35, STEP = 0.52;
+      for (var i = 0; i < ROWS.length; i++) {
+        tl.fromTo(ROWS[i],
+          { y: -34, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.46, ease: "power3.out" },
+          ONSET + i * STEP);
+      }
+
+      // ---- Scene 4 (5.8-9.0s): cursor clears, the stack holds and reads -----
+      // The cursor leaves the frame; the density of five legible takes on one
+      // screen is the argument, and it needs stillness to land. No hover
+      // states, no secondary motion, no exit tween on the content.
+      tl.to("#f06-cursor", { x: 1180, y: 60, opacity: 0, duration: 0.55, ease: "power2.in" }, 5.80);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["06-one-fixture"] = tl;
+    })();
+  </script>
+</template>

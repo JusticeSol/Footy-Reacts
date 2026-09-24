@@ -1,0 +1,58 @@
+{
+  "lines": [
+    {
+      "id": "01",
+      "sfx": [
+        "whistle-single",
+        "room-tone-tail"
+      ]
+    },
+    {
+      "id": "02",
+      "sfx": [
+        "crowd-swell",
+        "card-whoosh-soft",
+        "riser"
+      ]
+    },
+    {
+      "id": "03",
+      "sfx": [
+        "impact-soft ×4",
+        "tab-click ×6"
+      ]
+    },
+    {
+      "id": "04",
+      "sfx": [
+        "snap-impact",
+        "row-tick ×6"
+      ]
+    },
+    {
+      "id": "05",
+      "sfx": [
+        "page-travel-soft",
+        "chip-tick ×3"
+      ]
+    },
+    {
+      "id": "06",
+      "sfx": [
+        "cursor-click",
+        "row-arrive ×5"
+      ]
+    },
+    {
+      "id": "07",
+      "sfx": [
+        "ground-invert-thud",
+        "letter-tick ×12",
+        "tail-out"
+      ]
+    }
+  ],
+  "bgm": {
+    "mode": "none"
+  }
+}

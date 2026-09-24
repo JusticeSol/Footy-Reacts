@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1920, height=1080" />
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1080">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js" integrity="sha384-sG0Hv1tP1lZCk9KQmrIbY/XNwi+OY84GQqhMscbnsoBFqAz8KNCil1kvfL3Hbbk2" crossorigin="anonymous"></script>
     <style>
       * {
         margin: 0;
@@ -12,44 +12,80 @@
       }
       html,
       body {
-        margin: 0;
-        width: 1920px;
+        width: 1080px;
         height: 1080px;
         overflow: hidden;
-        background: #0a0a0a;
+        background: #000;
       }
       #root {
+        position: relative;
+        width: 1080px;
+        height: 1080px;
+        overflow: hidden;
+        background: #F4F1EA;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-      }
-      #title {
-        color: #f4f4f5;
-        font-size: 72px;
-        font-weight: 600;
-        letter-spacing: -0.03em;
       }
     </style>
   </head>
   <body>
-    <div
-      id="root"
-      data-composition-id="main"
-      data-start="0"
-      data-duration="10"
-      data-width="1920"
-      data-height="1080"
-    >
-      <h1 id="title" class="clip" data-start="0" data-duration="10" data-track-index="0">Title</h1>
+    <div data-hf-id="hf-ji8b" id="root" data-composition-id="main" data-start="0" data-duration="60" data-width="1080" data-height="1080">
+      <div data-hf-id="hf-7n6a" id="el-01-full-time" class="scene" data-composition-id="01-full-time" data-composition-src="compositions/frames/01-full-time.html" data-start="0" data-duration="6" data-track-index="0"></div>
+      <audio data-hf-id="hf-2ffp" id="el-01-full-time-voice" src="assets/voice/01.wav" data-start="0" data-duration="6" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-k0wg" id="el-02-the-flood" class="scene" data-composition-id="02-the-flood" data-composition-src="compositions/frames/02-the-flood.html" data-start="6" data-duration="10" data-track-index="1"></div>
+      <audio data-hf-id="hf-cq7j" id="el-02-the-flood-voice" src="assets/voice/02.wav" data-start="6" data-duration="10" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-5zjp" id="el-03-the-hunt" class="scene" data-composition-id="03-the-hunt" data-composition-src="compositions/frames/03-the-hunt.html" data-start="16" data-duration="8" data-track-index="0"></div>
+      <audio data-hf-id="hf-j67c" id="el-03-the-hunt-voice" src="assets/voice/03.wav" data-start="16" data-duration="8" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-jyaf" id="el-04-the-snap" class="scene" data-composition-id="04-the-snap" data-composition-src="compositions/frames/04-the-snap.html" data-start="24" data-duration="8" data-track-index="1"></div>
+      <audio data-hf-id="hf-pqw2" id="el-04-the-snap-voice" src="assets/voice/04.wav" data-start="24" data-duration="8" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-wuu5" id="el-05-the-board" class="scene" data-composition-id="05-the-board" data-composition-src="compositions/frames/05-the-board.html" data-start="32" data-duration="10" data-track-index="0"></div>
+      <audio data-hf-id="hf-v9gy" id="el-05-the-board-voice" src="assets/voice/05.wav" data-start="32" data-duration="10" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-dw6h" id="el-06-one-fixture" class="scene" data-composition-id="06-one-fixture" data-composition-src="compositions/frames/06-one-fixture.html" data-start="42" data-duration="9.5" data-track-index="1"></div>
+      <audio data-hf-id="hf-daq5" id="el-06-one-fixture-voice" src="assets/voice/06.wav" data-start="42" data-duration="9" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-4aau" id="el-07-every-view-counts" class="scene" data-composition-id="07-every-view-counts" data-composition-src="compositions/frames/07-every-view-counts.html" data-start="51" data-duration="9" data-track-index="0"></div>
+      <audio data-hf-id="hf-mqoj" id="el-07-every-view-counts-voice" src="assets/voice/07.wav" data-start="51" data-duration="9" data-track-index="10" data-volume="1"></audio>
+
+      <!-- BGM -->
+      <audio data-hf-id="hf-50hm" id="el-bgm" src="assets/bgm/track.mp3" data-start="0" data-duration="60" data-track-index="11" data-volume="0.12"></audio>
+
+      <!-- SFX -->
+      <audio data-hf-id="hf-3r7s" id="el-sfx-0" src="assets/sfx/whistle-single.mp3" data-start="0" data-duration="1.285" data-track-index="20" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-pkr7" id="el-sfx-1" src="assets/sfx/room-tone-tail.mp3" data-start="0" data-duration="0.816" data-track-index="21" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-4u40" id="el-sfx-2" src="assets/sfx/crowd-swell.mp3" data-start="6" data-duration="2.615" data-track-index="22" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-ymsl" id="el-sfx-3" src="assets/sfx/card-whoosh-soft.mp3" data-start="6" data-duration="0.288" data-track-index="23" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-tj3i" id="el-sfx-4" src="assets/sfx/riser.mp3" data-start="6" data-duration="4.97" data-track-index="24" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-rmo2" id="el-sfx-5" src="assets/sfx/impact-soft-4.mp3" data-start="16" data-duration="2.758" data-track-index="25" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-4mxc" id="el-sfx-6" src="assets/sfx/tab-click-6.mp3" data-start="16" data-duration="0.768" data-track-index="26" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-44e0" id="el-sfx-7" src="assets/sfx/snap-impact.mp3" data-start="24" data-duration="1.104" data-track-index="27" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-m9mb" id="el-sfx-8" src="assets/sfx/row-tick-6.mp3" data-start="24" data-duration="0.768" data-track-index="28" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-o3zy" id="el-sfx-9" src="assets/sfx/page-travel-soft.mp3" data-start="32" data-duration="1.008" data-track-index="29" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-v4rj" id="el-sfx-10" src="assets/sfx/chip-tick-3.mp3" data-start="32" data-duration="4.627" data-track-index="30" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-ejlz" id="el-sfx-11" src="assets/sfx/cursor-click.mp3" data-start="42" data-duration="0.768" data-track-index="31" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-guyf" id="el-sfx-12" src="assets/sfx/row-arrive-5.mp3" data-start="42" data-duration="5.708" data-track-index="32" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-7bsx" id="el-sfx-13" src="assets/sfx/ground-invert-thud.mp3" data-start="51" data-duration="0.864" data-track-index="33" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-yk0l" id="el-sfx-14" src="assets/sfx/letter-tick-12.mp3" data-start="51" data-duration="2.521" data-track-index="34" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-06to" id="el-sfx-15" src="assets/sfx/tail-out.mp3" data-start="51" data-duration="1.689" data-track-index="35" data-volume="0.35"></audio>
     </div>
+
     <script>
-      const tl = gsap.timeline({ paused: true });
-      // Example: tl.fromTo("#title", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6 }, 0);
-      window.__timelines["main"] = tl;
-      tl.seek(0);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+      // ── frame transitions (injected by transitions.mjs) ──
+      (function () { var tl = window.__timelines["main"];
+        tl.to("#el-06-one-fixture", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 51);
+        tl.fromTo("#el-07-every-view-counts", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 51);
+        tl.to({}, { duration: 60 }, 0); // full-span anchor — main.duration() == composition total (Studio master duration)
+      })();
     </script>
   </body>
 </html>

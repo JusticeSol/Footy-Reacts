@@ -1,0 +1,215 @@
+<template>
+<style>
+@font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-6ced06489fd81a3f-s.woff2") format("woff2");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}
+@font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-aa5f74293546f6d0-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+@font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:block;src:url("assets/fonts/captured-62c97acc3aa63787-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+@font-face{font-family:"Work Sans";font-style:normal;font-weight:100 900;font-display:block;src:url("assets/fonts/captured-f0a6239bc4153746-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+@font-face{font-family:"Work Sans";font-style:normal;font-weight:100 900;font-display:block;src:url("assets/fonts/captured-c9e6921c7fc300d8-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+
+#root{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  container-type:size;
+  font-family:"Work Sans",system-ui,sans-serif;
+  color:#16130F;
+}
+
+/* full-bleed ground rides a clip layer, never #root */
+.flood-ground{position:absolute;inset:0;background:#F4F1EA}
+
+.flood-layer{position:absolute;inset:0}
+.flood-deep{z-index:1}
+.flood-fore{z-index:2}
+
+.flood-card{
+  position:absolute;
+  background:#FFFFFF;
+  border:.55cqw solid #16130F;
+  padding:1.6cqw 2cqw;
+  font-family:Anton,sans-serif;
+  font-size:3.5cqw;
+  letter-spacing:.2cqw;
+  text-transform:uppercase;
+  white-space:nowrap;
+  border-radius:0;
+  box-shadow:none;
+  will-change:transform,opacity;
+}
+
+/* the one red accent in the whole frame */
+.flood-red{background:#D5202A;color:#F4F1EA;border-color:#16130F}
+
+/* depth: blurred far field, held at ~30% */
+.flood-dim{font-size:2.6cqw;border-width:.4cqw;filter:blur(.35cqw)}
+</style>
+
+<div data-hf-id="hf-gog1" id="root" data-composition-id="02-the-flood" data-width="1080" data-height="1080">
+
+  <div data-hf-id="hf-ujd1" class="clip flood-ground" data-start="0" data-duration="10" data-track-index="0"></div>
+
+  <!-- FAR FIELD - blurred depth implying hundreds, never legible -->
+  <div data-hf-id="hf-la7z" class="clip flood-layer flood-deep" data-layout-allow-overlap="" data-start="0" data-duration="10" data-track-index="1">
+    <!-- group A: populates behind the flurry in Scene 4 -->
+    <div data-hf-id="hf-vphf" class="flood-card flood-dim" data-rot="-3" data-px="42" data-py="34" style="left:4%;top:9%">Talking Town</div>
+    <div data-hf-id="hf-20qv" class="flood-card flood-dim" data-rot="2" data-px="38" data-py="-40" style="left:11%;bottom:12%">Only Fools and SAFC</div>
+    <div data-hf-id="hf-f7mr" class="flood-card flood-dim" data-rot="2" data-px="12" data-py="46" style="left:30%;top:4%">The United Stand</div>
+    <div data-hf-id="hf-i2ai" class="flood-card flood-dim" data-rot="-3" data-px="-46" data-py="-6" style="right:2%;top:52%">Stretford Paddock</div>
+    <div data-hf-id="hf-28t2" class="flood-card flood-dim" data-rot="3" data-px="46" data-py="10" style="left:2%;top:40%">Back of The Nest</div>
+    <div data-hf-id="hf-evsw" class="flood-card flood-dim" data-rot="-2" data-px="8" data-py="-44" style="left:34%;bottom:9%">Toffee TV</div>
+    <div data-hf-id="hf-5j7p" class="flood-card flood-dim" data-rot="3" data-px="-22" data-py="44" style="right:20%;top:6%">Kombo’s Diary</div>
+    <div data-hf-id="hf-eeqv" class="flood-card flood-dim" data-rot="-3" data-px="-44" data-py="-30" style="right:1%;bottom:8%">AdikasTakes</div>
+    <!-- group B: thickens the field through Scene 5, into the cut -->
+    <div data-hf-id="hf-rf7h" class="flood-card flood-dim" data-rot="-2" data-px="30" data-py="30" style="left:20%;top:19%">Football Fans Tribe</div>
+    <div data-hf-id="hf-xetp" class="flood-card flood-dim" data-rot="3" data-px="-32" data-py="26" style="right:14%;top:27%">Talking Town</div>
+    <div data-hf-id="hf-mo2u" class="flood-card flood-dim" data-rot="1" data-px="26" data-py="-28" style="left:24%;bottom:24%">Back of The Nest</div>
+    <div data-hf-id="hf-kbe6" class="flood-card flood-dim" data-rot="-3" data-px="-30" data-py="-34" style="right:26%;bottom:10%">Toffee TV</div>
+    <div data-hf-id="hf-yb3t" class="flood-card flood-dim" data-rot="2" data-px="44" data-py="-14" style="left:1%;top:64%">Only Fools and SAFC</div>
+    <div data-hf-id="hf-uvtx" class="flood-card flood-dim" data-rot="-1" data-px="-44" data-py="-20" style="right:3%;bottom:36%">Stretford Paddock</div>
+  </div>
+
+  <!-- FOREGROUND - exactly seven legible cards, sketch positions kept -->
+  <div data-hf-id="hf-06dg" class="clip flood-layer flood-fore" data-layout-allow-overlap="" data-start="0" data-duration="10" data-track-index="2">
+    <div data-hf-id="hf-qqn1" id="flood-c-united" class="flood-card" data-layout-allow-overlap="" data-rot="-4" data-ex="-620" data-ey="30" data-px="80" data-py="56" style="left:6%;top:26%">The United Stand</div>
+    <div data-hf-id="hf-aifd" id="flood-c-stretford" class="flood-card" data-layout-allow-overlap="" data-rot="3" data-ex="640" data-ey="-20" data-px="-84" data-py="28" style="right:4%;top:36%">Stretford Paddock</div>
+    <div data-hf-id="hf-20u5" id="flood-c-kombo" class="flood-card flood-red" data-rot="-1.5" data-ex="-30" data-ey="560" data-px="65" data-py="-1" style="left:14%;top:46%">Kombo’s Diary</div>
+    <div data-hf-id="hf-niqq" id="flood-c-adikas" class="flood-card" data-layout-allow-overlap="" data-rot="2.5" data-ex="520" data-ey="300" data-px="-84" data-py="-50" style="right:9%;bottom:28%">AdikasTakes</div>
+    <div data-hf-id="hf-2ti8" id="flood-c-tribe" class="flood-card" data-layout-allow-overlap="" data-rot="1" data-ex="-470" data-ey="330" data-px="67" data-py="-90" style="left:8%;bottom:14%">Football Fans Tribe</div>
+    <div data-hf-id="hf-1cjz" id="flood-c-toffee" class="flood-card" data-layout-allow-overlap="" data-rot="2" data-ex="120" data-ey="-470" data-px="-100" data-py="88" style="right:5%;top:15%">Toffee TV</div>
+    <div data-hf-id="hf-zavu" id="flood-c-nest" class="flood-card" data-layout-allow-overlap="" data-rot="-2" data-ex="560" data-ey="60" data-px="-74" data-py="-79" style="right:8%;bottom:18%">Back of The Nest</div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+(function () {
+  var root = document.getElementById("root");
+  var tl = gsap.timeline({ paused: true });
+
+  var n = function (el, k) {
+    var v = parseFloat(el.dataset[k]);
+    return isNaN(v) ? 0 : v;
+  };
+
+  /* dynamic-content-sequencing: the flat TIMELINE is reduced ONCE, here at
+     build time, never inside an onUpdate. Accelerating cadence comes from a
+     geometric decay on the hold, clamped at a flurry floor - so the density
+     ramp speeds up on its own, with no speed-up tween anywhere. */
+  function sequence(items, start, holdStart, decay, floor) {
+    var cum = start;
+    return items.map(function (item, i) {
+      var hold = Math.max(floor, holdStart * Math.pow(decay, i));
+      var at = cum;
+      cum += hold;
+      return { el: item, at: at };
+    });
+  }
+
+  var PUSH_AT = 7.62;           // Scene 5 cue - "a hundred takes start"
+  var PUSH_DUR = 2.38;          // runs out exactly on the 10s cut...
+  var PUSH_EASE = "power2.in";  // ...at peak velocity, so nothing resolves
+
+  /* A foreground card: arrives at its approved sketch position, keeps creeping
+     inward while the others land, then is swept by the lockstep close-in.
+     Rotation is a GSAP prop, never a CSS transform (they would fight). */
+  function arrive(el, at, dur) {
+    var rot = n(el, "rot");
+    var px = n(el, "px");
+    var py = n(el, "py");
+
+    tl.fromTo(
+      el,
+      { x: n(el, "ex"), y: n(el, "ey"), rotation: rot * 2.4, scale: 0.88, opacity: 0 },
+      { x: 0, y: 0, rotation: rot, scale: 1, opacity: 1, duration: dur, ease: "power3.out" },
+      at
+    );
+
+    // density ramp - the ring keeps tightening between arrivals; nothing freezes
+    var creepAt = at + dur;
+    var creepDur = PUSH_AT - creepAt;
+    if (creepDur > 0.05) {
+      tl.to(
+        el,
+        { x: px * 0.3, y: py * 0.3, rotation: rot * 1.15, duration: creepDur, ease: "none" },
+        creepAt
+      );
+    }
+
+    /* center-outward-expansion, run INWARD, synced-chord variant: every card
+       shares one start, one duration and one ease, travelling its own baked
+       data-px/data-py vector toward centre - one beat, not a stagger. */
+    tl.to(
+      el,
+      { x: px, y: py, rotation: rot * 1.9, scale: 1.045, duration: PUSH_DUR, ease: PUSH_EASE },
+      PUSH_AT
+    );
+  }
+
+  // A far-field card: blurred depth held at ~30%, joining the same chord weaker.
+  function deepen(el, at) {
+    var rot = n(el, "rot");
+    var px = n(el, "px");
+    var py = n(el, "py");
+
+    tl.fromTo(
+      el,
+      { x: px * -0.55, y: py * -0.55, rotation: rot * 1.8, scale: 0.9, opacity: 0 },
+      { x: 0, y: 0, rotation: rot, scale: 1, opacity: 0.3, duration: 0.5, ease: "power3.out" },
+      at
+    );
+
+    // Group A lands before PUSH_AT and rides the chord exactly; the late
+    // thickeners start squeezing the moment they land, still ending on the cut.
+    var from = Math.max(PUSH_AT, at + 0.5);
+    tl.to(
+      el,
+      { x: px, y: py, rotation: rot * 1.5, scale: 1.05, duration: 10 - from, ease: PUSH_EASE },
+      from
+    );
+  }
+
+  var united = root.querySelector("#flood-c-united");
+  var stretford = root.querySelector("#flood-c-stretford");
+  var kombo = root.querySelector("#flood-c-kombo");
+  var adikas = root.querySelector("#flood-c-adikas");
+  var tribe = root.querySelector("#flood-c-tribe");
+  var toffee = root.querySelector("#flood-c-toffee");
+  var nest = root.querySelector("#flood-c-nest");
+
+  var deep = Array.prototype.slice.call(root.querySelectorAll(".flood-dim"));
+  var deepA = deep.slice(0, 8);
+  var deepB = deep.slice(8);
+
+  // Scene 1 (0.0-1.8s) - bare cream; one card in from the left edge.
+  arrive(united, 0.08, 0.65);
+
+  // Scene 2 (1.8-3.4s) - in from the right; the first card does not re-animate.
+  arrive(stretford, 1.85, 0.62);
+
+  // Scene 3 (3.4-5.0s) - the single red card, up from below.
+  arrive(kombo, 3.45, 0.62);
+
+  // Scene 4 (5.0-7.6s) - the remaining four accelerate inward from four
+  // different edges in quick succession; the far layer populates behind them.
+  sequence([adikas, tribe, toffee, nest], 5.05, 0.52, 0.8, 0.3).forEach(function (step) {
+    arrive(step.el, step.at, 0.55);
+  });
+
+  sequence(deepA, 5.22, 0.4, 0.82, 0.16).forEach(function (step) {
+    deepen(step.el, step.at);
+  });
+
+  // Scene 5 (7.6-10.0s) - the whole field closes in lockstep (fired at PUSH_AT
+  // above) while the far layer keeps thickening right into the cut.
+  sequence(deepB, 7.7, 0.34, 0.82, 0.14).forEach(function (step) {
+    deepen(step.el, step.at);
+  });
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines["02-the-flood"] = tl;
+  tl.seek(0);
+})();
+</script>
+</template>

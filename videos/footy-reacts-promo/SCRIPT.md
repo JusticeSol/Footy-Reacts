@@ -1,6 +1,6 @@
 # SCRIPT — footy-reacts-promo
 
-**Voice:** pending confirmation — recommending a British male voice (HeyGen); pipeline default is Marcia (female)
+**Voice:** Flynn — Firm & Measured (HeyGen starfish, `242c212d2bd54aceabbd97013c036557`), male
 **Voice direction:** Terrace-adjacent, not corporate. Dry and certain rather than hyped. Let the silences in frames 1 and 4 carry — do not fill them.
 
 ---
@@ -17,7 +17,7 @@
 **Time:** 6.0 – 16.0s
 **Delivery:** The three names clipped and even, like a team sheet. Then the turn.
 
-    The United Stand. Stretford Paddock. Fulhamish. Ninety minutes ends — and a hundred takes start.
+    The United Stand. Stretford Paddock. Kombo's Diary. Ninety minutes ends — and a hundred takes start.
 
 ## Line 3 — The hunt (Frame 3)
 

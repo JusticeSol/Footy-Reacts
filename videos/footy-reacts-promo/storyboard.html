@@ -22,6 +22,12 @@ h1 em{font-style:normal;color:var(--coral)}
 .tag{margin-top:16px;display:inline-block;font-family:"Space Mono",monospace;font-size:11px;font-weight:700;
  letter-spacing:3px;text-transform:uppercase;color:var(--black);background:var(--coral);padding:7px 12px}
 .meta{margin-top:14px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:2px;color:var(--gray);text-transform:uppercase}
+.changes,.open{margin-top:18px;font-family:"Space Mono",monospace;font-size:12px;line-height:1.85;
+ border-left:3px solid var(--coral);padding:10px 0 10px 14px;color:#CFCAC2;max-width:78ch}
+.changes b,.open b{color:var(--coral);letter-spacing:2px;text-transform:uppercase}
+.changes i{color:var(--light-gray)}
+.open{border-left-color:var(--gray)}
+.open b{color:var(--light-gray)}
 .grid{max-width:1560px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:38px 30px}
 figure{margin:0}
 .cell{aspect-ratio:1/1;container-type:inline-size;position:relative;overflow:hidden;background:var(--cream);color:var(--black)}
@@ -113,10 +119,21 @@ figure{margin:0}
 </head>
 <body>
 <header>
-  <h1>The whistle, <em>then the flood</em> <span style="color:var(--gray)">&middot; v1</span></h1>
+  <h1>The whistle, <em>then the flood</em> <span style="color:var(--gray)">&middot; v2</span></h1>
   <p class="dek">Sketch pass for the Footy Reacts 60-second promo. Layout, copy and brand treatment are locked here; motion arrives with the build. Hatched blocks stand in for captured screenshots the frame workers will place.</p>
   <div class="tag">1080&times;1080 &middot; 60s &middot; 7 beats</div>
   <div class="meta">PAS arc &middot; coral bones remixed onto captured brand &middot; Anton / Work Sans / Space Mono</div>
+  <div class="changes">
+    <b>Changes from v1</b><br>
+    01 &mdash; scoreline is now FUL 1&mdash;1 MUN<br>
+    02 &mdash; The Redmen TV &rarr; AdikasTakes; Fulhamish &rarr; Kombo&rsquo;s Diary<br>
+    04 &mdash; results now FUL 1&mdash;1 MUN, BOU 0&mdash;1 LIV, LEE 0&mdash;0 CRY, MCI 5&mdash;3 SUN, BHA 3&mdash;0 ARS, EVE 1&mdash;0 IPS<br>
+    06 &mdash; header scoreline is now FUL 1&mdash;1 MUN<br>
+    <i>consequence:</i> frame 02&rsquo;s voiceover named Fulhamish, which is no longer on screen &mdash; the spoken third name became Kombo&rsquo;s Diary in STORYBOARD.md and SCRIPT.md.
+  </div>
+  <div class="open">
+    <b>Still open</b> &mdash; frame 06 still lists Fulhamish among the five takes for FUL&mdash;MUN, because you replaced it in 02 only. Say the word if it should come out of 06 too.
+  </div>
 </header>
 
 <div class="grid">
@@ -125,7 +142,7 @@ figure{margin:0}
   <div class="cell c1" id="frame-01">
     <div class="wall">90</div>
     <div class="score">
-      <div class="teams"><span>FUL</span><span class="n">2</span><span>&mdash;</span><span class="n">1</span><span>MUN</span></div>
+      <div class="teams"><span>FUL</span><span class="n">1</span><span>&mdash;</span><span class="n">1</span><span>MUN</span></div>
       <div class="rule"></div>
       <div class="kick">16:30 &middot; FULL TIME</div>
     </div>
@@ -143,8 +160,8 @@ figure{margin:0}
     <div class="card far" style="right:8%;bottom:18%">BACK OF THE NEST</div>
     <div class="card" style="left:6%;top:26%;transform:rotate(-4deg)">THE UNITED STAND</div>
     <div class="card" style="right:4%;top:36%;transform:rotate(3deg)">STRETFORD PADDOCK</div>
-    <div class="card red" style="left:14%;top:46%;transform:rotate(-1.5deg)">FULHAMISH</div>
-    <div class="card" style="right:9%;bottom:28%;transform:rotate(2.5deg)">THE REDMEN TV</div>
+    <div class="card red" style="left:14%;top:46%;transform:rotate(-1.5deg)">KOMBO&rsquo;S DIARY</div>
+    <div class="card" style="right:9%;bottom:28%;transform:rotate(2.5deg)">ADIKASTAKES</div>
     <div class="card" style="left:8%;bottom:14%;transform:rotate(1deg)">FOOTBALL FANS TRIBE</div>
   </div>
   <div class="label"><span>02 &middot; THE FLOOD</span><span class="r">overwhelm-surround &middot; 6&ndash;16s</span></div>
@@ -170,12 +187,12 @@ figure{margin:0}
 
 <figure>
   <div class="cell c4" id="frame-04">
-    <div class="row first"><span>FUL</span><span class="sc">2 &mdash; 1</span><span class="away">MUN</span></div>
-    <div class="row"><span>BOU</span><span class="sc">0 &mdash; 2</span><span class="away">LIV</span></div>
-    <div class="row"><span>LEE</span><span class="sc">1 &mdash; 1</span><span class="away">CRY</span></div>
-    <div class="row"><span>MCI</span><span class="sc">3 &mdash; 0</span><span class="away">SUN</span></div>
-    <div class="row"><span>BHA</span><span class="sc">1 &mdash; 2</span><span class="away">ARS</span></div>
-    <div class="row"><span>EVE</span><span class="sc">2 &mdash; 2</span><span class="away">IPS</span></div>
+    <div class="row first"><span>FUL</span><span class="sc">1 &mdash; 1</span><span class="away">MUN</span></div>
+    <div class="row"><span>BOU</span><span class="sc">0 &mdash; 1</span><span class="away">LIV</span></div>
+    <div class="row"><span>LEE</span><span class="sc">0 &mdash; 0</span><span class="away">CRY</span></div>
+    <div class="row"><span>MCI</span><span class="sc">5 &mdash; 3</span><span class="away">SUN</span></div>
+    <div class="row"><span>BHA</span><span class="sc">3 &mdash; 0</span><span class="away">ARS</span></div>
+    <div class="row"><span>EVE</span><span class="sc">1 &mdash; 0</span><span class="away">IPS</span></div>
   </div>
   <div class="label"><span>04 &middot; THE SNAP</span><span class="r">grid-card-assemble &middot; 24&ndash;32s</span></div>
   <p class="note"><b>The same objects, suddenly ordered.</b> On one beat the scattered cards of 02 cascade top-to-bottom into these rows, staggered ~60ms apart, and hold. The red leftbar marks the fixture 06 will open.</p>
@@ -205,7 +222,7 @@ figure{margin:0}
 
 <figure>
   <div class="cell c6" id="frame-06">
-    <div class="fixhead"><span>FUL</span><span class="sc">2 &mdash; 1</span><span>MUN</span></div>
+    <div class="fixhead"><span>FUL</span><span class="sc">1 &mdash; 1</span><span>MUN</span></div>
     <div class="takes">
       <div class="take sel"><span class="thumb"></span><span class="nm">The United Stand</span></div>
       <div class="take"><span class="thumb"></span><span class="nm">Stephen Howson</span></div>

@@ -1,0 +1,220 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <style>
+    /* ---- brand fonts (local files, per frame.md) ---- */
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/captured-6ced06489fd81a3f-s.woff2") format("woff2");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/captured-aa5f74293546f6d0-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/captured-62c97acc3aa63787-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+    @font-face{font-family:Work Sans;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-10f65c94012f0d89-s.woff2") format("woff2");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}
+    @font-face{font-family:Work Sans;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-f0a6239bc4153746-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:Work Sans;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-c9e6921c7fc300d8-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+    @font-face{font-family:Space Mono;font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/captured-77fb5eec12c66d49-s.woff2") format("woff2");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}
+    @font-face{font-family:Space Mono;font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/captured-281dae1e814de8c6-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:Space Mono;font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/captured-806de4d605d3ad01-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+
+    /* ---- frame root: sized, and the container every cqw below resolves against ---- */
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Work Sans", sans-serif;
+      color: #16130F;
+    }
+
+    /* track 0 — full-bleed cream ground (on a clip layer, never on #root) */
+    .f01-ground {
+      position: absolute;
+      inset: 0;
+      background: #F4F1EA;
+    }
+
+    /* track 1 — wallpaper numeral, 10% ink, dead centre, behind everything */
+    .f01-wall-layer {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+    }
+    .f01-wall {
+      font-family: Anton, sans-serif;
+      font-weight: 400;
+      font-size: 52cqw;
+      line-height: .8;
+      color: rgba(22, 19, 15, .10);
+      user-select: none;
+    }
+
+    /* track 2 — the scoreline group at x 50% / y 47% */
+    .f01-stage {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding-bottom: 6cqw; /* lifts the group centre from 50% to 47% */
+    }
+    .f01-score {
+      position: relative;
+      text-align: center;
+    }
+    .f01-teams {
+      font-family: Anton, sans-serif;
+      font-weight: 400;
+      font-size: 15cqw;
+      line-height: 1;
+      letter-spacing: .5cqw;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3cqw;
+      white-space: nowrap;
+    }
+    .f01-n { color: #D5202A; }
+
+    /* the one move — coral accent rule, drawn outward from centre */
+    .f01-rule {
+      display: block;
+      width: 34cqw;
+      height: 1.4cqw;
+      margin: 2.65cqw auto 0;
+    }
+    .f01-rule path {
+      fill: none;
+      stroke: #D5202A;
+      stroke-width: 7;
+      stroke-linecap: butt; /* hard edge — zero radius, per frame.md */
+    }
+
+    /* the mono kicker beneath the rule */
+    .f01-kick {
+      margin-top: 2.25cqw;
+      min-width: 34cqw; /* >= widest state — stops edge jitter between states */
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+      font-size: 2.9cqw;
+      letter-spacing: .6cqw;
+      text-transform: uppercase;
+      color: #6B6B6B;
+      white-space: nowrap;
+      opacity: 0;
+    }
+  </style>
+
+  <div data-hf-id="hf-g5wz" id="root" data-composition-id="01-full-time" data-width="1080" data-height="1080">
+    <div data-hf-id="hf-kzgt" class="clip f01-ground" data-start="0" data-duration="6" data-track-index="0"></div>
+
+    <div data-hf-id="hf-n64l" class="clip f01-wall-layer" data-start="0" data-duration="6" data-track-index="1">
+      <div data-hf-id="hf-7vn9" class="f01-wall">90</div>
+    </div>
+
+    <div data-hf-id="hf-7edo" class="clip f01-stage" data-start="0" data-duration="6" data-track-index="2">
+      <div data-hf-id="hf-i9na" class="f01-score">
+        <div data-hf-id="hf-bks2" class="f01-teams" id="f01-teams"><span data-hf-id="hf-cydw">FUL</span><span data-hf-id="hf-bejk" class="f01-n">1</span><span data-hf-id="hf-53zj">—</span><span data-hf-id="hf-js60" class="f01-n">1</span><span data-hf-id="hf-lad3">MUN</span></div>
+        <svg data-hf-id="hf-rls7" class="f01-rule" viewBox="0 0 340 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path data-hf-id="hf-4f3o" id="f01-rule-l" d="M 170 7 L 0 7" />
+          <path data-hf-id="hf-mr4t" id="f01-rule-r" d="M 170 7 L 340 7" />
+        </svg>
+        <div data-hf-id="hf-xs5e" class="f01-kick" id="f01-kick"><span data-hf-id="hf-vs08" id="f01-kick-text"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var ROOT = document.querySelector('[data-composition-id="01-full-time"]');
+      var teamsEl = ROOT.querySelector('#f01-teams');
+      var kickEl = ROOT.querySelector('#f01-kick');
+      var kickTextEl = ROOT.querySelector('#f01-kick-text');
+      var rulePaths = ROOT.querySelectorAll('.f01-rule path');
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ------------------------------------------------------------------
+       * Scene 1 (0.0-1.4s) - nothing enters. The scoreline and the wallpaper
+       * "90" are already seated at t=0. The single restrained move of the
+       * entire frame: the coral rule draws OUTWARD FROM CENTRE beneath the
+       * scoreline (svg-path-draw - measured getTotalLength dasharray +
+       * dashoffset; both halves run together so the growth reads symmetric).
+       * ---------------------------------------------------------------- */
+      for (var i = 0; i < rulePaths.length; i++) {
+        var p = rulePaths[i];
+        var len = p.getTotalLength ? p.getTotalLength() : 170;
+        p.style.strokeDasharray = String(len);
+        p.style.strokeDashoffset = String(len);
+      }
+      tl.to(rulePaths, {
+        strokeDashoffset: 0,
+        duration: 0.85,
+        ease: 'power2.out' /* a pen lifting at the end of the stroke */
+      }, 0.35);
+
+      /* ------------------------------------------------------------------
+       * Scene 2 (1.4-2.6s) - on the spoken "Full time.", the mono kicker
+       * resolves under the rule (discrete-text-sequence: sparse {t,text}
+       * states reverse-searched every frame, instant jumps between them)
+       * while it fades up. The scoreline does not react.
+       * ---------------------------------------------------------------- */
+      var SEQUENCE = [
+        { t: 0.00, text: '' },
+        { t: 1.40, text: '16:30' },
+        { t: 1.58, text: '16:30 ·' },
+        { t: 1.80, text: '16:30 · FULL' },
+        { t: 2.06, text: '16:30 · FULL TIME' }
+      ];
+      function textAt(time) {
+        for (var k = SEQUENCE.length - 1; k >= 0; k--) {
+          if (time >= SEQUENCE[k].t) return SEQUENCE[k].text;
+        }
+        return '';
+      }
+      var driver = { t: 0 };
+      tl.to(driver, {
+        t: 6,
+        duration: 6,
+        ease: 'none',
+        onUpdate: function () { kickTextEl.textContent = textAt(driver.t); }
+      }, 0);
+
+      tl.fromTo(kickEl,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power1.out' },
+        1.40);
+
+      /* ------------------------------------------------------------------
+       * Scene 3 (2.6-6.0s) - the held read. No camera, no drift, no
+       * breathing: the over-long hold IS this frame's payload and is
+       * deliberately not filled. The only life is sine-wave-loop at the very
+       * bottom of its register (1.2px, ~3s period) on the scoreline, with
+       * the settle-and-fade envelope ramping amplitude to zero so the frame
+       * is exactly static at the cut - honouring handoff_out (scoreline
+       * group: x 50%, y 47%, scale 1.0, opacity 1.0, motion 0 px/s).
+       * ---------------------------------------------------------------- */
+      var IDLE_START = 2.70;
+      var IDLE_DUR = 3.30;
+      var CYCLES = 1.1;
+      var Y_AMP = 1.2;
+      var FADE_FRAC = 0.35;
+      var phase = { p: 0 };
+      tl.to(phase, {
+        p: Math.PI * 2 * CYCLES,
+        duration: IDLE_DUR,
+        ease: 'none', /* sine itself is the curve */
+        onUpdate: function () {
+          var t = phase.p / (Math.PI * 2 * CYCLES);
+          var env = t < 1 - FADE_FRAC ? 1 : Math.max(0, (1 - t) / FADE_FRAC);
+          teamsEl.style.transform =
+            'translateY(' + (Math.sin(phase.p) * Y_AMP * env).toFixed(3) + 'px)';
+        }
+      }, IDLE_START);
+
+      /* No exit tween - the root transition owns the cut out of this frame. */
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines['01-full-time'] = tl;
+      tl.seek(0);
+    })();
+  </script>
+</template>

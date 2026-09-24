@@ -1,0 +1,210 @@
+<template>
+  <style>
+    /* ---- brand fonts: local files only, never Google Fonts ---- */
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/captured-6ced06489fd81a3f-s.woff2") format("woff2");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/captured-aa5f74293546f6d0-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/captured-62c97acc3aa63787-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+    @font-face{font-family:Space Mono;font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/captured-77fb5eec12c66d49-s.woff2") format("woff2");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}
+    @font-face{font-family:Space Mono;font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/captured-281dae1e814de8c6-s.woff2") format("woff2");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}
+    @font-face{font-family:Space Mono;font-style:normal;font-weight:700;font-display:swap;src:url("assets/fonts/captured-806de4d605d3ad01-s.p.woff2") format("woff2");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}
+
+    /* ---- frame root: the container law (cqw resolves against this box) ---- */
+    #root {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      container-type: size;
+      color: #16130f;
+    }
+
+    /* full-duration stacked layers; the ground is a clip, never the root */
+    .f-04-the-snap-layer {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Scene ground - warm cream field, flat, hard-edged (frame.md three-surface system) */
+    .f-04-the-snap-ground {
+      background: #f4f1ea;
+    }
+
+    /* ---- the approved sketch layout: one full-width result strip ---- */
+    .f-04-the-snap-strip {
+      position: absolute;
+      left: 6cqw;
+      right: 6cqw;
+      top: 16.55cqw;          /* puts the first row's centre on y = 22% (handoff_out) */
+    }
+
+    .f-04-the-snap-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 2cqw;
+      height: 10.9cqw;
+      border-bottom: 0.35cqw solid rgba(22, 19, 15, 0.18);
+      font-family: Anton, sans-serif;
+      font-weight: 400;
+      font-size: 5.2cqw;
+      line-height: 1;
+      letter-spacing: 0.2cqw;
+      text-transform: uppercase;
+      will-change: transform, opacity, filter;
+    }
+
+    /* the FUL 1 - 1 MUN row is inset by the width of its coral leftbar + gutter */
+    .f-04-the-snap-row.f-04-the-snap-first {
+      padding-left: 2.9cqw;
+    }
+
+    .f-04-the-snap-sc {
+      font-family: Space Mono, monospace;
+      font-weight: 700;
+      font-size: 3.6cqw;
+      letter-spacing: 0;
+      color: #d5202a;
+      white-space: nowrap;
+    }
+
+    .f-04-the-snap-away {
+      text-align: right;
+    }
+
+    /* ---- the coral leftbar, drawn as a real stroke (svg-path-draw) ---- */
+    .f-04-the-snap-bar {
+      fill: none;
+      stroke: #d5202a;
+      stroke-width: 9.72;     /* 0.9cqw at 1080 - the sketch's coral rule */
+      stroke-linecap: butt;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <div data-hf-id="hf-xru9" id="root" data-composition-id="04-the-snap" data-duration="8" data-width="1080" data-height="1080">
+
+    <!-- full-bleed ground rides on a clip layer, never on #root -->
+    <div data-hf-id="hf-hbfq" class="clip f-04-the-snap-layer f-04-the-snap-ground" data-start="0" data-duration="8" data-track-index="0"></div>
+
+    <!-- the six results -->
+    <div data-hf-id="hf-n5oh" class="clip f-04-the-snap-layer" data-start="0" data-duration="8" data-track-index="1">
+      <div data-hf-id="hf-srcj" class="f-04-the-snap-strip">
+        <div data-hf-id="hf-toiu" class="f-04-the-snap-row f-04-the-snap-first"><span data-hf-id="hf-cydw">FUL</span><span data-hf-id="hf-e47c" class="f-04-the-snap-sc">1 — 1</span><span data-hf-id="hf-i0e4" class="f-04-the-snap-away">MUN</span></div>
+        <div data-hf-id="hf-gx2h" class="f-04-the-snap-row"><span data-hf-id="hf-8uvp">BOU</span><span data-hf-id="hf-i3cb" class="f-04-the-snap-sc">0 — 1</span><span data-hf-id="hf-lln3" class="f-04-the-snap-away">LIV</span></div>
+        <div data-hf-id="hf-0nrx" class="f-04-the-snap-row"><span data-hf-id="hf-ckkp">LEE</span><span data-hf-id="hf-ihnc" class="f-04-the-snap-sc">0 — 0</span><span data-hf-id="hf-dfwk" class="f-04-the-snap-away">CRY</span></div>
+        <div data-hf-id="hf-1up0" class="f-04-the-snap-row"><span data-hf-id="hf-kxus">MCI</span><span data-hf-id="hf-n2pm" class="f-04-the-snap-sc">5 — 3</span><span data-hf-id="hf-llbe" class="f-04-the-snap-away">SUN</span></div>
+        <div data-hf-id="hf-1gdz" class="f-04-the-snap-row"><span data-hf-id="hf-o9ie">BHA</span><span data-hf-id="hf-aflt" class="f-04-the-snap-sc">3 — 0</span><span data-hf-id="hf-4jzg" class="f-04-the-snap-away">ARS</span></div>
+        <div data-hf-id="hf-2nb2" class="f-04-the-snap-row"><span data-hf-id="hf-cwup">EVE</span><span data-hf-id="hf-dpwb" class="f-04-the-snap-sc">1 — 0</span><span data-hf-id="hf-58ua" class="f-04-the-snap-away">IPS</span></div>
+      </div>
+    </div>
+
+    <!-- the single accent: coral leftbar on the FUL 1 - 1 MUN row -->
+    <svg data-hf-id="hf-gn6o" class="clip f-04-the-snap-layer" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg" data-start="0" data-duration="8" data-track-index="2">
+      <path data-hf-id="hf-eqfs" id="f-04-the-snap-bar" class="f-04-the-snap-bar" d="M 69.66 178.74 L 69.66 296.46" />
+    </svg>
+  </div>
+
+  <script>
+    (function () {
+      var FRAME = "04-the-snap";
+      var root = document.querySelector('[data-composition-id="04-the-snap"]');
+      if (!root) return;
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ------------------------------------------------------------------
+         SCENE 1 (0.0-0.9s) - THE SNAP.
+         dynamic-content-sequencing: the row content array is reduced ONCE at
+         build time into a flat TIMELINE of absolute start/end times. No
+         hardcoded per-row offsets, nothing recomputed inside onUpdate.
+         ------------------------------------------------------------------ */
+      var SNAP_START = 0.0;
+      var ROW_GAP = 0.06;        /* ~60ms - the tight stagger the sketch calls for */
+      var BASE_DURATION = 0.42;
+      var SEC_PER_CHAR = 0.006;
+
+      var ROWS = [
+        { home: "FUL", score: "1 - 1", away: "MUN" },
+        { home: "BOU", score: "0 - 1", away: "LIV" },
+        { home: "LEE", score: "0 - 0", away: "CRY" },
+        { home: "MCI", score: "5 - 3", away: "SUN" },
+        { home: "BHA", score: "3 - 0", away: "ARS" },
+        { home: "EVE", score: "1 - 0", away: "IPS" }
+      ];
+
+      var cumulative = SNAP_START;
+      var TIMELINE = ROWS.map(function (entry) {
+        var chars = (entry.home + entry.score + entry.away).length;
+        var dur = BASE_DURATION + chars * SEC_PER_CHAR;
+        var start = cumulative;
+        cumulative += ROW_GAP;
+        return { start: start, end: start + dur, duration: dur };
+      });
+
+      /* Two depth layers: every row arrives on the FAR plane it wore in frame 02
+         (dim, blurred, undersized) and resolves onto the NEAR plane - the same
+         objects, suddenly legible. Short path straight into its own slot. */
+      var FAR = { y: -34, scale: 0.94, opacity: 0.3, filter: "blur(4px)" };
+
+      var rowEls = root.querySelectorAll(".f-04-the-snap-row");
+
+      TIMELINE.forEach(function (slot, i) {
+        var el = rowEls[i];
+        if (!el) return;
+        tl.fromTo(
+          el,
+          { y: FAR.y, scale: FAR.scale, opacity: FAR.opacity, filter: FAR.filter },
+          {
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: slot.duration,
+            ease: "power3.out"
+          },
+          slot.start
+        );
+      });
+
+      /* ------------------------------------------------------------------
+         SCENE 2 (0.9-2.6s) - svg-path-draw: the coral leftbar draws DOWN the
+         FUL 1 - 1 MUN row, marking the fixture frame 06 opens. Single accent.
+         The dash pattern comes from the measured path length, never a guess.
+         ------------------------------------------------------------------ */
+      var BAR_DRAW_START = 0.9;
+      var BAR_DRAW_DUR = 0.62;
+
+      var bar = root.querySelector("#f-04-the-snap-bar");
+      if (bar) {
+        var BAR_LEN = 117.72; /* geometric fallback if the path is not measurable yet */
+        try {
+          var measured = bar.getTotalLength();
+          if (measured > 0) BAR_LEN = measured;
+        } catch (e) {}
+
+        bar.style.strokeDasharray = String(BAR_LEN);
+        bar.style.strokeDashoffset = String(BAR_LEN);
+
+        tl.fromTo(
+          bar,
+          { strokeDashoffset: BAR_LEN },
+          { strokeDashoffset: 0, duration: BAR_DRAW_DUR, ease: "power2.out" },
+          BAR_DRAW_START
+        );
+      }
+
+      /* ------------------------------------------------------------------
+         SCENE 3 (2.6-8.0s) - HELD READ, FULLY STILL.
+         The long hold is the point: the audience needs time to register that
+         the noise became a list. No drift, no float, no push-in, no hover.
+         An empty tween carries the timeline to the full 8s and moves nothing.
+         ------------------------------------------------------------------ */
+      tl.to({}, { duration: 8 }, 0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FRAME] = tl;
+      tl.seek(0);
+    })();
+  </script>
+</template>
