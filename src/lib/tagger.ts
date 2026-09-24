@@ -420,7 +420,20 @@ export async function tagVideo(
   // best guess is weak enough that it would be withheld anyway.
   if (!clearWinner || best.score < 0.7) {
     const agent = await askClaude(video, candidates, teams);
-    if (agent) return agent;
+    if (agent) {
+      // The model may reject, or move a take to a different candidate — but it
+      // may never raise confidence. Letting its own number stand overrode every
+      // heuristic penalty and pushed club news bulletins, other competitions
+      // and international-break talk onto match pages: asked to choose between
+      // two or three plausible fixtures, it will usually choose one.
+      if (agent.fixtureId === null) return agent;
+
+      const chosen = candidates.find((c) => c.fixture.id === agent.fixtureId);
+      return {
+        ...agent,
+        confidence: Math.min(agent.confidence, chosen?.score ?? best.score),
+      };
+    }
   }
 
   return {
