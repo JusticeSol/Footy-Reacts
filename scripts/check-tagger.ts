@@ -107,6 +107,24 @@ async function main() {
       expectBelowFloor: true,
     },
     {
+      // Club channels post a daily bulletin that names the club and lands
+      // near a kickoff, but is about everything except the match.
+      name: "club news bulletin stays hidden",
+      title: "Carrick Can't WIN! Scary Manager CONFESSION! Man Utd News",
+      publishedAt: at("seed-2", 200),
+      clubs: ["fd-66"],
+      expectBelowFloor: true,
+    },
+    {
+      // The exception: team news before a game is real pre-match content.
+      name: "team news before kickoff still counts",
+      title: "Liverpool vs Man United TEAM NEWS | Confirmed Line Ups",
+      publishedAt: at("seed-2", -60),
+      clubs: ["fd-66"],
+      expectFixture: "seed-2",
+      expectPhase: "pre",
+    },
+    {
       name: "on-topic club, not about the match",
       title: "International Break Is A Good Thing For Chelsea!",
       publishedAt: at("seed-1", 400),

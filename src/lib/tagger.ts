@@ -254,6 +254,15 @@ export function prefilter(
       reasons.push("off-topic marker in title");
     }
 
+    // Club channels run a daily news bulletin — "Man Utd News", "Everton News
+    // Daily" — which names the club, lands near a kickoff and is about
+    // everything except the match. "Team news" is the exception: that is
+    // genuine pre-match content.
+    if (containsWord(title, "news") && !containsWord(title, "team news")) {
+      score -= 0.25;
+      reasons.push("news bulletin");
+    }
+
     // Affinity plus timing alone must never be enough to publish. Without a
     // club named anywhere, or wording that marks it as match content, all we
     // actually know is that this creator posted near a kickoff — which is true
