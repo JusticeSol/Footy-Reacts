@@ -445,6 +445,16 @@
       "avatarUrl": "https://yt3.ggpht.com/uz011w6F-JXHW4JS1JHieRAUuF-hByB3CA4pPPBxjQ7e8U9Bxsxbi1dmXVzZwkuICEokMwYUk6c=s800-c-k-c0x00ffffff-no-rj",
       "clubAffinity": [],
       "claimed": false
+    },
+    {
+      "id": "creator-matty-fc",
+      "name": "Matty FC",
+      "handle": "@mattyfcx",
+      "youtubeChannelId": "UCTMBH4ozEVcHMeURVenpILw",
+      "uploadsPlaylistId": "UUTMBH4ozEVcHMeURVenpILw",
+      "avatarUrl": "https://yt3.ggpht.com/9d_LA7F7vbkE_TjQEaQYsYBS0z_0HQxERi0J2V7LNc1F2pwHHUiQXxrWjZpwebRgCBOOn0V7Ww=s800-c-k-c0x00ffffff-no-rj",
+      "clubAffinity": [],
+      "claimed": false
     }
   ],
   "takes": []
