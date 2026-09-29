@@ -1,6 +1,6 @@
 # Status
 
-**Last updated:** 2026-09-28 · Live at <https://footy-reacts.vercel.app>
+**Last updated:** 2026-09-29 · Live at <https://footy-reacts.vercel.app>
 
 A snapshot for picking the project back up. Architecture is in
 [CLAUDE.md](../CLAUDE.md), product reasoning in [SPEC.md](SPEC.md), secrets in
@@ -10,9 +10,9 @@ A snapshot for picking the project back up. Architecture is in
 
 | | |
 | --- | --- |
-| Creators | 26, all with uploads playlists resolved |
+| Creators | 27, all with uploads playlists resolved |
 | Takes | 367 stored, ~240 above the confidence floor |
-| Fixtures | 59 (matchdays 1–5) |
+| Fixtures | 60 (matchdays 1–5) |
 | Club coverage | 19 of 20 — Brentford is the gap |
 | Ingestion | GitHub Actions, running clean on schedule |
 | Site | Live, holding matchday 5 through the international break |
@@ -52,8 +52,10 @@ site through a viral post reacts differently to one who heard from you first.
   paged back that far.
 - **West Ham is not in this season's fixtures.** It exists in the team table
   only because the placeholder seed invented it; `coverage` ignores it.
-- **Kombo's Diary** was added on request. It posts general football news, so it
-  contributes little and some of what it does contribute is not match reaction.
+- **Kombo's Diary, Matty FC and Adikastakes are general-football channels**,
+  added on request. They post news, shorts and entertainment rather than match
+  reaction, so they contribute little, and they do not improve club coverage —
+  `coverage` counts creators per club.
 
 ## Next, roughly in order
 
