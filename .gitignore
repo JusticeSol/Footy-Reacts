@@ -14,3 +14,9 @@ src/data/store.json
 !.claude/skills/add-creator/
 skills-lock.json
 outreach-messages.txt
+
+# Foundry: build output and vendored libraries (see contracts/README.md)
+contracts/lib/
+contracts/out/
+contracts/cache/
+contracts/broadcast/*/31337/
