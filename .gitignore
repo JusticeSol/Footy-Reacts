@@ -10,6 +10,7 @@ src/data/store.json
 
 # Vendored agent skills — installed tooling, not project source
 .agents/
-.claude/skills/
+.claude/skills/*
+!.claude/skills/add-creator/
 skills-lock.json
 outreach-messages.txt
