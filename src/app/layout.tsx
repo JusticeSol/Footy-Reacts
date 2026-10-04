@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Space_Mono, Work_Sans } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton" });
 const workSans = Work_Sans({ subsets: ["latin"], variable: "--font-work-sans" });
@@ -37,7 +38,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${anton.variable} ${workSans.variable} ${spaceMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

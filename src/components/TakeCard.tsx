@@ -5,6 +5,8 @@ import { useState } from "react";
 import type { HydratedTake } from "@/lib/types";
 import { runtime, timeAgo } from "@/lib/format";
 import { youtubeEmbedUrl, youtubeWatchUrl } from "@/lib/providers/youtube";
+import { tipsEnabled } from "@/lib/chain/config";
+import { DisabledSupport, TipButton } from "./TipButton";
 
 /**
  * A single creator's take.
@@ -89,14 +91,7 @@ export function TakeCard({ take }: { take: HydratedTake }) {
           <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
             {take.creator.handle}
           </span>
-          <button
-            type="button"
-            disabled
-            title="Creator payouts arrive in Phase 2"
-            className="cursor-not-allowed border border-rule px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-3"
-          >
-            Support →
-          </button>
+          {tipsEnabled ? <TipButton take={take} /> : <DisabledSupport />}
         </div>
       </div>
     </article>

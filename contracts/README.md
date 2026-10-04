@@ -32,4 +32,4 @@ VERIFIER_ADDRESS=0x... forge script script/Deploy.s.sol \
 ```
 
 Then put the printed address and block in the app's `.env.local`, as
-`TIPJAR_ADDRESS` and `TIPJAR_DEPLOY_BLOCK`.
+`NEXT_PUBLIC_TIPJAR_ADDRESS` and `TIPJAR_DEPLOY_BLOCK`.
