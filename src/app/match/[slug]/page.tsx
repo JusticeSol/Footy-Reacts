@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Masthead } from "@/components/Masthead";
 import { PhaseTabs } from "@/components/PhaseTabs";
 import { TakeList } from "@/components/TakeList";
+import { TipsLoader } from "@/components/tips/TipsLoader";
 import { getFixtureBySlug, getTakes } from "@/lib/store";
 import { dayHeading, kickoffTime } from "@/lib/format";
 import type { Phase } from "@/lib/types";
@@ -115,7 +116,9 @@ export default async function MatchPage({
             </p>
           </div>
         ) : (
-          <TakeList takes={takes} />
+          <TipsLoader>
+            <TakeList takes={takes} />
+          </TipsLoader>
         )}
       </div>
     </main>

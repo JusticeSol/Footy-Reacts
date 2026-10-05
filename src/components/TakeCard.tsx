@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { HydratedTake } from "@/lib/types";
 import { runtime, timeAgo } from "@/lib/format";
 import { youtubeEmbedUrl, youtubeWatchUrl } from "@/lib/providers/youtube";
-import { tipsEnabled } from "@/lib/chain/config";
+import { tipsEnabled } from "@/lib/chain/flags";
 import { DisabledSupport, TipButton } from "./TipButton";
 
 /**
