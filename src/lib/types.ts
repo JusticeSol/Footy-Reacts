@@ -55,6 +55,38 @@ export interface Creator {
   clubAffinity: string[];
   /** Creator has claimed the profile (Phase 2: unlocks payouts). */
   claimed: boolean;
+  /** Where TipJar pays this creator, once they have claimed. */
+  payoutAddress?: string;
+}
+
+/**
+ * One confirmed onchain tip — a Tipped event from TipJar.
+ *
+ * The chain is the record; this is a cache of it, written only after the event
+ * is confirmed and keyed by the event itself, so writing it twice is harmless
+ * and tips:reconcile can refill it from the chain at any time.
+ */
+export interface Tip {
+  /** `${txHash}:${logIndex}`. */
+  id: string;
+  takeId: string;
+  creatorId: string;
+  /** Tipper's address, lowercase. */
+  from: string;
+  /** USDC base units (6 decimals): 3_000_000 is $3. */
+  amountUnits: number;
+  /** True when TipJar held it for an unclaimed creator. */
+  held: boolean;
+  txHash: string;
+  blockNumber: number;
+  createdAt: string;
+}
+
+/** What a take card and the Most supported strip show. */
+export interface TipTotal {
+  totalUnits: number;
+  /** Distinct tippers. */
+  fans: number;
 }
 
 export interface Take {
@@ -83,6 +115,8 @@ export interface Database {
   fixtures: Fixture[];
   creators: Creator[];
   takes: Take[];
+  /** Absent in a store written before tips existed. */
+  tips?: Tip[];
 }
 
 /** A take joined to the creator and fixture it belongs to, for rendering. */

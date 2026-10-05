@@ -12,6 +12,7 @@
     "sync:takes": "tsx scripts/sync-takes.ts",
     "check:tagger": "tsx scripts/check-tagger.ts",
     "check:landing": "tsx scripts/check-landing.ts",
+    "check:tips": "tsx scripts/check-tips.ts",
     "db:seed": "tsx scripts/db-seed.ts",
     "db:status": "tsx scripts/db-status.ts",
     "debug:uploads": "tsx scripts/debug-uploads.ts",
@@ -23,7 +24,8 @@
     "probe": "tsx scripts/probe-channel.ts",
     "coverage": "tsx scripts/coverage.ts",
     "creator:list": "tsx scripts/creator-list.ts",
-    "verify:attribution": "tsx scripts/verify-attribution.ts"
+    "verify:attribution": "tsx scripts/verify-attribution.ts",
+    "tips:reconcile": "tsx scripts/tips-reconcile.ts"
   },
   "dependencies": {
     "@privy-io/node": "^0.35.0",

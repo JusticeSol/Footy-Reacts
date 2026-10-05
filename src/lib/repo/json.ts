@@ -9,6 +9,7 @@ import type {
   Phase,
   Take,
   Team,
+  Tip,
 } from "../types";
 import type { Repo } from "./types";
 import {
@@ -20,6 +21,7 @@ import {
   indexTeams,
   interleaveByCreator,
   isVisible,
+  keepClaim,
   summariseMatchdays,
 } from "./shared";
 
@@ -82,6 +84,16 @@ async function mutate(fn: (db: Database) => void): Promise<void> {
   const db = structuredClone(await read());
   fn(db);
   await write(db);
+}
+
+/**
+ * Postgres cascades tip rows away with their take; a flat file has no cascade,
+ * so every delete that can remove takes calls this to match.
+ */
+function pruneTips(db: Database): void {
+  if (!db.tips) return;
+  const live = new Set(db.takes.map((t) => t.id));
+  db.tips = db.tips.filter((tip) => live.has(tip.takeId));
 }
 
 function visibleTakes(db: Database): Take[] {
@@ -226,7 +238,7 @@ export const jsonRepo: Repo = {
           continue;
         }
         const prior = db.creators[i];
-        const merged = { ...prior, ...creator };
+        const merged = { ...prior, ...creator, ...keepClaim(creator, prior) };
         // A corrected channel id invalidates the playlist cached from the old
         // one; keeping it would poll the wrong (or a dead) playlist forever.
         if (
@@ -265,6 +277,7 @@ export const jsonRepo: Repo = {
     const doomed = new Set(ids);
     await mutate((db) => {
       db.takes = db.takes.filter((t) => !doomed.has(t.id));
+      pruneTips(db);
     });
   },
 
@@ -274,6 +287,7 @@ export const jsonRepo: Repo = {
     await mutate((db) => {
       db.creators = db.creators.filter((c) => !doomed.has(c.id));
       db.takes = db.takes.filter((t) => !doomed.has(t.creatorId));
+      pruneTips(db);
     });
   },
 
@@ -284,6 +298,41 @@ export const jsonRepo: Repo = {
       db.fixtures = db.fixtures.filter((f) => !doomed.has(f.id));
       // No cascade in a flat file, so takes are removed explicitly.
       db.takes = db.takes.filter((t) => !doomed.has(t.fixtureId));
+      pruneTips(db);
+    });
+  },
+
+  async recordTips(tips) {
+    let added = 0;
+    if (tips.length === 0) return added;
+    await mutate((db) => {
+      const held = new Set((db.tips ?? []).map((t) => t.id));
+      db.tips ??= [];
+      for (const tip of tips) {
+        if (held.has(tip.id)) continue;
+        db.tips.push(tip);
+        held.add(tip.id);
+        added += 1;
+      }
+    });
+    return added;
+  },
+
+  async getTipsForTakes(takeIds) {
+    const wanted = new Set(takeIds);
+    return ((await read()).tips ?? []).filter((tip) => wanted.has(tip.takeId));
+  },
+
+  async listTipIds() {
+    return new Set(((await read()).tips ?? []).map((tip) => tip.id));
+  },
+
+  async setCreatorPayout(creatorId, payoutAddress) {
+    await mutate((db) => {
+      const creator = db.creators.find((c) => c.id === creatorId);
+      if (!creator) return;
+      creator.claimed = true;
+      creator.payoutAddress = payoutAddress;
     });
   },
 };

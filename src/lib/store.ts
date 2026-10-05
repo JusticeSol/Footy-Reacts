@@ -1,7 +1,8 @@
 import { getRepo } from "./repo";
-import { currentMatchday } from "./repo/shared";
+import { currentMatchday, mostSupported, totalTips } from "./repo/shared";
+import { tipsEnabled } from "./chain/flags";
 import type { MatchdaySummary } from "./repo/types";
-import type { HydratedFixture, HydratedTake, Phase } from "./types";
+import type { HydratedFixture, HydratedTake, Phase, TipTotal } from "./types";
 
 /**
  * Thin facade over the active repo, so pages import one stable module and stay
@@ -61,4 +62,26 @@ export function getRecentTakes(
   limit = 12,
 ): Promise<Array<{ take: HydratedTake; fixture: HydratedFixture }>> {
   return getRepo().getRecentTakes(limit);
+}
+
+/**
+ * Tip totals for the takes on a page, plus the Most supported strip.
+ *
+ * Tips are an add-on to the page, never a reason for it to fail: with tips off
+ * this reads nothing, and a store that cannot answer (a database the tip table
+ * has not been added to, say) degrades to no totals rather than an error page.
+ */
+export async function getTipSummary(takes: HydratedTake[]): Promise<{
+  totals: Record<string, TipTotal>;
+  top: Array<{ take: HydratedTake; total: TipTotal }>;
+}> {
+  if (!tipsEnabled || takes.length === 0) return { totals: {}, top: [] };
+  try {
+    const tips = await getRepo().getTipsForTakes(takes.map((t) => t.id));
+    const totals = totalTips(tips);
+    return { totals: Object.fromEntries(totals), top: mostSupported(takes, totals) };
+  } catch (err) {
+    console.error(`[tips] totals unavailable: ${(err as Error).message}`);
+    return { totals: {}, top: [] };
+  }
 }

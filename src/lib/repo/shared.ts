@@ -1,4 +1,4 @@
-import type { Fixture, HydratedFixture, Take, Team } from "../types";
+import type { Fixture, HydratedFixture, HydratedTake, Take, Team, Tip, TipTotal } from "../types";
 
 /** Takes below this confidence are stored but withheld from the UI. */
 export const TAG_MIN_CONFIDENCE = 0.55;
@@ -222,4 +222,65 @@ export const BOARD_FLOOR_DAYS = 4;
 export function boardWindow(days: number): { floor: number; horizon: number } {
   const now = Date.now();
   return { floor: now - BOARD_FLOOR_DAYS * 86_400_000, horizon: now + days * 86_400_000 };
+}
+
+// --- tips --------------------------------------------------------------------
+
+/** Per-take totals: dollars tipped and distinct fans. */
+export function totalTips(tips: Array<Pick<Tip, "takeId" | "from" | "amountUnits">>): Map<string, TipTotal> {
+  const units = new Map<string, number>();
+  const fans = new Map<string, Set<string>>();
+  for (const tip of tips) {
+    units.set(tip.takeId, (units.get(tip.takeId) ?? 0) + tip.amountUnits);
+    const set = fans.get(tip.takeId) ?? new Set<string>();
+    set.add(tip.from.toLowerCase());
+    fans.set(tip.takeId, set);
+  }
+  return new Map([...units].map(([takeId, totalUnits]) => [takeId, { totalUnits, fans: fans.get(takeId)!.size }]));
+}
+
+/**
+ * The Most supported strip: the best-backed takes on a page, at most one per
+ * creator. It sits beside the round-robin list rather than re-sorting it, so a
+ * well-tipped channel gets a spotlight without owning the match page.
+ */
+export function mostSupported(
+  takes: HydratedTake[],
+  totals: Map<string, TipTotal>,
+  limit = 3,
+): Array<{ take: HydratedTake; total: TipTotal }> {
+  const ranked = takes
+    .map((take) => ({ take, total: totals.get(take.id) }))
+    .filter((x): x is { take: HydratedTake; total: TipTotal } => x.total !== undefined && x.total.totalUnits > 0)
+    .sort(
+      (a, b) =>
+        b.total.totalUnits - a.total.totalUnits ||
+        b.total.fans - a.total.fans ||
+        Date.parse(b.take.publishedAt) - Date.parse(a.take.publishedAt),
+    );
+
+  const seen = new Set<string>();
+  const picked: Array<{ take: HydratedTake; total: TipTotal }> = [];
+  for (const entry of ranked) {
+    if (seen.has(entry.take.creatorId)) continue;
+    seen.add(entry.take.creatorId);
+    picked.push(entry);
+    if (picked.length === limit) break;
+  }
+  return picked;
+}
+
+/**
+ * A claim survives any later creator upsert. TipJar's payout address is
+ * permanent onchain, and creator:add writes `claimed: false` with no address —
+ * re-running it must not make our records disagree with the contract.
+ */
+export function keepClaim(
+  next: { claimed: boolean; payoutAddress?: string },
+  prior: { claimed: boolean; payoutAddress?: string } | undefined,
+): { claimed: boolean; payoutAddress?: string } {
+  return {
+    claimed: next.claimed || Boolean(prior?.claimed),
+    payoutAddress: next.payoutAddress ?? prior?.payoutAddress,
+  };
 }

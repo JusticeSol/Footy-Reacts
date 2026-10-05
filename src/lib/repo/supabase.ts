@@ -10,6 +10,7 @@ import type {
   TaggedBy,
   TakeSource,
   Team,
+  Tip,
 } from "../types";
 import type { Repo } from "./types";
 import {
@@ -20,6 +21,7 @@ import {
   hydrateFixture,
   indexTeams,
   interleaveByCreator,
+  keepClaim,
   summariseMatchdays,
   TAG_MIN_CONFIDENCE,
 } from "./shared";
@@ -81,6 +83,7 @@ interface CreatorRow {
   avatar_url: string | null;
   club_affinity: string[] | null;
   claimed: boolean;
+  payout_address: string | null;
 }
 
 interface TakeRow {
@@ -99,6 +102,42 @@ interface TakeRow {
   tagged_by: TaggedBy;
   unmatched: boolean;
 }
+
+interface TipRow {
+  id: string;
+  take_id: string;
+  creator_id: string;
+  from_address: string;
+  amount_units: number;
+  held: boolean;
+  tx_hash: string;
+  block_number: number;
+  created_at: string;
+}
+
+const toTip = (r: TipRow): Tip => ({
+  id: r.id,
+  takeId: r.take_id,
+  creatorId: r.creator_id,
+  from: r.from_address,
+  amountUnits: Number(r.amount_units),
+  held: r.held,
+  txHash: r.tx_hash,
+  blockNumber: Number(r.block_number),
+  createdAt: new Date(r.created_at).toISOString(),
+});
+
+const fromTip = (t: Tip) => ({
+  id: t.id,
+  take_id: t.takeId,
+  creator_id: t.creatorId,
+  from_address: t.from.toLowerCase(),
+  amount_units: t.amountUnits,
+  held: t.held,
+  tx_hash: t.txHash,
+  block_number: t.blockNumber,
+  created_at: t.createdAt,
+});
 
 const toTeam = (r: TeamRow): Team => ({
   id: r.id,
@@ -133,6 +172,7 @@ const toCreator = (r: CreatorRow): Creator => ({
   avatarUrl: r.avatar_url ?? undefined,
   clubAffinity: r.club_affinity ?? [],
   claimed: r.claimed,
+  payoutAddress: r.payout_address ?? undefined,
 });
 
 const toTake = (r: TakeRow): Take => ({
@@ -183,6 +223,7 @@ const fromCreator = (c: Creator) => ({
   avatar_url: c.avatarUrl ?? null,
   club_affinity: c.clubAffinity,
   claimed: c.claimed,
+  payout_address: c.payoutAddress ?? null,
 });
 
 const fromTake = (t: Take) => ({
@@ -452,7 +493,7 @@ export const supabaseRepo: Repo = {
     // what the JSON repo does — the two must not diverge in behaviour.
     const existingRes = await db()
       .from("creator")
-      .select("id,youtube_channel_id,uploads_playlist_id")
+      .select("id,youtube_channel_id,uploads_playlist_id,claimed,payout_address")
       .in(
         "id",
         creators.map((c) => c.id),
@@ -465,6 +506,8 @@ export const supabaseRepo: Repo = {
           id: string;
           youtube_channel_id: string | null;
           uploads_playlist_id: string | null;
+          claimed: boolean;
+          payout_address: string | null;
         }>
       ).map((r) => [r.id, r]),
     );
@@ -478,8 +521,15 @@ export const supabaseRepo: Repo = {
         prior?.youtube_channel_id != null &&
         c.youtubeChannelId !== prior.youtube_channel_id;
 
+      const claim = keepClaim(
+        c,
+        prior && { claimed: prior.claimed, payoutAddress: prior.payout_address ?? undefined },
+      );
+
       return {
         ...fromCreator(c),
+        claimed: claim.claimed,
+        payout_address: claim.payoutAddress ?? null,
         youtube_channel_id: c.youtubeChannelId ?? prior?.youtube_channel_id ?? null,
         uploads_playlist_id: channelChanged
           ? null
@@ -540,5 +590,38 @@ export const supabaseRepo: Repo = {
     // take.fixture_id is ON DELETE CASCADE, so attached takes go with them.
     const res = await db().from("fixture").delete().in("id", ids);
     fail("delete fixtures", res.error);
+  },
+
+  async recordTips(tips) {
+    if (tips.length === 0) return 0;
+    // ignoreDuplicates: a tip already stored is left exactly as it was, which
+    // is what makes recording at relay time and reconciling later both safe.
+    const res = await db()
+      .from("tip")
+      .upsert(tips.map(fromTip), { onConflict: "id", ignoreDuplicates: true })
+      .select("id");
+    fail("record tips", res.error);
+    return (res.data ?? []).length;
+  },
+
+  async getTipsForTakes(takeIds) {
+    if (takeIds.length === 0) return [];
+    const res = await db().from("tip").select("*").in("take_id", takeIds);
+    fail("tips for takes", res.error);
+    return (res.data as TipRow[]).map(toTip);
+  },
+
+  async listTipIds() {
+    const res = await db().from("tip").select("id");
+    fail("list tip ids", res.error);
+    return new Set((res.data as Array<{ id: string }>).map((r) => r.id));
+  },
+
+  async setCreatorPayout(creatorId, payoutAddress) {
+    const res = await db()
+      .from("creator")
+      .update({ claimed: true, payout_address: payoutAddress })
+      .eq("id", creatorId);
+    fail("set creator payout", res.error);
   },
 };

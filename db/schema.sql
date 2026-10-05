@@ -97,6 +97,25 @@ create index if not exists take_fixture_phase_idx
 -- The vidiprinter: newest published takes across all fixtures.
 create index if not exists take_published_idx on take (published_at desc);
 
+-- One confirmed onchain tip: a Tipped event from the TipJar contract. The chain
+-- is the record and this is a cache of it — written only once the event is
+-- confirmed, keyed by the event (tx hash + log index) so writing it twice is a
+-- no-op, and refillable from the chain with `npm run tips:reconcile`.
+create table if not exists tip (
+  id            text primary key,              -- '<tx_hash>:<log_index>'
+  take_id       text not null references take (id) on delete cascade,
+  creator_id    text not null references creator (id) on delete cascade,
+  from_address  text not null,                 -- lowercase
+  amount_units  bigint not null check (amount_units > 0),  -- USDC, 6 decimals
+  held          boolean not null,              -- held for an unclaimed creator
+  tx_hash       text not null,
+  block_number  bigint not null,
+  created_at    timestamptz not null default now()
+);
+
+-- A match page asks for the tips on its takes.
+create index if not exists tip_take_idx on tip (take_id);
+
 -- --- Row level security ------------------------------------------------------
 --
 -- RLS is enabled with NO policies, which denies every anon and authenticated
@@ -112,3 +131,4 @@ alter table team        enable row level security;
 alter table fixture     enable row level security;
 alter table creator     enable row level security;
 alter table take        enable row level security;
+alter table tip         enable row level security;

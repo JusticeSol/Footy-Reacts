@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TakeCard } from "./TakeCard";
-import type { HydratedTake } from "@/lib/types";
+import type { HydratedTake, TipTotal } from "@/lib/types";
 
 /**
  * The takes on a match page, cut so the first screen is every creator once.
@@ -31,18 +31,40 @@ function firstRoundLength(takes: HydratedTake[]): number {
   return takes.length;
 }
 
-export function TakeList({ takes }: { takes: HydratedTake[] }) {
+export function TakeList({
+  takes,
+  tipTotals = {},
+}: {
+  takes: HydratedTake[];
+  tipTotals?: Record<string, TipTotal>;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   const visible = Math.min(Math.max(firstRoundLength(takes), MIN_VISIBLE), MAX_VISIBLE);
   const surplus = takes.length - visible;
+
+  // The Most supported strip links to #take-<id>; a take past the cut is
+  // hidden, so reveal the rest when a link points at one of them.
+  useEffect(() => {
+    const reveal = () => {
+      const id = window.location.hash.replace(/^#take-/, "");
+      const index = takes.findIndex((t) => t.id === id);
+      if (index >= visible) {
+        setExpanded(true);
+        requestAnimationFrame(() => document.getElementById(`take-${id}`)?.scrollIntoView());
+      }
+    };
+    reveal();
+    window.addEventListener("hashchange", reveal);
+    return () => window.removeEventListener("hashchange", reveal);
+  }, [takes, visible]);
 
   return (
     <>
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-2 sm:px-5 sm:py-8">
         {takes.map((take, i) => (
           <div key={take.id} className={!expanded && i >= visible ? "hidden" : undefined}>
-            <TakeCard take={take} />
+            <TakeCard take={take} tips={tipTotals[take.id]} />
           </div>
         ))}
       </div>

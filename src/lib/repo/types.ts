@@ -6,6 +6,7 @@ import type {
   Phase,
   Take,
   Team,
+  Tip,
 } from "../types";
 
 /**
@@ -63,4 +64,17 @@ export interface Repo {
   deleteTakes(ids: string[]): Promise<void>;
   /** Removes creators and, by cascade, their takes. Honours an opt-out request. */
   deleteCreators(ids: string[]): Promise<void>;
+
+  // --- tips ---
+  /**
+   * Stores confirmed tips. Keyed by tx hash and log index, so re-recording a
+   * tip already held is a no-op. Returns how many were new.
+   */
+  recordTips(tips: Tip[]): Promise<number>;
+  /** Tips on these takes — what a match page needs for its totals. */
+  getTipsForTakes(takeIds: string[]): Promise<Tip[]>;
+  /** Ids of every stored tip, for reconciling against the chain. */
+  listTipIds(): Promise<Set<string>>;
+  /** Records a creator's claim: claimed, and where TipJar now pays them. */
+  setCreatorPayout(creatorId: string, payoutAddress: string): Promise<void>;
 }

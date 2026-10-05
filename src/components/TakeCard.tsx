@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import type { HydratedTake } from "@/lib/types";
-import { runtime, timeAgo } from "@/lib/format";
+import type { HydratedTake, TipTotal } from "@/lib/types";
+import { formatDollars, runtime, timeAgo } from "@/lib/format";
 import { youtubeEmbedUrl, youtubeWatchUrl } from "@/lib/providers/youtube";
 import { tipsEnabled } from "@/lib/chain/flags";
 import { DisabledSupport, TipButton } from "./TipButton";
@@ -19,12 +19,16 @@ import { DisabledSupport, TipButton } from "./TipButton";
  * are adding views, not taking them. SUPPORT is the seat already reserved for
  * the stablecoin payment rail.
  */
-export function TakeCard({ take }: { take: HydratedTake }) {
+export function TakeCard({ take, tips }: { take: HydratedTake; tips?: TipTotal }) {
   const [playing, setPlaying] = useState(false);
+  // Tips sent from this card since the page loaded, added to the server total
+  // so a fan sees their own tip land without a reload.
+  const [addedUnits, setAddedUnits] = useState(0);
+  const tippedUnits = (tips?.totalUnits ?? 0) + addedUnits;
   const length = runtime(take.durationSec);
 
   return (
-    <article className="border border-rule bg-paper">
+    <article id={`take-${take.id}`} className="scroll-mt-4 border border-rule bg-paper">
       <div className="relative aspect-video w-full bg-ink">
         {playing ? (
           <iframe
@@ -90,8 +94,15 @@ export function TakeCard({ take }: { take: HydratedTake }) {
         <div className="mt-3 flex items-center justify-between">
           <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
             {take.creator.handle}
+            {tippedUnits > 0 && (
+              <span className="ml-2 font-bold text-ink-2">· {formatDollars(tippedUnits)} tipped</span>
+            )}
           </span>
-          {tipsEnabled ? <TipButton take={take} /> : <DisabledSupport />}
+          {tipsEnabled ? (
+            <TipButton take={take} onTipped={(amount) => setAddedUnits((u) => u + amount * 1_000_000)} />
+          ) : (
+            <DisabledSupport />
+          )}
         </div>
       </div>
     </article>

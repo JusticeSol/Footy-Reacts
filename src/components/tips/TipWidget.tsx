@@ -43,7 +43,14 @@ function randomSalt(): Hex {
   return toHex(crypto.getRandomValues(new Uint8Array(32)));
 }
 
-export default function TipWidget({ take }: { take: HydratedTake }) {
+export default function TipWidget({
+  take,
+  onTipped,
+}: {
+  take: HydratedTake;
+  /** Called with the dollar amount once a tip is confirmed onchain. */
+  onTipped?: (amount: number) => void;
+}) {
   const { ready, authenticated, login, getAccessToken } = usePrivy();
   const { wallets } = useWallets();
   const { signTypedData } = useSignTypedData();
@@ -120,6 +127,7 @@ export default function TipWidget({ take }: { take: HydratedTake }) {
         });
         if (!ok) throw new Error(String(json.error ?? "the tip did not go through"));
 
+        onTipped?.(amount);
         setState({
           kind: "sent",
           amount,
@@ -130,7 +138,7 @@ export default function TipWidget({ take }: { take: HydratedTake }) {
         setState({ kind: "error", message: (err as Error).message });
       }
     },
-    [wallet, channelId, take.id, take.externalId, signTypedData, authedPost],
+    [wallet, channelId, take.id, take.externalId, signTypedData, authedPost, onTipped],
   );
 
   useEffect(() => {

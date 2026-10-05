@@ -15,9 +15,15 @@ const TipWidget = dynamic(() => import("./tips/TipWidget"), {
   loading: () => <Placeholder />,
 });
 
-export function TipButton({ take }: { take: HydratedTake }) {
+export function TipButton({
+  take,
+  onTipped,
+}: {
+  take: HydratedTake;
+  onTipped?: (amount: number) => void;
+}) {
   const ready = useContext(TipsReady);
-  return ready ? <TipWidget take={take} /> : <Placeholder />;
+  return ready ? <TipWidget take={take} onTipped={onTipped} /> : <Placeholder />;
 }
 
 const pill = "border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider";

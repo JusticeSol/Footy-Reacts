@@ -100,6 +100,28 @@ export async function POST(request: Request) {
       signature: signature as Hex,
     });
 
+    // The tip already happened onchain; failing to cache it must not tell the
+    // fan otherwise. tips:reconcile refills anything missed from the chain.
+    try {
+      await repo.recordTips([
+        {
+          id: `${relayed.txHash}:${relayed.logIndex}`,
+          takeId: take.id,
+          creatorId: creator.id,
+          from: from.toLowerCase(),
+          amountUnits: Number(toUnits(amount as number)),
+          held: relayed.held,
+          txHash: relayed.txHash,
+          blockNumber: Number(relayed.blockNumber),
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+    } catch (err) {
+      console.error(
+        `[tips] confirmed but not recorded — run tips:reconcile -- --tx ${relayed.txHash}: ${(err as Error).message}`,
+      );
+    }
+
     return NextResponse.json({
       ok: true,
       txHash: relayed.txHash,

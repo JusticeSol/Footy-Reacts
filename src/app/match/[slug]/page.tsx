@@ -3,9 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Masthead } from "@/components/Masthead";
 import { PhaseTabs } from "@/components/PhaseTabs";
+import { MostSupported } from "@/components/MostSupported";
 import { TakeList } from "@/components/TakeList";
 import { TipsLoader } from "@/components/tips/TipsLoader";
-import { getFixtureBySlug, getTakes } from "@/lib/store";
+import { getFixtureBySlug, getTakes, getTipSummary } from "@/lib/store";
 import { dayHeading, kickoffTime } from "@/lib/format";
 import type { Phase } from "@/lib/types";
 
@@ -57,6 +58,7 @@ export default async function MatchPage({
     phaseParam === "pre" || phaseParam === "post" ? phaseParam : played ? "post" : "pre";
 
   const takes = await getTakes(fixture.id, phase);
+  const tips = await getTipSummary(takes);
 
   return (
     <main className="min-h-screen">
@@ -116,9 +118,12 @@ export default async function MatchPage({
             </p>
           </div>
         ) : (
-          <TipsLoader>
-            <TakeList takes={takes} />
-          </TipsLoader>
+          <>
+            <MostSupported top={tips.top} />
+            <TipsLoader>
+              <TakeList takes={takes} tipTotals={tips.totals} />
+            </TipsLoader>
+          </>
         )}
       </div>
     </main>
