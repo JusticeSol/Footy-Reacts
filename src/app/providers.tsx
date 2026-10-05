@@ -1,35 +1,36 @@
 "use client";
 
-import { PrivyProvider } from "@privy-io/react-auth";
-import { PRIVY_APP_ID, tipsChain, tipsEnabled } from "@/lib/chain/config";
+import { useEffect, useState, type ComponentType, type ReactNode } from "react";
+import { tipsEnabled } from "@/lib/chain/config";
 
 /**
- * Sign-in for tipping. Fans log in with email or Google and Privy creates an
- * embedded wallet behind it — the word "wallet" never has to reach them.
+ * Loads Privy after the page has rendered, not as part of it.
  *
- * With tips switched off this renders nothing extra, so the public site does
- * not load Privy at all.
+ * Privy's SDK is large: imported statically it put ~500 kB on every match page
+ * and made a cold dev server take minutes to show anything. Instead the page
+ * renders and hydrates without it, and PrivyRoot is fetched in the background.
+ * Mounting it re-renders the tree once, shortly after load, before anyone has
+ * had time to interact with it.
+ *
+ * With tips switched off nothing is fetched at all.
  */
-export function Providers({ children }: { children: React.ReactNode }) {
-  if (!tipsEnabled || !PRIVY_APP_ID) return <>{children}</>;
+type Root = ComponentType<{ children: ReactNode }>;
 
-  return (
-    <PrivyProvider
-      appId={PRIVY_APP_ID}
-      config={{
-        loginMethods: ["email", "google"],
-        appearance: { theme: "light", accentColor: "#d5202a", landingHeader: "Sign in to support creators" },
-        embeddedWallets: {
-          ethereum: { createOnLogin: "users-without-wallets" },
-          // Our own button is the confirmation: "Send $3" is the consent, and
-          // a second signing modal would be exactly the crypto UI we avoid.
-          showWalletUIs: false,
-        },
-        defaultChain: tipsChain,
-        supportedChains: [tipsChain],
-      }}
-    >
-      {children}
-    </PrivyProvider>
-  );
+export function Providers({ children }: { children: ReactNode }) {
+  const [Root, setRoot] = useState<Root | null>(null);
+
+  useEffect(() => {
+    if (!tipsEnabled) return;
+    let cancelled = false;
+    import("@/components/tips/PrivyRoot")
+      .then((mod) => {
+        if (!cancelled) setRoot(() => mod.default);
+      })
+      .catch((err) => console.error("[tips] could not load sign-in:", err));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return Root ? <Root>{children}</Root> : <>{children}</>;
 }

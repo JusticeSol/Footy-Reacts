@@ -1,5 +1,4 @@
-import { encodeAbiParameters, keccak256, parseAbi, stringToHex, type Hex } from "viem";
-import { monadTestnet } from "viem/chains";
+import { defineChain, encodeAbiParameters, keccak256, parseAbi, stringToHex, type Hex } from "viem";
 
 /**
  * Everything both the browser and the server need to agree on for tips.
@@ -9,7 +8,16 @@ import { monadTestnet } from "viem/chains";
  * it and pays the gas, so a fan never holds or sees MON.
  */
 
-export const tipsChain = monadTestnet;
+// Defined here rather than imported from "viem/chains": that barrel pulls in
+// every chain viem knows, which took the dev server minutes to compile.
+export const tipsChain = defineChain({
+  id: 10_143,
+  name: "Monad Testnet",
+  nativeCurrency: { name: "Testnet MON Token", symbol: "MON", decimals: 18 },
+  rpcUrls: { default: { http: ["https://testnet-rpc.monad.xyz"] } },
+  blockExplorers: { default: { name: "Monad Testnet explorer", url: "https://testnet.monadexplorer.com" } },
+  testnet: true,
+});
 
 /** Circle's USDC on Monad testnet — 6 decimals, EIP-3009. */
 export const USDC_ADDRESS = "0x534b2f3A21130d7a60830c2Df862319e593943A3" as const;
