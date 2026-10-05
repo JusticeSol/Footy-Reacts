@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import { PrivyClient } from "@privy-io/node";
 import {
   createPublicClient,
@@ -5,6 +6,7 @@ import {
   http,
   parseEventLogs,
   parseSignature,
+  zeroAddress,
   type Hex,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -12,7 +14,9 @@ import {
   PRIVY_APP_ID,
   TIPJAR_ADDRESS,
   USDC_ADDRESS,
+  claimTypes,
   tipJarAbi,
+  tipJarDomain,
   tipsChain,
   usdcAbi,
 } from "./config";
@@ -155,4 +159,68 @@ export async function sendTestUsdc(to: Hex, value: bigint): Promise<Hex> {
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
   if (receipt.status !== "success") throw new Error(`faucet transfer reverted: ${hash}`);
   return hash;
+}
+
+// --- creator claims -----------------------------------------------------------
+
+function verifierKey(): Hex {
+  const raw = process.env.VERIFIER_PRIVATE_KEY?.trim();
+  if (!raw) throw new Error("VERIFIER_PRIVATE_KEY is not set");
+  return (raw.startsWith("0x") ? raw : `0x${raw}`) as Hex;
+}
+
+/**
+ * The code a creator pastes into their channel description to prove they own
+ * it. Derived from the channel id with a server secret, so it needs no storage
+ * and cannot be guessed for a channel someone does not control.
+ */
+export function claimCode(channelId: string): string {
+  const mac = createHmac("sha256", verifierKey()).update(`footy-reacts-claim:${channelId}`).digest("hex");
+  return `FOOTY-${mac.slice(0, 8).toUpperCase()}`;
+}
+
+export async function claimState(creatorKey: Hex): Promise<{ payout: Hex | null; heldUnits: bigint }> {
+  const [payout, heldUnits] = await Promise.all([
+    publicClient.readContract({ address: tipJar(), abi: tipJarAbi, functionName: "payoutOf", args: [creatorKey] }),
+    publicClient.readContract({ address: tipJar(), abi: tipJarAbi, functionName: "pendingTotal", args: [creatorKey] }),
+  ]);
+  return { payout: payout === zeroAddress ? null : payout, heldUnits };
+}
+
+/**
+ * Signs the verifier's attestation and submits TipJar.claim, which points the
+ * creator's tips at `payout` and sweeps everything held for them. The relayer
+ * submits it, so a creator needs no gas either. Call only after the channel
+ * ownership check has passed — the signature is what TipJar trusts.
+ */
+export async function submitClaim(creatorKey: Hex, payout: Hex): Promise<{ txHash: Hex; sweptUnits: bigint }> {
+  const verifier = privateKeyToAccount(verifierKey());
+  const nonce = await publicClient.readContract({
+    address: tipJar(),
+    abi: tipJarAbi,
+    functionName: "claimNonce",
+    args: [creatorKey],
+  });
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600);
+  const signature = await verifier.signTypedData({
+    domain: tipJarDomain(tipJar()),
+    types: claimTypes,
+    primaryType: "Claim",
+    message: { creatorKey, payout, nonce, deadline },
+  });
+
+  const wallet = relayer();
+  const { request } = await publicClient.simulateContract({
+    account: wallet.account,
+    address: tipJar(),
+    abi: tipJarAbi,
+    functionName: "claim",
+    args: [creatorKey, payout, deadline, signature],
+  });
+  const txHash = await wallet.writeContract(request);
+  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+  if (receipt.status !== "success") throw new Error(`claim transaction reverted: ${txHash}`);
+
+  const [event] = parseEventLogs({ abi: tipJarAbi, eventName: "Claimed", logs: receipt.logs });
+  return { txHash, sweptUnits: event?.args.swept ?? 0n };
 }

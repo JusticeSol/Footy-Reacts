@@ -81,6 +81,8 @@ export const tipJarAbi = parseAbi([
   "function tipWithAuthorization(bytes32 creatorKey, bytes32 takeKey, address from, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 salt, uint8 v, bytes32 r, bytes32 s)",
   "function payoutOf(bytes32 creatorKey) view returns (address)",
   "function pendingTotal(bytes32 creatorKey) view returns (uint256)",
+  "function claimNonce(bytes32 creatorKey) view returns (uint256)",
+  "function claim(bytes32 creatorKey, address payout, uint256 deadline, bytes signature)",
   "event Tipped(bytes32 indexed creatorKey, bytes32 indexed takeKey, address indexed from, uint256 value, bool held)",
   "event Claimed(bytes32 indexed creatorKey, address payout, uint256 swept)",
 ]);
@@ -88,3 +90,17 @@ export const tipJarAbi = parseAbi([
 export function explorerTxUrl(hash: string): string {
   return `${tipsChain.blockExplorers.default.url}/tx/${hash}`;
 }
+
+/** Must match TipJar's EIP-712 domain and Claim type. */
+export function tipJarDomain(verifyingContract: Hex) {
+  return { name: "FootyReactsTipJar", version: "1", chainId: tipsChain.id, verifyingContract } as const;
+}
+
+export const claimTypes = {
+  Claim: [
+    { name: "creatorKey", type: "bytes32" },
+    { name: "payout", type: "address" },
+    { name: "nonce", type: "uint256" },
+    { name: "deadline", type: "uint256" },
+  ],
+} as const;

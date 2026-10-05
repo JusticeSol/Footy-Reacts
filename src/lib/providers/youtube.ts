@@ -61,11 +61,12 @@ export async function resolveUploadsPlaylistId(channelId: string): Promise<strin
  */
 export async function fetchChannelProfile(
   channelId: string,
-): Promise<{ handle?: string; title?: string; avatarUrl?: string } | null> {
+): Promise<{ handle?: string; title?: string; avatarUrl?: string; description?: string } | null> {
   const body = await call<{
     items?: Array<{
       snippet?: {
         title?: string;
+        description?: string;
         customUrl?: string;
         thumbnails?: Record<string, { url?: string }>;
       };
@@ -80,6 +81,8 @@ export async function fetchChannelProfile(
     handle: snippet.customUrl?.startsWith("@") ? snippet.customUrl : undefined,
     title: snippet.title,
     avatarUrl: thumbs.high?.url ?? thumbs.medium?.url ?? thumbs.default?.url,
+    // Where a creator pastes their claim code to prove they own the channel.
+    description: snippet.description,
   };
 }
 
