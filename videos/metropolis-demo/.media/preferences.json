@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "preferences": {
+    "aspect": {
+      "value": "1920x1080",
+      "confirmed_in": [
+        "metropolis-demo"
+      ],
+      "updated_at": "2026-10-06T15:30:54.652Z"
+    },
+    "storyboard": {
+      "value": "yes",
+      "confirmed_in": [
+        "metropolis-demo"
+      ],
+      "updated_at": "2026-10-06T15:30:54.963Z"
+    },
+    "flow": {
+      "value": "automation",
+      "confirmed_in": [
+        "metropolis-demo"
+      ],
+      "updated_at": "2026-10-06T15:30:55.281Z"
+    }
+  },
+  "sightings": {}
+}

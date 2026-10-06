@@ -23,3 +23,7 @@ contracts/broadcast/*/31337/
 
 # Raw screen recordings for the demo video — large, not source
 videos/metropolis-demo/clips/
+
+# HyperFrames working files (contact sheets, packets, renders)
+videos/metropolis-demo/.hyperframes/
+videos/metropolis-demo/renders/
