@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { formatDollars } from "@/lib/format";
+import { Money } from "./Money";
 import type { HydratedTake, TipTotal } from "@/lib/types";
 
 /**
@@ -41,7 +41,7 @@ export function MostSupported({ top }: { top: Array<{ take: HydratedTake; total:
                   {take.title}
                 </span>
                 <span className="mt-1 block font-mono text-[10px] uppercase tracking-wider text-ink-3">
-                  {formatDollars(total.totalUnits)} from {total.fans} {total.fans === 1 ? "fan" : "fans"}
+                  <Money units={total.totalUnits} /> from {total.fans} {total.fans === 1 ? "fan" : "fans"}
                 </span>
               </span>
             </a>

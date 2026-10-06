@@ -9,18 +9,29 @@ export function Masthead({ subtitle }: { subtitle?: string }) {
         <Link href="/" className="font-display text-3xl leading-none tracking-tight sm:text-4xl">
           FOOTY REACTS
         </Link>
-        <span className="hidden font-mono text-[10px] uppercase tracking-[0.2em] opacity-80 min-[420px]:inline sm:text-xs">
+        {/* With the tips links in the bar there is no room for this on a phone. */}
+        <span
+          className={`hidden font-mono text-[10px] uppercase tracking-[0.2em] opacity-80 sm:text-xs ${
+            tipsEnabled ? "md:inline" : "min-[420px]:inline"
+          }`}
+        >
           {subtitle ?? "every take, by fixture"}
         </span>
         {tipsEnabled ? (
           // ContactMenu pushes itself right with ml-auto; grouping keeps the
           // link beside it instead of splitting the free space between them.
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-3 sm:gap-4">
             <Link
               href="/claim"
-              className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-80 hover:opacity-100 sm:text-xs"
+              className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-80 hover:opacity-100 sm:text-xs sm:tracking-[0.2em]"
             >
               Creators
+            </Link>
+            <Link
+              href="/account"
+              className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-80 hover:opacity-100 sm:text-xs sm:tracking-[0.2em]"
+            >
+              Account
             </Link>
             <ContactMenu />
           </div>

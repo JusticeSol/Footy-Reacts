@@ -323,6 +323,13 @@ export const jsonRepo: Repo = {
     return ((await read()).tips ?? []).filter((tip) => wanted.has(tip.takeId));
   },
 
+  async listTipsBy(filter) {
+    const tips = (await read()).tips ?? [];
+    if ("from" in filter) return tips.filter((t) => t.from === filter.from.toLowerCase());
+    const wanted = new Set(filter.creatorIds);
+    return tips.filter((t) => wanted.has(t.creatorId));
+  },
+
   async listTipIds() {
     return new Set(((await read()).tips ?? []).map((tip) => tip.id));
   },

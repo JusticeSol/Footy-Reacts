@@ -19,6 +19,7 @@ import {
 } from "@/lib/chain/config";
 import type { HydratedTake } from "@/lib/types";
 import { DisabledSupport } from "../TipButton";
+import { Money } from "../Money";
 
 /**
  * Tip a take in dollars. Behind it: a USDC transfer authorization the fan
@@ -32,7 +33,7 @@ import { DisabledSupport } from "../TipButton";
 type State =
   | { kind: "idle" }
   | { kind: "picking" }
-  | { kind: "working"; label: string }
+  | { kind: "working"; label: React.ReactNode }
   | { kind: "needs-money"; amount: TipAmount }
   | { kind: "sent"; amount: TipAmount; receiptUrl: string; held: boolean }
   | { kind: "error"; message: string };
@@ -93,7 +94,7 @@ export default function TipWidget({
         return;
       }
 
-      setState({ kind: "working", label: `Sending $${amount}…` });
+      setState({ kind: "working", label: <>Sending <Money dollars={amount} />…</> });
       const salt = randomSalt();
       const validBefore = Math.floor(Date.now() / 1000) + 3600;
 
@@ -202,9 +203,9 @@ export default function TipWidget({
               key={amount}
               type="button"
               onClick={() => choose(amount)}
-              className={`${pill} border-ink text-ink hover:bg-red hover:border-red hover:text-paper`}
+              className={`${pill} border-ink text-[11px] text-ink hover:bg-red hover:border-red hover:text-paper`}
             >
-              ${amount}
+              <Money dollars={amount} />
             </button>
           ))}
           <button
@@ -230,7 +231,7 @@ export default function TipWidget({
             onClick={() => topUp(state.amount)}
             className={`${pill} border-red bg-red text-paper hover:bg-red-dark`}
           >
-            Add $5 &amp; send
+            Add <Money dollars={5} /> &amp; send
           </button>
         </div>
       );
@@ -239,7 +240,7 @@ export default function TipWidget({
       return (
         <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
           <span className="font-bold text-live">
-            Sent ${state.amount} to {take.creator.name}
+            Sent <Money dollars={state.amount} /> to {take.creator.name}
           </span>
           <a href={state.receiptUrl} target="_blank" rel="noreferrer" className="text-ink-3 underline hover:text-ink">
             receipt

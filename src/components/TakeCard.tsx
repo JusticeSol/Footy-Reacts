@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 import type { HydratedTake, TipTotal } from "@/lib/types";
-import { formatDollars, runtime, timeAgo } from "@/lib/format";
+import { runtime, timeAgo } from "@/lib/format";
+import { Money } from "./Money";
 import { youtubeEmbedUrl, youtubeWatchUrl } from "@/lib/providers/youtube";
 import { tipsEnabled } from "@/lib/chain/flags";
 import { DisabledSupport, TipButton } from "./TipButton";
@@ -95,7 +96,7 @@ export function TakeCard({ take, tips }: { take: HydratedTake; tips?: TipTotal }
           <span className="font-mono text-[10px] uppercase tracking-wider text-ink-3">
             {take.creator.handle}
             {tippedUnits > 0 && (
-              <span className="ml-2 font-bold text-ink-2">· {formatDollars(tippedUnits)} tipped</span>
+              <span className="ml-2 font-bold text-ink-2">· <Money units={tippedUnits} /> tipped</span>
             )}
           </span>
           {tipsEnabled ? (

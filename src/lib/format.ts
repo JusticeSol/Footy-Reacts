@@ -66,9 +66,3 @@ export function runtime(seconds?: number): string | null {
   const s = seconds % 60;
   return `${m}:${String(s).padStart(2, "0")}`;
 }
-
-/** USDC base units as dollars: 3_000_000 → "$3", 2_500_000 → "$2.50". */
-export function formatDollars(units: number): string {
-  const dollars = units / 1_000_000;
-  return Number.isInteger(dollars) ? `$${dollars}` : `$${dollars.toFixed(2)}`;
-}

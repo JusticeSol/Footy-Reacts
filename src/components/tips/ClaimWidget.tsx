@@ -3,7 +3,7 @@
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
-import { formatDollars } from "@/lib/format";
+import { Money } from "../Money";
 
 /**
  * The creator side of tips: prove the channel is yours, collect what fans have
@@ -188,7 +188,7 @@ export default function ClaimWidget() {
             >
               {busy ??
                 (step.channel.heldUnits > 0
-                  ? `I've added it — collect ${formatDollars(step.channel.heldUnits)}`
+                  ? <>I&apos;ve added it — collect <Money units={step.channel.heldUnits} /></>
                   : "I've added it — claim my channel")}
             </button>
           </li>
@@ -198,20 +198,20 @@ export default function ClaimWidget() {
       {step.kind === "done" && (
         <div className="mt-6 border-l-4 border-live pl-4">
           <p className="font-display text-2xl text-ink">
-            {step.sweptUnits > 0 ? `${formatDollars(step.sweptUnits)} is yours` : "Your channel is claimed"}
+            {step.sweptUnits > 0 ? <><Money units={step.sweptUnits} /> is yours</> : "Your channel is claimed"}
           </p>
           <p className="mt-2 text-sm text-ink-2">
             Every future tip on your takes now goes straight to your account. You can remove the code from
             your description.
           </p>
-          <a
-            href={step.receiptUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-3 inline-block font-mono text-[10px] uppercase tracking-wider text-ink-3 underline hover:text-ink"
-          >
-            receipt
-          </a>
+          <div className="mt-3 flex gap-4 font-mono text-[10px] uppercase tracking-wider">
+            <a href="/account" className="font-bold text-ink underline hover:text-red">
+              see it in your account →
+            </a>
+            <a href={step.receiptUrl} target="_blank" rel="noreferrer" className="text-ink-3 underline hover:text-ink">
+              receipt
+            </a>
+          </div>
         </div>
       )}
 
@@ -239,7 +239,7 @@ function ChannelCard({ channel }: { channel: Channel }) {
           {channel.claimedBy
             ? "claimed"
             : channel.heldUnits > 0
-              ? `${formatDollars(channel.heldUnits)} waiting for you`
+              ? <><Money units={channel.heldUnits} /> waiting for you</>
               : "nothing waiting yet — tips will be held here for you"}
         </p>
       </div>

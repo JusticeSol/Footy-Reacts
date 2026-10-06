@@ -73,6 +73,8 @@ export interface Repo {
   recordTips(tips: Tip[]): Promise<number>;
   /** Tips on these takes — what a match page needs for its totals. */
   getTipsForTakes(takeIds: string[]): Promise<Tip[]>;
+  /** Tips one address sent, or tips to these creators — an account's history. */
+  listTipsBy(filter: { from: string } | { creatorIds: string[] }): Promise<Tip[]>;
   /** Ids of every stored tip, for reconciling against the chain. */
   listTipIds(): Promise<Set<string>>;
   /** Records a creator's claim: claimed, and where TipJar now pays them. */

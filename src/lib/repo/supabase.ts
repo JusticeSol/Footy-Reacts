@@ -611,6 +611,18 @@ export const supabaseRepo: Repo = {
     return (res.data as TipRow[]).map(toTip);
   },
 
+  async listTipsBy(filter) {
+    const query = db().from("tip").select("*");
+    const res =
+      "from" in filter
+        ? await query.eq("from_address", filter.from.toLowerCase())
+        : filter.creatorIds.length === 0
+          ? { data: [], error: null }
+          : await query.in("creator_id", filter.creatorIds);
+    fail("tips by account", res.error);
+    return (res.data as TipRow[]).map(toTip);
+  },
+
   async listTipIds() {
     const res = await db().from("tip").select("id");
     fail("list tip ids", res.error);
