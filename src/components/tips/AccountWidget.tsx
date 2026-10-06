@@ -1,7 +1,7 @@
 "use client";
 
 import { useExportWallet, usePrivy, useWallets } from "@privy-io/react-auth";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { timeAgo } from "@/lib/format";
 import { Money } from "../Money";
 
@@ -35,34 +35,51 @@ const button =
 
 export default function AccountWidget() {
   const { ready, authenticated, login, logout, getAccessToken } = usePrivy();
-  const { wallets } = useWallets();
+  const { wallets, ready: walletsReady } = useWallets();
   const { exportWallet } = useExportWallet();
   const wallet = wallets.find((w) => w.walletClientType === "privy");
+  // Keyed on the address, not the wallet object: Privy hands back a new object
+  // on re-render, and depending on it re-ran the fetch in a loop.
+  const address = wallet?.address;
 
   const [account, setAccount] = useState<Account | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // getAccessToken is not referentially stable either; read it through a ref.
+  const tokenRef = useRef(getAccessToken);
+  tokenRef.current = getAccessToken;
+
   const load = useCallback(async () => {
-    if (!wallet) return;
+    if (!address) return;
     setError(null);
+    // A hung request would otherwise leave the page on "Loading" for good.
+    const abort = new AbortController();
+    const timer = setTimeout(() => abort.abort(), 30_000);
     try {
-      const token = await getAccessToken();
+      const token = await tokenRef.current();
       const res = await fetch("/api/account", {
         method: "POST",
         headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
-        body: JSON.stringify({ address: wallet.address }),
+        body: JSON.stringify({ address }),
+        signal: abort.signal,
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "could not load your account");
       setAccount(json as Account);
     } catch (err) {
-      setError((err as Error).message);
+      setError(
+        (err as Error).name === "AbortError"
+          ? "your account took too long to load — try Refresh"
+          : (err as Error).message,
+      );
+    } finally {
+      clearTimeout(timer);
     }
-  }, [wallet, getAccessToken]);
+  }, [address]);
 
   useEffect(() => {
-    if (authenticated && wallet) void load();
-  }, [authenticated, wallet, load]);
+    if (authenticated && address) void load();
+  }, [authenticated, address, load]);
 
   if (!ready) return <p className={label}>Loading…</p>;
 
@@ -79,7 +96,23 @@ export default function AccountWidget() {
     );
   }
 
-  if (!wallet || (!account && !error)) return <p className={label}>Loading your account…</p>;
+  if (!walletsReady) return <p className={label}>Opening your account…</p>;
+
+  if (!wallet) {
+    return (
+      <div>
+        <p className="max-w-xl text-ink-2">
+          You&apos;re signed in, but there&apos;s no account set up for this sign-in yet. Tip a take or collect your
+          tips and one is created for you.
+        </p>
+        <button type="button" onClick={() => void logout()} className={`${button} mt-4 border-rule text-ink-3 hover:text-ink`}>
+          Sign out
+        </button>
+      </div>
+    );
+  }
+
+  if (!account && !error) return <p className={label}>Loading your balance…</p>;
 
   return (
     <div className="max-w-2xl">

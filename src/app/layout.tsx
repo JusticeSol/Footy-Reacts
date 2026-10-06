@@ -1,13 +1,29 @@
 import type { Metadata } from "next";
-import { Anton, Space_Mono, Work_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton" });
-const workSans = Work_Sans({ subsets: ["latin"], variable: "--font-work-sans" });
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
+// The same Google Fonts files (latin subset, OFL), kept in the repo rather than
+// fetched at compile time. Under Turbopack the fetch failed on this machine and
+// every page fell back to Arial; local files need no network in either bundler.
+const anton = localFont({
+  src: "./fonts/Anton-400.woff2",
+  weight: "400",
+  variable: "--font-anton",
+  display: "swap",
+});
+const workSans = localFont({
+  src: "./fonts/WorkSans-100-900.woff2",
+  weight: "100 900",
+  variable: "--font-work-sans",
+  display: "swap",
+});
+const spaceMono = localFont({
+  src: [
+    { path: "./fonts/SpaceMono-400.woff2", weight: "400" },
+    { path: "./fonts/SpaceMono-700.woff2", weight: "700" },
+  ],
   variable: "--font-space-mono",
+  display: "swap",
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footy-reacts.vercel.app";

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { tipsEnabled } from "@/lib/chain/flags";
 
@@ -12,30 +13,37 @@ import { tipsEnabled } from "@/lib/chain/flags";
  * Mounting it re-renders what this wraps once, shortly after load, before
  * anyone has had time to interact with it.
  *
- * Wrap only the parts of a page that show take cards — not the root layout.
- * Turbopack compiles a dynamic import's target wherever the import appears, so
- * in the layout it added a minute to the cold compile of every page, including
- * ones with nothing to tip.
+ * Two things the shape below exists for:
+ * - The import sits behind next/dynamic with ssr:false. A bare import() in an
+ *   effect still lands in the server bundle, so the dev server compiled the
+ *   whole SDK twice — once for a server that never runs it.
+ * - Wrap only the parts of a page that show take cards, not the root layout.
+ *   The bundler compiles a dynamic import's target wherever it appears, so in
+ *   the layout it added a minute to the cold compile of every page.
  *
  * With tips switched off nothing is fetched at all.
  */
 type Root = ComponentType<{ children: ReactNode }>;
 
+const LoadPrivy = dynamic(
+  () =>
+    import("./PrivyRoot").then(({ default: PrivyRoot }) => {
+      // Renders nothing; exists to hand PrivyRoot back once its chunk arrives.
+      return function Loaded({ onLoad }: { onLoad: (root: Root) => void }) {
+        useEffect(() => onLoad(PrivyRoot), [onLoad]);
+        return null;
+      };
+    }),
+  { ssr: false },
+);
+
 export function TipsLoader({ children }: { children: ReactNode }) {
   const [Root, setRoot] = useState<Root | null>(null);
 
-  useEffect(() => {
-    if (!tipsEnabled) return;
-    let cancelled = false;
-    import("@/components/tips/PrivyRoot")
-      .then((mod) => {
-        if (!cancelled) setRoot(() => mod.default);
-      })
-      .catch((err) => console.error("[tips] could not load sign-in:", err));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return Root ? <Root>{children}</Root> : <>{children}</>;
+  return (
+    <>
+      {tipsEnabled && !Root && <LoadPrivy onLoad={(root) => setRoot(() => root)} />}
+      {Root ? <Root>{children}</Root> : children}
+    </>
+  );
 }

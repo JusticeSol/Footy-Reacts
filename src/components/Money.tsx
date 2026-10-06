@@ -7,7 +7,7 @@ export function Money({ dollars, units }: { dollars?: number; units?: number }) 
   const text = Number.isInteger(value) ? String(value) : value.toFixed(2);
   return (
     <span className="whitespace-nowrap">
-      <span className="text-[1.3em] leading-none">$</span>
+      <span className="text-[1.1em] leading-none">$</span>
       {text}
     </span>
   );
