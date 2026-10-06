@@ -20,3 +20,6 @@ contracts/lib/
 contracts/out/
 contracts/cache/
 contracts/broadcast/*/31337/
+
+# Raw screen recordings for the demo video — large, not source
+videos/metropolis-demo/clips/
