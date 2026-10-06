@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getRepo } from "@/lib/repo";
+import { tipsEnabled } from "@/lib/chain/flags";
 
 export const dynamic = "force-dynamic";
 
@@ -55,5 +56,18 @@ export async function GET(request: Request) {
     read = { ok: false, error: (err as Error).message };
   }
 
-  return NextResponse.json({ store: repo.kind, env, read }, { status: read.ok ? 200 : 500 });
+  // Presence and shape only, as above. NEXT_PUBLIC_ values are compiled in at
+  // build time, so "MISSING" here after setting one means: redeploy.
+  const tips = {
+    enabled: tipsEnabled,
+    NEXT_PUBLIC_TIPS_ENABLED: process.env.NEXT_PUBLIC_TIPS_ENABLED ?? "MISSING",
+    NEXT_PUBLIC_TIPJAR_ADDRESS: describe(process.env.NEXT_PUBLIC_TIPJAR_ADDRESS),
+    NEXT_PUBLIC_PRIVY_APP_ID: describe(process.env.NEXT_PUBLIC_PRIVY_APP_ID),
+    PRIVY_APP_SECRET: describe(process.env.PRIVY_APP_SECRET),
+    RELAYER_PRIVATE_KEY: describe(process.env.RELAYER_PRIVATE_KEY),
+    VERIFIER_PRIVATE_KEY: describe(process.env.VERIFIER_PRIVATE_KEY),
+    YOUTUBE_API_KEY: describe(process.env.YOUTUBE_API_KEY),
+  };
+
+  return NextResponse.json({ store: repo.kind, env, tips, read }, { status: read.ok ? 200 : 500 });
 }

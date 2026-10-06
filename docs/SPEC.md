@@ -218,8 +218,11 @@ vertical suits the rail rather than the other way round.
 Sequenced after retention is proven:
 
 1. **Claim your page** — creator verifies channel ownership, sets a payout
-   address. `creator.claimed` already exists for this.
-2. **Tips** — one-tap per take, settling to the creator's address.
+   address. *Built on the `monad-hackathon` branch: a code in the channel
+   description, a verifier-signed claim on Monad testnet.*
+2. **Tips** — one-tap per take, settling to the creator's address. *Built on
+   the `monad-hackathon` branch: $1/$3/$5 in USDC, gasless, held for creators
+   who have not claimed and refundable to fans after 90 days.*
 3. **Memberships** — recurring support for a creator across a season.
 4. **Match-day pots** — split a tip across every creator on one fixture page.
 

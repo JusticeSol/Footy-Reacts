@@ -20,6 +20,7 @@ npm run typecheck
 
 npm run check:tagger   # the test suite — 11 tagging cases, needs no API keys
 npm run check:landing  # which matchday a visitor lands on, across break dates
+npm run check:tips     # tip totals, the Most supported strip, sticky claims
 ```
 
 There is no test runner. `check:tagger` is where regressions get caught; add a
@@ -39,6 +40,7 @@ npm run probe -- "@handle"       # channel's real title + recent uploads
 npm run creator:add -- --name "X" --handle "@x" --clubs ARS
 npm run creator:remove -- --id "Name"
 npm run verify:attribution       # every take vs YouTube's own channel ownership
+npm run tips:reconcile           # refill the tip cache from the chain; dry run, --write applies
 ```
 
 Quote handles in PowerShell — a bare `@word` is the splatting operator.
@@ -149,6 +151,46 @@ up changed environment variables**.
 
 `/api/health?key=$CRON_SECRET` reports which configuration actually reached a
 deployment — a failing server component otherwise shows only an opaque digest.
+
+## Tips (`monad-hackathon` branch only)
+
+Fans tip takes in USDC on Monad testnet. This exists on the `monad-hackathon`
+branch for the Metropolis hackathon and is **not on `main`**; it is a demo, not
+the product. `contracts/README.md` covers the contract.
+
+- **Off unless switched on.** `NEXT_PUBLIC_TIPS_ENABLED=1` plus
+  `NEXT_PUBLIC_TIPJAR_ADDRESS` and `NEXT_PUBLIC_PRIVY_APP_ID`
+  (`src/lib/chain/flags.ts`). Missing any one, the old disabled Support button
+  renders and Privy never loads.
+- **Gasless by construction.** A fan signs a USDC `ReceiveWithAuthorization`;
+  `/api/tips` relays it with `RELAYER_PRIVATE_KEY`. The authorization's nonce is
+  derived from the creator and take keys, so a relayer cannot redirect a tip.
+  The route derives those keys from our records, never from the client.
+- **Keys are public ids.** `creatorKey = keccak256(youtubeChannelId)`,
+  `takeKey = keccak256(videoId)`. TipJar holds tips by channel, so any channel
+  can claim, roster or not.
+- **Claims.** A creator pastes a code into their channel description (an HMAC
+  of the channel id under `VERIFIER_PRIVATE_KEY`); `/api/claim` checks it, the
+  verifier signs, the relayer submits. The trust is in our verifier key, and the
+  write-up says so. A claim is permanent onchain, so `keepClaim` in
+  `repo/shared.ts` stops `creator:add` from un-claiming a creator in the store.
+- **The chain is the record; the `tip` table is a cache.** A tip is stored only
+  after its `Tipped` event is confirmed, keyed by tx hash and log index, so
+  recording twice is a no-op. `tips:reconcile` refills it. Monad's public RPC
+  limits `eth_getLogs` to 100 blocks, so a full scan is ~2,000 requests a day
+  elapsed — pass `--tx` when the hash is known.
+- **Most supported sits beside the list, never re-sorts it.** One take per
+  creator, so the round-robin rule above still holds.
+- **Monad charges the gas limit, not gas used.** Every relayed call is simulated
+  first; a doomed transaction still costs the relayer.
+- **Privy loads only where it is needed.** `TipsLoader` fetches it with
+  `next/dynamic` and `ssr:false`, wrapped round the take list on match pages and
+  on `/claim` and `/account` — never the root layout. In the layout, or as a bare
+  `import()`, it was compiled into every route and the server bundle, and a cold
+  dev compile took minutes.
+- **Fonts are local** (`src/app/fonts`, `next/font/local`). Under Turbopack
+  `next/font/google`'s compile-time download failed here and every page fell
+  back to Arial.
 
 ## UI conventions
 

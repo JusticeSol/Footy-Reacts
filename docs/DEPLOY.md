@@ -105,3 +105,33 @@ npm run creator:add -- --name "AFTV" --channel UCBTy8j2cPy6zw68godcE7MQ --clubs 
 The creator is written to both `src/data/seed.json` (version controlled, so the
 roster is reviewable) and the live database. Commit the seed change, then run
 `npm run sync:takes` to pull their recent uploads.
+
+---
+
+## 4. The tips demo (`monad-hackathon` branch)
+
+The demo is that branch's Vercel **preview** deployment; production never gets
+these values. Add each at **project → Settings → Environment Variables**, tick
+**Preview** only, and set **Branch** to `monad-hackathon`:
+
+| Variable | Value | Secret? |
+| --- | --- | --- |
+| `NEXT_PUBLIC_TIPS_ENABLED` | `1` | no |
+| `NEXT_PUBLIC_TIPJAR_ADDRESS` | `0xAd171119f441fCF94A20129545B73c201D47E386` | no |
+| `NEXT_PUBLIC_PRIVY_APP_ID` | from the Privy dashboard | no |
+| `PRIVY_APP_SECRET` | from the Privy dashboard | **yes** |
+| `RELAYER_PRIVATE_KEY` | relayer wallet (pays gas, holds test USDC) | **yes** |
+| `VERIFIER_PRIVATE_KEY` | verifier wallet (signs claims) | **yes** |
+| `YOUTUBE_API_KEY` | same as the GitHub secret — `/claim` reads channels | **yes** |
+
+The two Supabase values are already set for all environments.
+
+Then **redeploy the branch**: `NEXT_PUBLIC_` values are compiled into the page
+at build time, so an existing deployment cannot pick them up. In the Privy
+dashboard, add the preview's address (and `http://localhost:3210`) under allowed
+origins, or sign-in is refused.
+
+Keep the relayer funded: MON for gas from the Monad faucet, test USDC from
+Circle's faucet (Monad Testnet) for the "Add $5" button. `/api/faucet` reports
+"test money has run out" when it is low.
+
