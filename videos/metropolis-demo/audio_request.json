@@ -1,0 +1,22 @@
+{
+  "provider": "heygen",
+  "voice": "7e48c8d406b04a8089c5eb3cd057cb2e",
+  "lang": "en",
+  "speed": 1.0,
+  "lines": [
+    { "id": "f02", "text": "Footy Reacts gathers every football creator's reaction video and organises it by match." },
+    { "id": "f03", "text": "This is live data. Real creators' YouTube reactions, embedded, never re-hosted." },
+    { "id": "f04", "text": "Now fans can tip the takes they agree with." },
+    { "id": "f05", "text": "Sign in with an email. A wallet is created behind it. The fan never sees the word." },
+    { "id": "f06", "text": "It's testnet, so a new fan gets five dollars of test USDC. Then the tip goes through: about seven seconds from click to confirmed." },
+    { "id": "f07", "text": "Here's the receipt on Monad's explorer. The fan only signed a USDC authorisation. Our relayer submitted it to the TipJar contract and paid the gas. The fan never needed MON. And three dollars moved from the fan into TipJar." },
+    { "id": "f08", "text": "The best-backed takes rise to the top of the match, one per creator." },
+    { "id": "f09", "text": "Most creators haven't heard of us yet, so TipJar holds their tips, keyed to their YouTube channel. Here, three dollars are waiting." },
+    { "id": "f10", "text": "To collect, the creator puts a one-off code in their channel description. Something only the owner can do." },
+    { "id": "f11", "text": "Our verifier checks it and signs. The relayer submits the claim." },
+    { "id": "f12", "text": "Everything held is swept to the creator in one transaction." },
+    { "id": "f13", "text": "In this demo, one test account played both fan and creator. Every future tip goes straight to the creator's account, and fans can take back tips that are never claimed, after ninety days." },
+    { "id": "f14", "text": "The TipJar contract is verified on Monad testnet: gasless tips, held tips, signed claims, and refunds." }
+  ],
+  "bgm": { "mode": "retrieve", "query": "calm minimal ambient underscore, soft piano and pads, unobtrusive, no drums" }
+}

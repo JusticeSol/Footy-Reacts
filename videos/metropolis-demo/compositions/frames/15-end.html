@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+@font-face{font-family:Anton;font-weight:400;src:url("assets/fonts/Anton-400.woff2") format("woff2")}
+@font-face{font-family:"Space Mono";font-weight:400;src:url("assets/fonts/SpaceMono-400.woff2") format("woff2")}
+@font-face{font-family:"Space Mono";font-weight:700;src:url("assets/fonts/SpaceMono-700.woff2") format("woff2")}
+#f15{position:absolute;inset:0;background:#F4F1EA;overflow:hidden}
+#f15 .top{position:absolute;left:0;right:0;top:110px;display:flex;flex-direction:column;align-items:center;gap:30px}
+#f15 .lockup{display:block;width:1000px;height:241px}
+#f15 .rule{width:60px;height:4px;background:#D5202A}
+#f15 .eb{font:700 20px/1 "Space Mono",monospace;letter-spacing:6px;color:#D5202A;text-transform:uppercase}
+#f15 .url{font:700 40px/1 "Space Mono",monospace;color:#16130F}
+#f15 .addr{font:400 30px/1 "Space Mono",monospace;color:#6B6B6B}
+#f15 .band{position:absolute;left:0;right:0;bottom:0;height:220px;background:#D5202A;display:flex;align-items:center;justify-content:space-between;padding:0 96px}
+#f15 .band-hatch{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 20px,rgba(0,0,0,.06) 20px 40px)}
+#f15 .sign{position:relative;font:400 72px/1 Anton,sans-serif;letter-spacing:4px;text-transform:uppercase;color:#16130F}
+#f15 .mark{position:relative;display:block;width:130px;height:130px}
+</style>
+<div data-hf-id="hf-neev" id="f15" data-composition-id="f15" data-width="1920" data-height="1080" data-duration="6">
+  <div data-hf-id="hf-sijt" class="top">
+    <img data-hf-id="hf-95tu" class="lockup s1" src="assets/brand/lockup.svg" alt="Footy Reacts">
+    <div data-hf-id="hf-w69d" class="rule s2"></div>
+    <div data-hf-id="hf-h8a4" class="eb s3">Try the demo</div>
+    <div data-hf-id="hf-hk7f" class="url s4">footyreacts-monad.vercel.app</div>
+    <div data-hf-id="hf-u6rw" class="addr s5">TipJar · 0xAd171119f441fCF94A20129545B73c201D47E386</div>
+  </div>
+  <div data-hf-id="hf-a71x" class="band">
+    <div data-hf-id="hf-rxt0" class="band-hatch"></div>
+    <div data-hf-id="hf-icwr" class="sign s6">Built on Monad · Metropolis 2026</div>
+    <img data-hf-id="hf-dkoh" class="mark" src="assets/brand/mark.svg" alt="">
+  </div>
+</div>
+<script>
+(() => {
+  const tl = gsap.timeline({ paused: true });
+  ["s1", "s2", "s3", "s4", "s5", "s6"].forEach((c, i) => {
+    tl.fromTo(`#f15 .${c}`, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.05 + i * 0.25);
+  });
+  // the badge ticks in last
+  tl.fromTo("#f15 .mark", { opacity: 0, scale: 0.6, rotation: -12 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2)" }, 1.75);
+  window.__timelines["f15"] = tl;
+})();
+</script>
+</template>
+</body>
+</html>

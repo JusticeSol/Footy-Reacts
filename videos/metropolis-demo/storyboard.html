@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metropolis demo — storyboard v1</title>
+<style>
+@font-face{font-family:Anton;font-weight:400;src:url("assets/fonts/Anton-400.woff2") format("woff2")}
+@font-face{font-family:"Work Sans";font-weight:100 900;src:url("assets/fonts/WorkSans-100-900.woff2") format("woff2")}
+@font-face{font-family:"Space Mono";font-weight:400;src:url("assets/fonts/SpaceMono-400.woff2") format("woff2")}
+@font-face{font-family:"Space Mono";font-weight:700;src:url("assets/fonts/SpaceMono-700.woff2") format("woff2")}
+
+:root{
+  --coral:#D5202A; --coral-dark:#A5181F; --cream:#F4F1EA; --cream-dark:#EBE7DD;
+  --ink:#16130F; --gray:#6B6B6B; --light-gray:#B0B0B0; --white:#FFFFFF;
+  --hatch:repeating-linear-gradient(45deg,transparent 0 20px,rgba(0,0,0,.06) 20px 40px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream-dark);color:var(--ink);font-family:"Work Sans",system-ui,sans-serif;padding:48px 40px 80px}
+.mono{font-family:"Space Mono",ui-monospace,monospace}
+
+/* ---------- sheet header ---------- */
+header.sheet{max-width:1680px;margin:0 auto 36px;display:grid;grid-template-columns:1fr auto;gap:8px 32px;align-items:end;border-bottom:3px solid var(--ink);padding-bottom:20px}
+header.sheet .eyebrow{grid-column:1/-1;font:700 12px/1 "Space Mono";letter-spacing:4px;text-transform:uppercase;color:var(--coral)}
+header.sheet h1{font:400 64px/0.95 Anton;letter-spacing:2px;text-transform:uppercase}
+header.sheet h1 em{font-style:normal;color:var(--coral)}
+header.sheet p{grid-column:1;max-width:820px;font-size:16px;line-height:1.6;color:#3a3630}
+header.sheet .htag{grid-column:2;grid-row:2/4;align-self:end;font:700 12px/1.9 "Space Mono";letter-spacing:3px;text-transform:uppercase;background:var(--ink);color:var(--cream);padding:12px 16px;text-align:right}
+
+main{max-width:1680px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:40px 28px}
+.act{grid-column:1/-1;display:flex;align-items:baseline;gap:16px;border-top:1px solid var(--ink);padding-top:10px;margin-top:8px}
+.act b{font:400 26px/1 Anton;letter-spacing:2px;text-transform:uppercase}
+.act span{font:700 11px/1 "Space Mono";letter-spacing:3px;text-transform:uppercase;color:var(--gray)}
+.act i{font-style:normal;font:700 11px/1 "Space Mono";letter-spacing:3px;color:var(--coral)}
+
+/* ---------- a cell ---------- */
+.cell{display:flex;flex-direction:column;gap:10px}
+.frame{aspect-ratio:16/9;container-type:inline-size;position:relative;overflow:hidden;background:var(--cream);outline:1px solid rgba(0,0,0,.18)}
+.frame>*{--u:calc(100cqw / 1920)}
+.label{display:flex;justify-content:space-between;font:700 11px/1 "Space Mono";letter-spacing:2px;text-transform:uppercase}
+.label span:last-child{color:var(--gray)}
+.note{font-size:13.5px;line-height:1.55;color:#36322c}
+.note b{color:var(--ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:700 10px/1 "Space Mono";letter-spacing:2px;text-transform:uppercase;border:1px solid var(--ink);padding:5px 7px}
+.chip.red{background:var(--coral);border-color:var(--coral);color:var(--ink)}
+.chip.priv{background:var(--ink);color:var(--cream)}
+
+/* ---------- the stage: screen in a frame + caption rail ---------- */
+.stage{position:absolute;inset:0;background:var(--cream)}
+.screen{position:absolute;left:calc(var(--u)*60);top:calc(var(--u)*20);width:calc(var(--u)*1800);height:calc(var(--u)*902);overflow:hidden;background:#ddd;outline:calc(var(--u)*2) solid var(--ink)}
+.zoom{position:absolute;inset:0;transform-origin:var(--ox,50%) var(--oy,50%);transform:scale(var(--s,1))}
+.zoom img{display:block;width:100%;height:100%}
+/* watermark cover: a coral corner wedge pinned to the screen's bottom-right */
+.badge{position:absolute;right:0;bottom:0;width:calc(var(--u)*236);height:calc(var(--u)*140);background:var(--coral);clip-path:polygon(100% 0,100% 100%,0 100%)}
+.badge img{position:absolute;right:calc(var(--u)*12);bottom:calc(var(--u)*10);width:calc(var(--u)*62);height:calc(var(--u)*62)}
+/* callout: coral box + ink tag */
+.co{position:absolute;border:calc(var(--u)*5) solid var(--coral)}
+.tag{position:absolute;white-space:nowrap;background:var(--ink);color:var(--cream);font:700 calc(var(--u)*24)/1 "Space Mono";letter-spacing:calc(var(--u)*2);text-transform:uppercase;padding:calc(var(--u)*12) calc(var(--u)*16) calc(var(--u)*12) calc(var(--u)*22);border-left:calc(var(--u)*8) solid var(--coral)}
+.tag.dim{opacity:.38}
+.num{display:inline-block;background:var(--coral);color:var(--ink);padding:0 calc(var(--u)*8);margin-right:calc(var(--u)*12)}
+/* the caption rail */
+.rail{position:absolute;left:calc(var(--u)*60);right:calc(var(--u)*60);top:calc(var(--u)*922);height:calc(var(--u)*158);display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*40)}
+.cap{display:flex;flex-direction:column;gap:calc(var(--u)*10)}
+.cap b{font:400 calc(var(--u)*58)/1 Anton;letter-spacing:calc(var(--u)*2);text-transform:uppercase;white-space:nowrap}
+.cap span{font:400 calc(var(--u)*28)/1 "Space Mono";color:#4a4640;white-space:nowrap}
+.actmark{text-align:right;font:700 calc(var(--u)*18)/1.5 "Space Mono";letter-spacing:calc(var(--u)*4);text-transform:uppercase;color:var(--coral);white-space:nowrap}
+.actmark small{display:block;font-size:calc(var(--u)*18);color:var(--gray);letter-spacing:calc(var(--u)*4)}
+.hold{position:absolute;right:calc(var(--u)*80);top:calc(var(--u)*44);font:700 calc(var(--u)*20)/1 "Space Mono";letter-spacing:calc(var(--u)*3);background:var(--coral);color:var(--ink);padding:calc(var(--u)*10) calc(var(--u)*14)}
+
+/* ---------- graphic frames ---------- */
+.title{position:absolute;inset:0;background:var(--coral);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u)*44)}
+.title::before{content:"";position:absolute;inset:0;background:var(--hatch);background-size:calc(var(--u)*57) calc(var(--u)*57)}
+.title img{position:relative;width:calc(var(--u)*1000)}
+.title .line{position:relative;font:700 calc(var(--u)*30)/1 "Space Mono";letter-spacing:calc(var(--u)*12);color:var(--ink)}
+.end{position:absolute;inset:0;background:var(--cream)}
+.end .top{position:absolute;left:0;right:0;top:calc(var(--u)*110);display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*30)}
+.end .top img{width:calc(var(--u)*1000)}
+.end .rule{width:calc(var(--u)*60);height:calc(var(--u)*4);background:var(--coral)}
+.end .eb{font:700 calc(var(--u)*20)/1 "Space Mono";letter-spacing:calc(var(--u)*6);color:var(--coral)}
+.end .url{font:700 calc(var(--u)*40)/1 "Space Mono";color:var(--ink)}
+.end .addr{font:400 calc(var(--u)*30)/1 "Space Mono";color:#4a4640}
+.end .band{position:absolute;left:0;right:0;bottom:0;height:calc(var(--u)*220);background:var(--coral);display:flex;align-items:center;justify-content:space-between;padding:0 calc(var(--u)*96)}
+.end .band::before{content:"";position:absolute;inset:0;background:var(--hatch);background-size:calc(var(--u)*57) calc(var(--u)*57)}
+.end .band b{position:relative;font:400 calc(var(--u)*72)/1 Anton;letter-spacing:calc(var(--u)*4);text-transform:uppercase;color:var(--ink)}
+.end .band img{position:relative;width:calc(var(--u)*130);height:calc(var(--u)*130)}
+
+/* ---------- closing cells ---------- */
+.wide{grid-column:1/-1}
+.seams{background:var(--white);padding:24px;outline:1px solid rgba(0,0,0,.18)}
+.seams h3,.tokens h3{font:400 26px/1 Anton;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.strip{display:flex;height:76px;border:2px solid var(--ink)}
+.seg{position:relative;border-right:2px solid var(--ink);display:flex;flex-direction:column;justify-content:space-between;padding:6px 5px;font:700 10px/1.1 "Space Mono";letter-spacing:1px;overflow:hidden}
+.seg:last-child{border-right:0}
+.seg.g{background:var(--coral)}
+.seg.g em{color:var(--ink)}
+.seg.p{background:var(--cream-dark)}
+.seg em{font-style:normal;color:var(--gray);font-weight:400}
+.seg.cutp::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:repeating-linear-gradient(45deg,var(--ink) 0 3px,transparent 3px 6px)}
+.legend{display:flex;gap:22px;margin-top:12px;font:700 11px/1 "Space Mono";letter-spacing:2px;text-transform:uppercase;color:#4a4640;flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:14px;vertical-align:-3px;margin-right:6px;border:1px solid var(--ink)}
+.tokens{background:var(--white);padding:24px;outline:1px solid rgba(0,0,0,.18);display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:28px}
+.sw{display:flex;align-items:center;gap:10px;font:700 11px/1 "Space Mono";letter-spacing:1px;margin-bottom:8px}
+.sw i{width:40px;height:28px;border:1px solid rgba(0,0,0,.2)}
+.ty{margin-bottom:12px}
+.ty div:first-child{font:700 10px/1 "Space Mono";letter-spacing:2px;color:var(--gray);margin-bottom:4px;text-transform:uppercase}
+.bans li{list-style:none;font-size:13.5px;line-height:1.5;padding-left:18px;position:relative;margin-bottom:4px}
+.bans li::before{content:"✕";position:absolute;left:0;color:var(--coral);font-weight:700}
+@media (max-width:1100px){main{grid-template-columns:1fr 1fr}.tokens{grid-template-columns:1fr}}
+@media (max-width:700px){body{padding:24px 16px}main{grid-template-columns:1fr}header.sheet{grid-template-columns:1fr}header.sheet .htag{grid-column:1;grid-row:auto;text-align:left}}
+</style>
+</head>
+<body>
+
+<header class="sheet">
+  <div class="eyebrow">Footy Reacts × Monad Metropolis · technical demo · sketch pass</div>
+  <h1>Storyboard <em>v1</em></h1>
+  <p>Every frame at its key moment: the real recording sits in the framed screen, captions in the cream rail beneath, callouts point into the footage. Static on purpose: this sheet locks layout, copy and treatment. Motion arrives in the build.</p>
+  <div class="htag">1920×1080<br>~2:26 · 15 frames<br>AI VO + quiet bed</div>
+</header>
+
+<main>
+
+<!-- ============ OPEN ============ -->
+<div class="act"><b>Open</b><i>0:00–0:03</i></div>
+
+<section class="cell" id="frame-01">
+  <div class="frame"><div class="title">
+    <img src="assets/brand/lockup-onred.svg" alt="Footy Reacts">
+    <div class="line">FAN TIPS ON MONAD</div>
+  </div></div>
+  <div class="label"><span>01 · Title</span><span>title · 0:00–0:03</span></div>
+  <p class="note"><b>The lockup settles first</b> (0.96→1, fade), the Space Mono line tracks in 0.3s later. Hard cut to the board on the voiceover's first word.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip">graphic</span></div>
+</section>
+
+<!-- ============ I ============ -->
+<div class="act"><b>I · The product</b><span>a live site, real creators</span><i>0:03–0:22</i></div>
+
+<section class="cell" id="frame-02">
+  <div class="frame"><div class="stage">
+    <div class="screen"><div class="zoom"><img src=".hyperframes/sketch/f02.jpg" alt=""></div><div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div></div>
+    <div class="rail"><div class="cap"><b>Every take on every match — by fixture</b><span>live: 27 creators · 70 fixtures · 214 takes</span></div><div class="actmark">I · The product<small>02 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>02 · The board</span><span>board · 0:03–0:12</span></div>
+  <p class="note"><b>Footage moves first:</b> matchday 5 scrolls at 1.6× (T1 0:05–0:20); the caption lands with "organises it by match". Cut on the scroll's rest.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip">T1 0:05–0:20 · 1.6×</span></div>
+</section>
+
+<section class="cell" id="frame-03">
+  <div class="frame"><div class="stage">
+    <div class="screen"><div class="zoom"><img src=".hyperframes/sketch/f03.jpg" alt=""></div><div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div></div>
+    <div class="rail"><div class="cap"><b>One page per match</b><span>embedded, never re-hosted · creators keep their views</span></div><div class="actmark">I · The product<small>03 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>03 · The match page</span><span>match · 0:12–0:22</span></div>
+  <p class="note"><b>Scroll through Fulham 1–1 Man United's take grid</b> at 1.8× (T1 0:38–0:56). Proof line reworded from "YouTube revenue" so the rail fits one line.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip">T1 0:38–0:56 · 1.8×</span></div>
+</section>
+
+<!-- ============ II ============ -->
+<div class="act"><b>II · A fan tips</b><span>dollars in, gas paid by us</span><i>0:22–1:17</i></div>
+
+<section class="cell" id="frame-04">
+  <div class="frame"><div class="stage">
+    <div class="screen"><div class="zoom" style="--ox:43%;--oy:77%;--s:2.2"><img src=".hyperframes/sketch/f04.jpg" alt=""></div><div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div></div>
+    <div class="rail"><div class="cap"><b>Tip a take in dollars</b><span>$1 · $3 · $5</span></div><div class="actmark">II · A fan tips<small>04 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>04 · Support, $3</span><span>support · 0:22–0:28</span></div>
+  <p class="note"><b>Push-in 1.0→2.2 onto the first card's footer</b> as Support opens $1 / $3 / $5; shown at full push, $3 about to be clicked. Deeper than the planned 1.5×: at 1.5× the footer text is still unreadable. Hover trimmed.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip red">push-in 2.2×</span><span class="chip">T1 1:35–1:48</span></div>
+</section>
+
+<section class="cell" id="frame-05">
+  <div class="frame"><div class="stage">
+    <div class="screen"><div class="zoom"><img src=".hyperframes/sketch/f05.jpg" alt=""></div><div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div></div>
+    <div class="rail"><div class="cap"><b>Sign in with email</b><span>no wallet setup · no seed phrase · Privy embedded wallet</span></div><div class="actmark">II · A fan tips<small>05 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>05 · Sign in</span><span>signin · 0:28–0:35</span></div>
+  <p class="note"><b>The empty sign-in modal (1:56–1:59), then a hard jump to 2:43:</b> "Creating your wallet" → "All set!". The email typing and the code screen (which prints the address at 2:40) are never shown.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip priv">privacy jump 1:59 → 2:43</span></div>
+</section>
+
+<section class="cell" id="frame-06">
+  <div class="frame"><div class="stage">
+    <div class="screen"><div class="zoom" style="--ox:36.4%;--oy:77.4%;--s:2.2"><img src=".hyperframes/sketch/f06.jpg" alt=""></div><div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div></div>
+    <div class="rail"><div class="cap"><b>Sent — settled on Monad</b><span>click → confirmed onchain in ~7s</span></div><div class="actmark">II · A fan tips<small>06 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>06 · Top-up and send</span><span>send · 0:35–0:48</span></div>
+  <p class="note"><b>Pushed in on the footer from the first state</b> and held through "Out of test money · Add $5 &amp; send" → "Adding test money…" → "Sending $3…" → "Sent $3 to The United Stand". All at 1×. Source corrected to <b>T1 2:52–3:12</b>: "Sent" lands at 3:07.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip red">push-in 2.2× · held</span><span class="chip">T1 2:52–3:12 · 1×</span></div>
+</section>
+
+<section class="cell" id="frame-07">
+  <div class="frame"><div class="stage">
+    <div class="screen">
+      <div class="zoom" style="--ox:39.9%;--oy:57.9%;--s:1.6"><img src=".hyperframes/sketch/f07.jpg" alt=""></div>
+      <div class="co" style="left:21%;top:46.6%;width:37.4%;height:5.2%"></div>
+      <div class="tag" style="left:59.4%;top:46.1%"><span class="num">2</span>From: our relayer — paid the gas</div>
+      <div class="co" style="left:21%;top:55.3%;width:37.4%;height:5.2%"></div>
+      <div class="tag" style="left:59.4%;top:54.8%"><span class="num">3</span>To: TipJar</div>
+      <div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div>
+    </div>
+    <div class="hold">HOLD 3s</div>
+    <div class="rail"><div class="cap"><b>The fan paid no gas</b><span>EIP-3009 authorisation · relayed · Monad testnet</span></div><div class="actmark">II · A fan tips<small>07 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>07 · The tip receipt</span><span>receipt · 0:48–1:10</span></div>
+  <p class="note"><b>The held frame.</b> Shown at the From/To pair, pushed in 1.6×: both boxes up, nothing moving for 3s while "the fan never needed MON" lands. Callouts run 1→4: 1 (Method) before, 4 (3 USDC: fan → TipJar) after, each on its own push. Loading at 2×, the rest 1×.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip red">push-in 1.6× · 4 callouts</span><span class="chip">T1 3:20–4:24</span></div>
+</section>
+
+<section class="cell" id="frame-08">
+  <div class="frame"><div class="stage">
+    <div class="screen">
+      <div class="zoom"><img src=".hyperframes/sketch/f08.jpg" alt=""></div>
+      <div class="co" style="left:23%;top:45%;width:53.4%;height:11%"></div>
+      <div class="tag" style="left:77.6%;top:47.6%">#1 · $3 from 1 fan</div>
+      <div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div>
+    </div>
+    <div class="rail"><div class="cap"><b>Most supported</b><span>beside the list, never re-sorting it · one per creator</span></div><div class="actmark">II · A fan tips<small>08 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>08 · Most supported</span><span>most · 1:10–1:17</span></div>
+  <p class="note"><b>Back on the match page after a refresh:</b> the coral outline draws round the strip, the tag reads out the #1. The take grid below stays in its own order.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip red">outline</span><span class="chip">T1 5:03–5:12</span></div>
+</section>
+
+<!-- ============ III ============ -->
+<div class="act"><b>III · A creator collects</b><span>held tips, claimed by proof of ownership</span><i>1:17–2:07</i></div>
+
+<section class="cell" id="frame-09">
+  <div class="frame"><div class="stage">
+    <div class="screen">
+      <div class="zoom"><img src=".hyperframes/sketch/f09.jpg" alt=""></div>
+      <div class="co" style="left:23.6%;top:42.4%;width:31.4%;height:10.2%"></div>
+      <div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div>
+    </div>
+    <div class="rail"><div class="cap"><b>Tips wait for creators</b><span>held in TipJar, keyed to the YouTube channel id</span></div><div class="actmark">III · A creator collects<small>09 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>09 · Tips wait</span><span>claim · 1:17–1:29</span></div>
+  <p class="note"><b>/claim, @FootyReactss typed at 2×,</b> then 1× on the channel card: "$3 waiting for you". A plain coral outline marks the card (no tag; the caption says it).</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip red">outline</span><span class="chip">T2 0:01–0:34</span></div>
+</section>
+
+<section class="cell" id="frame-10">
+  <div class="frame"><div class="stage">
+    <div class="screen">
+      <div class="zoom"><img src=".hyperframes/sketch/f10.jpg" alt=""></div>
+      <div class="co" style="left:13.4%;top:52.9%;width:47.6%;height:18%"></div>
+      <div class="tag" style="left:13.4%;top:73.4%">The one-off code · only the owner can edit this</div>
+      <div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div>
+    </div>
+    <div class="rail"><div class="cap"><b>Proof of ownership</b><span>code in the channel description</span></div><div class="actmark">III · A creator collects<small>10 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>10 · Proof of ownership</span><span>proof · 1:29–1:40</span></div>
+  <p class="note"><b>The FOOTY- code is copied (0:38–0:46), then a hard jump past the Google sign-in</b> to YouTube Studio with the code in the description → "Changes published". Shown: the description box outlined.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip priv">privacy jump 0:46 → 3:42</span><span class="chip red">outline</span></div>
+</section>
+
+<section class="cell" id="frame-11">
+  <div class="frame"><div class="stage">
+    <div class="screen"><div class="zoom"><img src=".hyperframes/sketch/f11.jpg" alt=""></div><div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div></div>
+    <div class="rail"><div class="cap"><b>$3 is yours</b><span>verifier signs · relayer submits · no gas for the creator</span></div><div class="actmark">III · A creator collects<small>11 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>11 · Collect</span><span>collect · 1:40–1:47</span></div>
+  <p class="note"><b>"I've added it — collect $3" is clicked,</b> the page answers "$3 is yours". Played at 1×; the confirmation is the beat.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip">T2 4:04–4:14</span></div>
+</section>
+
+<section class="cell" id="frame-12">
+  <div class="frame"><div class="stage">
+    <div class="screen">
+      <div class="zoom"><img src=".hyperframes/sketch/f12.jpg" alt=""></div>
+      <div class="co" style="left:28%;top:13.4%;width:25.2%;height:4.6%"></div>
+      <div class="tag" style="left:54.4%;top:12.2%"><span class="num">1</span>3 USDC: TipJar → creator</div>
+      <div class="co" style="left:28.4%;top:63%;width:15.6%;height:4.4%"></div>
+      <div class="tag" style="left:45.2%;top:61.8%"><span class="num">2</span>claim(…) — one transaction</div>
+      <div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div>
+    </div>
+    <div class="rail"><div class="cap"><b>Held tips, swept in one transaction</b><span>claim · Monad testnet</span></div><div class="actmark">III · A creator collects<small>12 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>12 · The claim receipt</span><span>claimtx · 1:47–2:00</span></div>
+  <p class="note"><b>Callout 1 boxes the ERC20 row, then the view slides to the input data</b> for callout 2. Both shown here on one still; in the build each gets its own push-in.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip red">2 callouts</span><span class="chip">T2 4:28–4:50</span></div>
+</section>
+
+<section class="cell" id="frame-13">
+  <div class="frame"><div class="stage">
+    <div class="screen">
+      <div class="zoom"><img src=".hyperframes/sketch/f13.jpg" alt=""></div>
+      <div class="co" style="left:23.6%;top:28.4%;width:10%;height:13%"></div>
+      <div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div>
+    </div>
+    <div class="rail"><div class="cap"><b>Balance, read from the chain</b><span>demo: one test account played fan and creator</span></div><div class="actmark">III · A creator collects<small>13 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>13 · Account</span><span>account · 2:00–2:07</span></div>
+  <p class="note"><b>Open question.</b> The page shows <b>$5</b> and "Tips you've sent: $3". The fan and the payout account are the same test account (0xeF63…2e20 in both receipts): $2 left + $3 collected. The proof line says so; see the question below.</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip red">outline</span><span class="chip">T2 5:12–5:25</span></div>
+</section>
+
+<!-- ============ IV ============ -->
+<div class="act"><b>IV · The contract</b><span>what judges can check themselves</span><i>2:07–2:20</i></div>
+
+<section class="cell" id="frame-14">
+  <div class="frame"><div class="stage">
+    <div class="screen">
+      <div class="zoom"><img src=".hyperframes/sketch/f14.jpg" alt=""></div>
+      <div class="co" style="left:14.6%;top:29.6%;width:70.8%;height:6%"></div>
+      <div class="tag" style="left:14.6%;top:38%"><span class="num">2</span>Source verified · full match</div>
+      <div class="badge"><img src="assets/brand/mark-onred.svg" alt=""></div>
+    </div>
+    <div class="rail"><div class="cap"><b>TipJar — verified on Monad testnet</b><span>0xAd17…E386</span></div><div class="actmark">IV · The contract<small>14 / 15</small></div></div>
+  </div></div>
+  <div class="label"><span>14 · The contract</span><span>contract · 2:07–2:20</span></div>
+  <p class="note"><b>First the address page with callout 1</b> on its transaction list ("Claim · TipWithAuthorization — real calls", T3 0:15–0:24), then the Contract tab. Shown: callout 2 on "Contract Source Code Verified".</p>
+  <div class="chips"><span class="chip">cut →</span><span class="chip red">2 callouts</span><span class="chip">T3 0:15–0:52</span></div>
+</section>
+
+<!-- ============ CLOSE ============ -->
+<div class="act"><b>Close</b><i>2:20–2:26</i></div>
+
+<section class="cell" id="frame-15">
+  <div class="frame"><div class="end">
+    <div class="top">
+      <img src="assets/brand/lockup.svg" alt="Footy Reacts">
+      <div class="rule"></div>
+      <div class="eb">TRY THE DEMO</div>
+      <div class="url">footyreacts-monad.vercel.app</div>
+      <div class="addr">TipJar · 0xAd171119f441fCF94A20129545B73c201D47E386</div>
+    </div>
+    <div class="band"><b>Built on Monad · Metropolis 2026</b><img src="assets/brand/mark.svg" alt=""></div>
+  </div></div>
+  <div class="label"><span>15 · End card</span><span>end · 2:20–2:26</span></div>
+  <p class="note"><b>Lines settle top to bottom</b> (0.25s stagger, power3.out), then hold. The badge mark ticks in last, at the right of the coral band. The music bed resolves under it.</p>
+  <div class="chips"><span class="chip">end</span><span class="chip">graphic</span></div>
+</section>
+
+<!-- ============ closing cells ============ -->
+<div class="act"><b>Seams &amp; tokens</b></div>
+
+<section class="seams wide">
+  <h3>Seam map — every seam is a hard cut</h3>
+  <div class="strip">
+    <div class="seg g" style="flex:3">01<em>title</em></div>
+    <div class="seg" style="flex:9">02<em>board</em></div>
+    <div class="seg" style="flex:10">03<em>match</em></div>
+    <div class="seg p" style="flex:6">04<em>$3</em></div>
+    <div class="seg cutp" style="flex:7">05<em>sign in</em></div>
+    <div class="seg p" style="flex:13">06<em>send</em></div>
+    <div class="seg p" style="flex:22">07<em>receipt · HOLD</em></div>
+    <div class="seg p" style="flex:7">08<em>most</em></div>
+    <div class="seg" style="flex:12">09<em>wait</em></div>
+    <div class="seg cutp" style="flex:11">10<em>proof</em></div>
+    <div class="seg" style="flex:7">11<em>collect</em></div>
+    <div class="seg p" style="flex:13">12<em>claim tx</em></div>
+    <div class="seg" style="flex:7">13<em>account</em></div>
+    <div class="seg p" style="flex:13">14<em>contract</em></div>
+    <div class="seg g" style="flex:6">15<em>end</em></div>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--coral)"></i>graphic</span>
+    <span><i style="background:var(--cream-dark)"></i>push-in / callouts</span>
+    <span><i style="background:var(--white)"></i>footage as is</span>
+    <span><i style="background:repeating-linear-gradient(45deg,var(--ink) 0 3px,#fff 3px 6px)"></i>privacy jump inside the frame</span>
+    <span>width ∝ duration · 146s</span>
+  </div>
+</section>
+
+<section class="tokens wide">
+  <div>
+    <h3>Palette</h3>
+    <div class="sw"><i style="background:#D5202A"></i>CORAL #D5202A — callouts, wedge, title</div>
+    <div class="sw"><i style="background:#16130F"></i>INK #16130F — type, tags, screen rule</div>
+    <div class="sw"><i style="background:#F4F1EA"></i>CREAM #F4F1EA — stage + rail</div>
+    <div class="sw"><i style="background:#EBE7DD"></i>CREAM-DARK #EBE7DD — reserve</div>
+    <div class="sw"><i style="background:#6B6B6B"></i>GRAY #6B6B6B — meta only</div>
+  </div>
+  <div>
+    <h3>Type</h3>
+    <div class="ty"><div>Display · Anton 58px, caps, 2px</div><div style="font:400 30px/1 Anton;letter-spacing:2px">THE FAN PAID NO GAS</div></div>
+    <div class="ty"><div>Proof / tags · Space Mono 28 / 24px</div><div class="mono" style="font-size:15px">EIP-3009 authorisation · relayed</div></div>
+    <div class="ty"><div>Body (sheet only) · Work Sans</div><div style="font-size:15px">Real screen, framed; the rail explains.</div></div>
+  </div>
+  <div>
+    <h3>Bans</h3>
+    <ul class="bans">
+      <li>No mocked-up UI, no code walkthrough, no stock footage</li>
+      <li>No caption over the product: the rail carries text, callouts only point in</li>
+      <li>No speeding up an onchain readout or a tip state</li>
+      <li>No email, confirmation code or Google sign-in on screen</li>
+      <li>No shadow, glow or radius (logo excepted)</li>
+      <li>Not a slideshow (no cards between beats) or a screensaver (no idle drift)</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

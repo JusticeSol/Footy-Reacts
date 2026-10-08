@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+/* covers the recorder's watermark: a coral wedge pinned to the screen frame's bottom-right */
+#wedge{position:absolute;inset:0;pointer-events:none}
+#wedge .fill{position:absolute;left:1624px;top:782px;width:236px;height:140px;background:#D5202A;clip-path:polygon(100% 0,100% 100%,0 100%)}
+#wedge .mark{position:absolute;left:1786px;top:850px;width:62px;height:62px;display:block}
+</style>
+<div data-hf-id="hf-cgt3" id="wedge" data-composition-id="wedge" data-width="1920" data-height="1080">
+  <div data-hf-id="hf-4qej" class="fill"></div>
+  <img data-hf-id="hf-axgm" class="mark" src="assets/brand/mark-onred.svg" alt="">
+</div>
+<script>
+(() => {
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines["wedge"] = tl;
+})();
+</script>
+</template>
+</body>
+</html>

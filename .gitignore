@@ -27,3 +27,9 @@ videos/metropolis-demo/clips/
 # HyperFrames working files (contact sheets, packets, renders)
 videos/metropolis-demo/.hyperframes/
 videos/metropolis-demo/renders/
+videos/metropolis-demo/.thumbnails/
+videos/metropolis-demo/.waveform-cache/
+
+# Demo video music: a HeyGen library track, re-fetchable from the query in
+# audio_request.json; too large and not ours to republish
+videos/metropolis-demo/assets/bgm/

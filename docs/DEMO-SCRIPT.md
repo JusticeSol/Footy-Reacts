@@ -14,7 +14,7 @@ not a promo, and not a code walkthrough.
 
 Nothing is mocked up. Every product shot is a recording of the demo URL.
 
-**Demo URL:** https://footy-reacts-git-monad-hackathon-justice-s-projects1.vercel.app
+**Demo URL:** https://footyreacts-monad.vercel.app
 
 ---
 

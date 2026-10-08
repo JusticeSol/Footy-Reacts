@@ -2,7 +2,7 @@
 
 **Metropolis · Consumer Products & Payments**
 
-- **Demo:** https://footy-reacts-git-monad-hackathon-justice-s-projects1.vercel.app
+- **Demo:** https://footyreacts-monad.vercel.app
 - **Code:** https://github.com/JusticeSol/Footy-Reacts/tree/monad-hackathon
 - **TipJar contract (Monad testnet, verified):** [`0xAd171119f441fCF94A20129545B73c201D47E386`](https://testnet.monadexplorer.com/address/0xAd171119f441fCF94A20129545B73c201D47E386)
 

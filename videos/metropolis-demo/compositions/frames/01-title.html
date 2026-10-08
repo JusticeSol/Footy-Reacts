@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+@font-face{font-family:"Space Mono";font-weight:700;src:url("assets/fonts/SpaceMono-700.woff2") format("woff2")}
+#f01{position:absolute;inset:0;background:#D5202A;overflow:hidden}
+#f01 .hatch{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 20px,rgba(0,0,0,.06) 20px 40px)}
+#f01 .stack{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:44px}
+#f01 .lockup{display:block;width:1000px;height:241px}
+#f01 .line{font:700 30px/1 "Space Mono",monospace;letter-spacing:12px;color:#16130F;text-transform:uppercase}
+</style>
+<div data-hf-id="hf-umfa" id="f01" data-composition-id="f01" data-width="1920" data-height="1080" data-duration="3">
+  <div data-hf-id="hf-xitm" class="hatch"></div>
+  <div data-hf-id="hf-d1zs" class="stack">
+    <img data-hf-id="hf-fjo7" class="lockup" src="assets/brand/lockup-onred.svg" alt="Footy Reacts">
+    <div data-hf-id="hf-bs5f" class="line">Fan tips on Monad</div>
+  </div>
+</div>
+<script>
+(() => {
+  const tl = gsap.timeline({ paused: true });
+  tl.fromTo("#f01 .lockup", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 0.05);
+  tl.fromTo("#f01 .line", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.35);
+  window.__timelines["f01"] = tl;
+})();
+</script>
+</template>
+</body>
+</html>
