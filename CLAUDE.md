@@ -178,7 +178,7 @@ the product. `contracts/README.md` covers the contract.
   after its `Tipped` event is confirmed, keyed by tx hash and log index, so
   recording twice is a no-op. `tips:reconcile` refills it. Monad's public RPC
   limits `eth_getLogs` to 100 blocks, so a full scan is ~2,000 requests a day
-  elapsed, so pass `--tx` when the hash is known.
+  elapsed. Pass `--tx` when the hash is known.
 - **Most supported sits beside the list, never re-sorts it.** One take per
   creator, so the round-robin rule above still holds.
 - **Monad charges the gas limit, not gas used.** Every relayed call is simulated
