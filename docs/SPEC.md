@@ -1,11 +1,11 @@
-# Footy Reacts — MVP Spec
+# Footy Reacts: MVP Spec
 
 **Status:** in build · **Last updated:** 2026-09-18
 
 ## 1. What it is
 
 A fixture-centric home for football reaction content. Fans stop hunting across
-YouTube, X and TikTok for takes on their club's match — every creator's pre- and
+YouTube, X and TikTok for takes on their club's match. Every creator's pre- and
 post-match video sits on one page, organised by fixture.
 
 **The unit of consumption is the match, not the creator.** That is the whole
@@ -64,16 +64,16 @@ competition ──< fixture >── team (home, away)
                    └──< take >── creator
 ```
 
-**`fixture`** — `slug` is the URL key (`arsenal-vs-chelsea-2026-09-19`).
+**`fixture`**: `slug` is the URL key (`arsenal-vs-chelsea-2026-09-19`).
 `externalId` keeps the provider's own id so re-syncs de-duplicate cleanly, while
-our internal `id` never changes — existing takes stay attached when a kickoff
+our internal `id` never changes, so existing takes stay attached when a kickoff
 moves.
 
-**`creator`** — `clubAffinity` (team ids) is the tagging pre-filter's strongest
+**`creator`**: `clubAffinity` (team ids) is the tagging pre-filter's strongest
 signal. `uploadsPlaylistId` is resolved once and cached; see the quota note
 below. `claimed` gates Phase 2 payouts.
 
-**`take`** — the join of a video to a fixture. Carries `phase` (`pre` | `post`),
+**`take`**: the join of a video to a fixture. Carries `phase` (`pre` | `post`),
 `confidence` (0–1) and `taggedBy` (`heuristic` | `agent` | `manual`). Takes
 below `TAG_MIN_CONFIDENCE` (0.55) are stored but withheld from the UI, so a bad
 tag is invisible rather than wrong in public. A `manual` tag always survives
@@ -88,17 +88,17 @@ twice. Implemented in [`src/lib/jobs.ts`](../src/lib/jobs.ts), exposed at
 `/api/cron/fixtures` and `/api/cron/takes` (shared-secret auth), and runnable
 locally via `npm run sync:fixtures` / `npm run sync:takes`.
 
-### 4.1 Fixture sync — daily
+### 4.1 Fixture sync (daily)
 
 Pulls a rolling window (3 days back, 14 days ahead) and upserts teams and
 fixtures. Two providers are supported and normalise to one shape:
 
-- `footballdata` — football-data.org v4, free tier, `X-Auth-Token` header
-- `apifootball` — API-Football v3, direct or via RapidAPI
+- `footballdata`: football-data.org v4, free tier, `X-Auth-Token` header
+- `apifootball`: API-Football v3, direct or via RapidAPI
 
 Kickoff times and scores are provider-authoritative; our ids are not.
 
-### 4.2 Take sync — every 15 minutes on matchdays
+### 4.2 Take sync (every 15 minutes on matchdays)
 
 **The quota decision the whole pipeline rests on:**
 
@@ -121,34 +121,34 @@ anything under 90 seconds (Shorts and clips, not takes) → tag → store.
 ## 5. The tagging agent
 
 **Contract:** given a video (title, description, publish time) and its creator,
-decide *which fixture* it is about and *which phase* it belongs to — or decline.
+decide *which fixture* it is about and *which phase* it belongs to, or decline.
 
 Implemented in [`src/lib/tagger.ts`](../src/lib/tagger.ts) in two stages.
 
-### Stage 1 — deterministic pre-filter (free)
+### Stage 1: deterministic pre-filter (free)
 
 Narrows the entire calendar to the 2–3 plausible fixtures by scoring:
 
 - **Time window.** Only fixtures within 4 days before kickoff or 3 days after
   the final whistle can be the subject. This alone eliminates almost everything.
 - **Team mentions.** Both clubs named in the title is the strongest textual
-  signal. Matching runs over an alias table — APIs say "Wolverhampton
+  signal. Matching runs over an alias table: APIs say "Wolverhampton
   Wanderers FC", creators say "Wolves"; likewise Spurs, Man Utd, the Toon.
 - **Creator affinity.** A channel that only covers Arsenal is almost certainly
   discussing the Arsenal game that week, even with a vague title.
 - **Proximity to kickoff**, scaled across the window.
 - **Phase wording.** "preview / team news / predictions" vs "reaction / review /
   player ratings / full time". Wording that *contradicts* the timing subtracts
-  score — it usually means the wrong fixture was matched, not the wrong phase.
+  score, because it usually means the wrong fixture was matched, not the wrong phase.
 
 Phase itself is decided by timing first (published before kickoff → `pre`, after
 the whistle → `post`), with wording only breaking ties inside the match window.
 
-### Stage 2 — Claude as tie-breaker (cheap, optional)
+### Stage 2: Claude as tie-breaker (cheap, optional)
 
 The model is called **only** when the top two candidates are within 0.15 of each
 other, or the best score is weak enough to be withheld anyway. It then chooses
-between 2–3 labelled options plus "none of these" — a far easier and cheaper
+between 2–3 labelled options plus "none of these". That is a far easier and cheaper
 task than guessing from an open calendar. Haiku is the default model; picking
 one of three options does not need a frontier model.
 
@@ -159,69 +159,69 @@ never hard-depends on the model.**
 
 ## 6. Interface
 
-Design direction: football's own printed world — the Saturday results coupon,
-the teletext vidiprinter, the matchday programme — rather than generic app UI.
+Design direction: football's own printed world (the Saturday results coupon,
+the teletext vidiprinter, the matchday programme) rather than generic app UI.
 
 - **Type:** Anton (condensed display), Work Sans (body), Space Mono (all
   numerals: kickoff times, scores, counts).
 - **Palette:** red is the *field*, not an accent. The masthead and the active
   phase tab wear it fully; everything else stays paper-and-ink quiet, so the red
   keeps meaning something.
-- **Home** — fixtures as coupon rows grouped by day, bold three-letter
+- **Home**: fixtures as coupon rows grouped by day, bold three-letter
   abbreviations, take counts on the right. All times render in Europe/London
   regardless of the reader's location: that is the clock fixtures are announced
   in, and pinning it also prevents hydration drift.
-- **Vidiprinter** — a black teletext strip under the masthead announcing takes
+- **Vidiprinter**: a black teletext strip under the masthead announcing takes
   as the agent files them. It turns the ingestion pipeline into visible matchday
   energy, and it costs nothing extra: it is just the newest rows.
-- **Match page** — the two phase tabs are the two halves of a matchday; the
+- **Match page**: the two phase tabs are the two halves of a matchday; the
   active one goes full red like a raised board. The phase lives in the URL, so
   "send me the post-match takes" is a shareable link. The page opens on
   `post` once the match has been played, `pre` before.
-- **Take cards** — YouTube thumbnail facade; the iframe only mounts on click
+- **Take cards**: YouTube thumbnail facade; the iframe only mounts on click
   (twenty live iframes would cost megabytes before anyone pressed play).
-  A ghosted `SUPPORT →` sits on every card — Phase 2's seat at the table.
+  A ghosted `SUPPORT →` sits on every card: Phase 2's seat at the table.
 
 ---
 
 ## 7. Build order
 
-- [x] **Day 1** — scaffold, design tokens, domain model, storage layer
-- [x] **Day 2** — fixture sync (both providers), YouTube poller, quota-safe polling
-- [x] **Day 3** — tagging agent: pre-filter + model tie-breaker
-- [x] **Day 4** — fixture board, match page, phase tabs, take cards, vidiprinter
-- [x] **Day 5** — first live ingestion. 22 takes across 6 creators, nearly all
+- [x] **Day 1**: scaffold, design tokens, domain model, storage layer
+- [x] **Day 2**: fixture sync (both providers), YouTube poller, quota-safe polling
+- [x] **Day 3**: tagging agent: pre-filter + model tie-breaker
+- [x] **Day 4**: fixture board, match page, phase tabs, take cards, vidiprinter
+- [x] **Day 5**: first live ingestion. 22 takes across 6 creators, nearly all
       tagged at 1.00 confidence by the heuristic alone; the model was never
       needed. See §9 for what real data broke.
-- [x] **Day 6** — deployed to Vercel, Supabase live, ingestion scheduled on
+- [x] **Day 6**: deployed to Vercel, Supabase live, ingestion scheduled on
       GitHub Actions (see [DEPLOY.md](DEPLOY.md))
-- [ ] **Day 7** — grow the roster to 15–20 creators, then outreach: DM each
+- [ ] **Day 7**: grow the roster to 15–20 creators, then outreach: DM each
       channel a link to their own takes on the site
 
 ### Then: prove retention before building the rail
 
 The one metric that matters: **do fans come back next matchday?** Ship the
 aggregator, watch a few matchdays, and only wire in payments once creators are
-claiming profiles. Retention first, payments second — a rail nobody returns to
+claiming profiles. Retention first, payments second: a rail nobody returns to
 use is just plumbing.
 
 ---
 
-## 8. Phase 2 — the creator payment rail
+## 8. Phase 2: the creator payment rail
 
 Stablecoins are the settlement layer, not the product. Fans see "tip £3" or
 "support this creator"; the rail is invisible underneath. Creator payouts in
-stablecoin solve a real problem this audience actually has — reaction creators
-are global and cross-border payouts are slow and expensive — which is why this
+stablecoin solve a real problem this audience actually has (reaction creators
+are global and cross-border payouts are slow and expensive), which is why this
 vertical suits the rail rather than the other way round.
 
 Sequenced after retention is proven:
 
-1. **Claim your page** — creator verifies channel ownership, sets a payout
+1. **Claim your page**: creator verifies channel ownership, sets a payout
    address. `creator.claimed` already exists for this.
-2. **Tips** — one-tap per take, settling to the creator's address.
-3. **Memberships** — recurring support for a creator across a season.
-4. **Match-day pots** — split a tip across every creator on one fixture page.
+2. **Tips**: one-tap per take, settling to the creator's address.
+3. **Memberships**: recurring support for a creator across a season.
+4. **Match-day pots**: split a tip across every creator on one fixture page.
 
 ---
 
@@ -232,13 +232,13 @@ all now fixed:
 
 - **The seeder poisoned the database.** `db:seed` pushed the placeholder
   calendar into Supabase, where invented fixtures sat beside synced ones
-  permanently — the provider assigns different ids, so nothing overwrote them.
+  permanently, because the provider assigns different ids, so nothing overwrote them.
 - **The two repos had silently diverged.** Supabase's `upsertCreators` nulled
   the cached channel and playlist ids when a caller did not carry them; the JSON
   repo merged. Identical behaviour across implementations is the whole point of
   the interface, so this was a design failure, not a typo.
 - **The board outlived its own window.** Fixtures dropped off after 2 days while
-  the tagger still accepted reactions for 3 — takes were ingested, tagged
+  the tagger still accepted reactions for 3, so takes were ingested, tagged
   correctly, and unreachable. `BOARD_FLOOR_DAYS` is now 4.
 
 Tagging itself needed no changes. Titles with no club named ("Pecked By The

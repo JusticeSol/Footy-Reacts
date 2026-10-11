@@ -14,7 +14,7 @@ needs to read.
 
 ---
 
-## 1. GitHub Actions — the ingestion
+## 1. GitHub Actions: the ingestion
 
 `.github/workflows/sync-takes.yml` and `sync-fixtures.yml` run the same scripts
 you run locally, on a schedule, writing straight to Supabase. They do not touch
@@ -29,7 +29,7 @@ repository secret**:
 | `SUPABASE_SERVICE_ROLE_KEY` | permission to write |
 | `YOUTUBE_API_KEY` | polling creator uploads |
 | `FOOTBALL_DATA_API_KEY` | the fixture calendar |
-| `ANTHROPIC_API_KEY` | optional — tagging tie-breaks |
+| `ANTHROPIC_API_KEY` | optional, for tagging tie-breaks |
 
 Optional **variables** (not secrets) on the same page: `FIXTURES_PROVIDER`,
 `FOOTBALL_DATA_COMPETITION`, `TAGGER_MODEL`. Sensible defaults apply if unset.
@@ -44,12 +44,12 @@ Weekends every 15 minutes (11:00–23:00 UTC), weekday evenings every 30 minutes
 2,900 Actions minutes a month against a 2,000 free allowance on a private repo.
 The schedule follows when reaction content actually appears.
 
-GitHub delays scheduled runs when it is busy. That is fine — the jobs are
+GitHub delays scheduled runs when it is busy. That is fine: the jobs are
 idempotent, so a late or repeated run changes nothing.
 
 ---
 
-## 2. Vercel — the website
+## 2. Vercel: the website
 
 The deployed site only **reads**. Add at **project → Settings → Environment
 Variables**, for all three environments:
@@ -59,7 +59,7 @@ Variables**, for all three environments:
 | `SUPABASE_URL` | same as above |
 | `SUPABASE_SERVICE_ROLE_KEY` | same as above |
 
-Then **redeploy** — environment variables are read at build and run time, so an
+Then **redeploy**. Environment variables are read at build and run time, so an
 existing deployment will not pick them up.
 
 Until these are set, the deployed site falls back to the JSON seed and shows the
@@ -69,7 +69,7 @@ the usual sign the variables did not take.
 ### Why the service-role key, on a website
 
 Every read happens in a server component, never in the browser, and row level
-security is enabled with no policies — so the anon key would be refused. The
+security is enabled with no policies, so the anon key would be refused. The
 service-role key bypasses RLS and is only ever used server-side. Do not add
 `NEXT_PUBLIC_` to it, and do not import the repo into a client component.
 
