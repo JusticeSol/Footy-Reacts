@@ -13,11 +13,11 @@ A snapshot for picking the project back up. Architecture is in
 | Creators | 27, all with uploads playlists resolved |
 | Takes | 367 stored, ~240 above the confidence floor |
 | Fixtures | 60 (matchdays 1–5) |
-| Club coverage | 19 of 20 — Brentford is the gap |
+| Club coverage | 19 of 20 (Brentford is the gap) |
 | Ingestion | GitHub Actions, running clean on schedule |
 | Site | Live, holding matchday 5 through the international break |
 
-The league is in an international break. **Matchday 6 is on 10 October** — the
+The league is in an international break. **Matchday 6 is on 10 October**: the
 first round the system fills with nobody watching, and the real test of it.
 
 Scheduled runs are succeeding and correctly storing almost nothing: break-time
@@ -27,18 +27,18 @@ rules reject by design.
 ## What's in flight
 
 **Creator outreach has started.** `npm run outreach` generates a personalised
-message per creator — their own video, their fixture page, who they sit beside.
+message per creator: their own video, their fixture page, who they sit beside.
 Contact on the site is `@affanyjoe` only; email was deliberately left off a
 public page.
 
 Order that matters: the 14 club channels first (they get pitched least and gain
 most), AFTV and The United Stand last. If anyone opts out:
-`npm run creator:remove -- --id "Their Name"` — the message promises same-day
+`npm run creator:remove -- --id "Their Name"`. The message promises same-day
 removal, and honouring that quickly is what makes the message safe to send.
 
 **An X launch post is drafted but not published.** Link preview cards are in
 place, so a shared match link unfurls with its scoreline and take counts. Send
-the creator messages a day or two *before* posting — a creator discovering the
+the creator messages a day or two *before* posting. A creator discovering the
 site through a viral post reacts differently to one who heard from you first.
 
 ## Decided, don't re-litigate
@@ -54,8 +54,8 @@ site through a viral post reacts differently to one who heard from you first.
   only because the placeholder seed invented it; `coverage` ignores it.
 - **Kombo's Diary, Matty FC and Adikastakes are general-football channels**,
   added on request. They post news, shorts and entertainment rather than match
-  reaction, so they contribute little, and they do not improve club coverage —
-  `coverage` counts creators per club.
+  reaction, so they contribute little, and they do not improve club coverage
+  (`coverage` counts creators per club.
 
 ## Next, roughly in order
 
@@ -65,7 +65,7 @@ site through a viral post reacts differently to one who heard from you first.
 3. Ranking within a fixture page. Forty-one takes on one match is already past
    what anyone scrolls; `TakeList` cuts the first screen at one take per
    creator, but ordering beyond that is still just recency.
-4. Phase 2 — the creator payment rail — but only once fans are demonstrably
+4. Phase 2, the creator payment rail, but only once fans are demonstrably
    returning each matchday. Retention first; the rail is plumbing, not the
    product.
 
@@ -77,5 +77,5 @@ site through a viral post reacts differently to one who heard from you first.
   A deployment built without them throws an opaque digest on every page;
   `/api/health?key=$CRON_SECRET` says which configuration actually arrived.
 - After any change to `src/lib/tagger.ts`, run `npm run check:tagger`, then
-  `npm run retag` (dry by default) — stored takes otherwise keep old scores.
+  `npm run retag` (dry by default), since stored takes otherwise keep old scores.
 - Start Claude Code sessions from this folder, or CLAUDE.md will not load.

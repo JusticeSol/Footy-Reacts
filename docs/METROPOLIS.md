@@ -1,4 +1,4 @@
-# Footy Reacts — tip the take, not the platform
+# Footy Reacts: tip the take, not the platform
 
 **Metropolis · Consumer Products & Payments**
 

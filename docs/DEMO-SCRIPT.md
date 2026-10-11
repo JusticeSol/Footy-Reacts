@@ -1,4 +1,4 @@
-# Technical demo video — script
+# Technical demo video: script
 
 **What it is:** the working product, used live, end to end. It is not slides,
 not a promo, and not a code walkthrough.
@@ -44,7 +44,7 @@ Nothing is mocked up. Every product shot is a recording of the demo URL.
 | 1.2 | Click **FUL 1–1 MUN**. Pause on the score and the Pre/Post tabs. | One page per match |
 | 1.3 | Scroll to the **Most supported** strip, then down through the take cards. | Real creators' YouTube reactions, embedded, never re-hosted |
 | 1.4 | On a take *not* in Most supported, click **Support →**. The $1 / $3 / $5 buttons appear. | **Tip a take in dollars** |
-| 1.5 | Click **$3**. Privy's sign-in opens: enter an email, then type the code from your inbox. | Sign in with email — no wallet, no seed phrase |
+| 1.5 | Click **$3**. Privy's sign-in opens: enter an email, then type the code from your inbox. | Sign in with email: no wallet, no seed phrase |
 | 1.6 | The card says **Out of test money**. Click **Add $5 & send**. | Testnet: the demo tops up new fans with test USDC |
 | 1.7 | Wait for **"Sent $3 to …"**, and for **"$3 tipped"** under the card. | **Settled on Monad** |
 | 1.8 | Click **receipt**. The explorer opens. Let it load and pause. Slowly hover **To** (the TipJar contract), then **From** (the relayer), then the **USDC transfer** line. | **To: TipJar** `0xAd17…E386` · **From: our relayer**, so the fan paid no gas · **USDC moved from the fan → TipJar** |
@@ -57,7 +57,7 @@ Nothing is mocked up. Every product shot is a recording of the demo URL.
 | 2.1 | Click **Creators** in the red header. The `/claim` page opens. | Most creators haven't joined yet, so **tips wait for them** |
 | 2.2 | Type `@FootyReactss` and click **Find it**. Pause on the card: name, avatar, **"$3 waiting for you"**. | Held in TipJar, keyed to the YouTube channel |
 | 2.3 | Click **copy** next to the `FOOTY-…` code. Click **YouTube Studio**, paste the code into the channel description, and click **Publish**. | **Proof of ownership:** only the channel's owner can edit its description |
-| 2.4 | Back on the claim page, click **"I've added it — collect $3"**. Sign in if asked. Wait for **"$3 is yours"**. | Our verifier signs; the relayer submits the claim |
+| 2.4 | Back on the claim page, click the **collect $3** button. Sign in if asked. Wait for **"$3 is yours"**. | Our verifier signs; the relayer submits the claim |
 | 2.5 | Click **receipt**. On the explorer, pause on the transaction calling **claim** on TipJar. | **Everything held, swept to the creator in one transaction** |
 | 2.6 | Click **see it in your account →**. Pause on the balance and history. | The creator's balance, read from the chain. Future tips go straight here |
 
@@ -75,7 +75,7 @@ Afterwards, delete the code from the YouTube description.
 
 | Time | Shot | Voiceover |
 | --- | --- | --- |
-| 0:00–0:03 | **Title card:** the logo, "Footy Reacts — fan tips on Monad" | — |
+| 0:00–0:03 | **Title card:** the logo, "Footy Reacts: fan tips on Monad" | (no voiceover) |
 | 0:03–0:20 | Take 1.1–1.3 | "Footy Reacts gathers every football creator's reaction video and organises them by match. This is live data: twenty-seven creators, every fixture." |
 | 0:20–0:50 | Take 1.4–1.7 | "Now fans can tip the takes they agree with. Pick an amount, sign in with an email, and that's it. No wallet, no gas. This is testnet, so a new fan gets five dollars of test USDC." |
 | 0:50–1:10 | Take 1.8 | "Here's the receipt on the Monad explorer. The fan signed a USDC authorisation. Our relayer submitted it to the TipJar contract and paid the gas, so the fan never needed MON. The three dollars went from the fan into TipJar, in under a second." |
@@ -84,7 +84,7 @@ Afterwards, delete the code from the YouTube description.
 | 1:35–2:00 | Take 2.3–2.5 | "To collect, the creator puts a code in their channel description, which only the owner can do. Our verifier checks it and signs, the relayer submits the claim, and everything held is swept to them in one transaction." |
 | 2:00–2:12 | Take 2.6 | "It shows in their account, and every future tip goes straight there. Fans can take back tips a creator never claims, after ninety days." |
 | 2:12–2:24 | Take 3.1 | "The contract is verified on Monad testnet. It does gasless tips, held tips, signed claims, and refunds." |
-| 2:24–2:30 | **End card:** the demo URL, the TipJar address, "Built on Monad · Metropolis" | — |
+| 2:24–2:30 | **End card:** the demo URL, the TipJar address, "Built on Monad · Metropolis" | (no voiceover) |
 
 The voiceover is about 230 words, which fits 2:30 at a calm pace. Record your
 own (it usually lands better with judges), or let HyperFrames generate it with

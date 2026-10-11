@@ -18,7 +18,7 @@ npm run dev            # localhost:3210
 npm run build          # also the only type check that runs on lint
 npm run typecheck
 
-npm run check:tagger   # the test suite — 11 tagging cases, needs no API keys
+npm run check:tagger   # the test suite: 11 tagging cases, needs no API keys
 npm run check:landing  # which matchday a visitor lands on, across break dates
 npm run check:tips     # tip totals, the Most supported strip, sticky claims
 ```
@@ -43,13 +43,13 @@ npm run verify:attribution       # every take vs YouTube's own channel ownership
 npm run tips:reconcile           # refill the tip cache from the chain; dry run, --write applies
 ```
 
-Quote handles in PowerShell — a bare `@word` is the splatting operator.
+Quote handles in PowerShell: a bare `@word` is the splatting operator.
 
 ## Storage: one interface, two backends
 
 `src/lib/repo/` holds a `Repo` interface with a JSON-file implementation (local
 dev) and a Supabase one (everything deployed). `getRepo()` picks by whether
-`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are both set — there is no flag.
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are both set. There is no flag.
 
 **The two implementations must behave identically.** They have diverged before:
 Supabase's `upsertCreators` nulled cached channel ids that the JSON one merged,
@@ -57,7 +57,7 @@ silently forcing quota-costly re-resolution. Anything that could drift lives as 
 pure function in `repo/shared.ts` and is called by both.
 
 Pages never import a repo directly; they go through the `src/lib/store.ts`
-facade. Supabase access uses the service-role key and is **server-only** — RLS is
+facade. Supabase access uses the service-role key and is **server-only**. RLS is
 enabled with no policies, so the anon key is refused by design.
 
 ## Tagging (`src/lib/tagger.ts`)
@@ -74,7 +74,7 @@ Two stages:
 **The model may reject or re-assign, never promote.** Its confidence is capped at
 whatever the heuristic gave that candidate. Letting its own number stand
 overrode every heuristic penalty and pushed transfer news, La Liga opinion and
-international-break talk onto match pages — asked to choose between plausible
+international-break talk onto match pages. Asked to choose between plausible
 fixtures, a model usually chooses one, so its "no" is far stronger evidence than
 its "yes".
 
@@ -92,11 +92,11 @@ Scoring rules worth knowing before editing:
   *featuring* far more often.
 - A title containing `news` costs 0.25, with `team news` exempt.
 - No club named anywhere **and** no phase wording caps the score below the
-  floor — otherwise affinity plus timing alone publishes anything posted near a
+  floor. Otherwise affinity plus timing alone publishes anything posted near a
   kickoff.
 - A take marked `taggedBy: "manual"` is never overwritten by a sync or a retag.
 
-After changing this file, run `npm run retag` — the sync only ever looks at
+After changing this file, run `npm run retag`. The sync only ever looks at
 videos it has not seen, so stored takes keep their old scores otherwise.
 
 ## YouTube quota is the pipeline's design constraint
@@ -104,7 +104,7 @@ videos it has not seen, so stored takes keep their old scores otherwise.
 `playlistItems.list` costs 1 unit, `search.list` costs 100, against 10,000/day.
 The poller therefore resolves each creator's uploads playlist once, caches it on
 the creator record, and pages that. `find:channel` is the one place search is
-used, and it is a setup-time tool only — never put it on a schedule.
+used, and it is a setup-time tool only; never put it on a schedule.
 
 `fetchRecentUploads` pages until it passes the cutoff. It took a single page of
 15 once, and a channel posting fifteen times on a Sunday pushed Saturday's
@@ -116,9 +116,9 @@ Changing one of these means checking the others:
 
 - pre-match window: 4 days before kickoff (`tagger.ts`)
 - post-match window: 3 days after the whistle (`tagger.ts`)
-- `BOARD_FLOOR_DAYS`: 4 (`repo/shared.ts`) — must outlast the post window, or
+- `BOARD_FLOOR_DAYS`: 4 (`repo/shared.ts`), which must outlast the post window, or
   fixtures leave the board while reactions are still being filed for them
-- `sync:fixtures` default `daysBack`: 5 — must cover the board floor so scores
+- `sync:fixtures` default `daysBack`: 5, which must cover the board floor so scores
   keep refreshing for everything still visible
 
 ## Which matchday the board shows
@@ -128,7 +128,7 @@ takes** → else nearest by date. The middle rule carries the site through an
 international break; landing on the nearest by date would show an empty upcoming
 round for a week. `check:landing` pins this behaviour.
 
-The archive only contains matchdays that have been synced — a default
+The archive only contains matchdays that have been synced. A default
 `sync:fixtures` run never reaches rounds played before the project existed. Use
 `--back` to backfill.
 
@@ -136,7 +136,7 @@ The archive only contains matchdays that have been synced — a default
 
 `src/data/seed.json` is the version-controlled creator roster plus a placeholder
 calendar. `db:seed` writes creators and teams to whichever store is configured,
-but pushes the **placeholder fixtures to the JSON store only** — in a real
+but pushes the **placeholder fixtures to the JSON store only**. In a real
 database they sit beside synced fixtures forever, since the provider assigns
 different ids. `creator:add` and `creator:remove` keep this file in sync; commit
 their changes.
@@ -150,7 +150,7 @@ in GitHub; Vercel only needs the two Supabase values, and **only a redeploy pick
 up changed environment variables**.
 
 `/api/health?key=$CRON_SECRET` reports which configuration actually reached a
-deployment — a failing server component otherwise shows only an opaque digest.
+deployment. A failing server component otherwise shows only an opaque digest.
 
 ## Tips (`monad-hackathon` branch only)
 
@@ -178,14 +178,14 @@ the product. `contracts/README.md` covers the contract.
   after its `Tipped` event is confirmed, keyed by tx hash and log index, so
   recording twice is a no-op. `tips:reconcile` refills it. Monad's public RPC
   limits `eth_getLogs` to 100 blocks, so a full scan is ~2,000 requests a day
-  elapsed — pass `--tx` when the hash is known.
+  elapsed, so pass `--tx` when the hash is known.
 - **Most supported sits beside the list, never re-sorts it.** One take per
   creator, so the round-robin rule above still holds.
 - **Monad charges the gas limit, not gas used.** Every relayed call is simulated
   first; a doomed transaction still costs the relayer.
 - **Privy loads only where it is needed.** `TipsLoader` fetches it with
   `next/dynamic` and `ssr:false`, wrapped round the take list on match pages and
-  on `/claim` and `/account` — never the root layout. In the layout, or as a bare
+  on `/claim` and `/account`, never the root layout. In the layout, or as a bare
   `import()`, it was compiled into every route and the server bundle, and a cold
   dev compile took minutes.
 - **Fonts are local** (`src/app/fonts`, `next/font/local`). Under Turbopack
