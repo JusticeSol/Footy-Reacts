@@ -33,3 +33,24 @@ videos/metropolis-demo/.waveform-cache/
 # Demo video music: a HeyGen library track, re-fetchable from the query in
 # audio_request.json; too large and not ours to republish
 videos/metropolis-demo/assets/bgm/
+
+# Raw voice recordings for the pitch video
+videos/pitch/recordings/
+
+# Pitch video: working files, renders, linked takes, music
+videos/pitch/work/
+videos/pitch/clips/
+videos/pitch/renders/
+videos/pitch/assets/bgm/
+videos/pitch/.hyperframes/
+videos/pitch/.thumbnails/
+videos/pitch/.waveform-cache/
+
+# Privy bounty video: linked takes, renders, music, working files
+videos/privy/clips/
+videos/privy/renders/
+videos/privy/assets/bgm/
+videos/privy/.hyperframes/
+videos/privy/.thumbnails/
+videos/privy/.waveform-cache/
+videos/pitch/assets/voice/

@@ -1,0 +1,15 @@
+{
+  "provider": "heygen",
+  "voice": "7e48c8d406b04a8089c5eb3cd057cb2e",
+  "lang": "en",
+  "speed": 1.0,
+  "lines": [
+    { "id": "f02", "text": "Fans sign in to Footy Reacts with email or Google, through Privy. On first login, Privy creates an embedded wallet behind it. No download, no seed phrase. The fan never sees the word wallet." },
+    { "id": "f03", "text": "It's one configuration: email and Google login, a wallet for every user who doesn't have one, and Privy's own wallet screens switched off, because our button is the confirmation." },
+    { "id": "f04", "text": "When a fan taps send three dollars, the embedded wallet signs a USDC transfer authorisation. There's no second pop-up. Our relayer submits it to TipJar on Monad, and pays the gas." },
+    { "id": "f05", "text": "Under the hood, the tip is one signTypedData call on the embedded wallet. And every request that moves money carries the user's Privy access token, which our server verifies with Privy's Node SDK before anything is relayed." },
+    { "id": "f06", "text": "Creators sign in with Privy too. When they claim, everything held for their channel is swept straight into their own embedded wallet." },
+    { "id": "f07", "text": "And it really is theirs. From the account page, Privy's key export lets anyone take their wallet to MetaMask or Rabby. Footy Reacts never sees the key." }
+  ],
+  "bgm": { "mode": "none" }
+}
