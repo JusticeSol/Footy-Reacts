@@ -175,6 +175,14 @@ export const jsonRepo: Repo = {
       .filter((x): x is { take: HydratedTake; fixture: HydratedFixture } => x !== null);
   },
 
+  async getFixtureHighlights(fixtureId) {
+    return ((await read()).highlights ?? []).filter((h) => h.kind === "match" && h.fixtureId === fixtureId);
+  },
+
+  async getMatchdayHighlights(matchday) {
+    return ((await read()).highlights ?? []).filter((h) => h.kind === "matchday" && h.matchday === matchday);
+  },
+
   async listTeams(): Promise<Team[]> {
     return (await read()).teams;
   },
@@ -194,6 +202,10 @@ export const jsonRepo: Repo = {
 
   async listTakes() {
     return (await read()).takes;
+  },
+
+  async listHighlightVideoIds() {
+    return new Set(((await read()).highlights ?? []).map((h) => h.videoId));
   },
 
   async upsertTeams(teams) {
@@ -247,6 +259,18 @@ export const jsonRepo: Repo = {
         const i = db.takes.findIndex((t) => t.id === take.id);
         if (i === -1) db.takes.push(take);
         else if (db.takes[i].taggedBy !== "manual") db.takes[i] = { ...db.takes[i], ...take };
+      }
+    });
+  },
+
+  async upsertHighlights(highlights) {
+    if (highlights.length === 0) return;
+    await mutate((db) => {
+      db.highlights ??= [];
+      for (const h of highlights) {
+        const i = db.highlights.findIndex((x) => x.id === h.id);
+        if (i === -1) db.highlights.push(h);
+        else db.highlights[i] = h;
       }
     });
   },

@@ -4,7 +4,10 @@ import { notFound } from "next/navigation";
 import { Masthead } from "@/components/Masthead";
 import { PhaseTabs } from "@/components/PhaseTabs";
 import { TakeList } from "@/components/TakeList";
-import { getFixtureBySlug, getTakes } from "@/lib/store";
+import { MatchHighlightsSection } from "@/components/Highlights";
+import { getFixtureBySlug, getFixtureHighlights, getTakes } from "@/lib/store";
+import { pickMatchHighlights } from "@/lib/highlights/select";
+import { viewerCountry } from "@/lib/viewer";
 import { dayHeading, kickoffTime } from "@/lib/format";
 import type { Phase } from "@/lib/types";
 
@@ -55,7 +58,12 @@ export default async function MatchPage({
   const phase: Phase =
     phaseParam === "pre" || phaseParam === "post" ? phaseParam : played ? "post" : "pre";
 
-  const takes = await getTakes(fixture.id, phase);
+  const [takes, highlights, country] = await Promise.all([
+    getTakes(fixture.id, phase),
+    getFixtureHighlights(fixture.id),
+    viewerCountry(),
+  ]);
+  const picked = pickMatchHighlights(highlights, fixture, country);
 
   return (
     <main className="min-h-screen">
@@ -100,6 +108,8 @@ export default async function MatchPage({
             </p>
           )}
         </section>
+
+        <MatchHighlightsSection picked={picked} />
 
         <PhaseTabs slug={fixture.slug} active={phase} counts={fixture.counts} />
 

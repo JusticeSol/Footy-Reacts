@@ -2,13 +2,16 @@ import { getRepo } from "./repo";
 import { syncFixtures } from "./providers/fixtures";
 import {
   fetchDurations,
+  fetchPlayability,
   fetchRecentUploads,
   resolveChannelIdFromHandle,
   resolveUploadsPlaylistId,
   youtubeWatchUrl,
 } from "./providers/youtube";
 import { tagVideo } from "./tagger";
-import type { Take, Team } from "./types";
+import { matchHighlight } from "./highlights/match";
+import { HIGHLIGHT_SOURCES, uploadsPlaylistFor } from "./highlights/sources";
+import type { Highlight, Take, Team } from "./types";
 
 /**
  * The two cron jobs. Both are idempotent: safe to run every 15 minutes, safe
@@ -141,5 +144,97 @@ export async function runTakesSync(opts: { sinceHours?: number } = {}): Promise<
   }
 
   await repo.upsertTakes(newTakes);
+  return result;
+}
+
+export interface HighlightsJobResult {
+  store: string;
+  sourcesPolled: number;
+  videosSeen: number;
+  highlightsAdded: number;
+  rejected: number;
+  skipped: string[];
+}
+
+/**
+ * Polls every official channel in HIGHLIGHT_SOURCES and stores the Premier
+ * League highlights among their new uploads. Idempotent like the take sync:
+ * a video already stored is never looked at again.
+ *
+ * Costs 1 quota unit per source per run (one page of its uploads playlist),
+ * plus 1 for the batch of new candidates' embedding and region rules.
+ */
+export async function runHighlightsSync(opts: { sinceHours?: number } = {}): Promise<HighlightsJobResult> {
+  const { sinceHours = 48 } = opts;
+  const since = new Date(Date.now() - sinceHours * 3_600_000);
+  const repo = getRepo();
+
+  const [teams, fixtures, existing] = await Promise.all([
+    repo.listTeams(),
+    repo.listFixtures(),
+    repo.listHighlightVideoIds(),
+  ]);
+
+  const result: HighlightsJobResult = {
+    store: repo.kind,
+    sourcesPolled: 0,
+    videosSeen: 0,
+    highlightsAdded: 0,
+    rejected: 0,
+    skipped: [],
+  };
+
+  const found: Array<Omit<Highlight, "embeddable" | "durationSec" | "regionsAllowed" | "regionsBlocked">> = [];
+
+  for (const source of HIGHLIGHT_SOURCES) {
+    try {
+      // Up to 3 pages: NBC posts ~11 videos a day across every sport, so one page
+      // of 50 reaches back only ~4 days. Paging stops at the cutoff, so a normal
+      // run still costs 1 unit per source.
+      const videos = await fetchRecentUploads(uploadsPlaylistFor(source), { since, maxPages: 3 });
+      result.sourcesPolled += 1;
+      result.videosSeen += videos.length;
+
+      for (const video of videos) {
+        if (existing.has(video.videoId)) continue;
+        const match = matchHighlight(video, source, fixtures, teams);
+        if (match.kind === "reject") {
+          result.rejected += 1;
+          continue;
+        }
+        found.push({
+          id: `yt-${video.videoId}`,
+          kind: match.kind,
+          fixtureId: match.kind === "match" ? match.fixtureId : undefined,
+          matchday: match.kind === "matchday" ? match.matchday : undefined,
+          sourceId: source.id,
+          videoId: video.videoId,
+          title: video.title,
+          thumbnailUrl: video.thumbnailUrl,
+          publishedAt: video.publishedAt,
+          extended: match.kind === "match" ? match.extended : false,
+        });
+        existing.add(video.videoId);
+      }
+    } catch (err) {
+      result.skipped.push(`${source.name}: ${(err as Error).message}`);
+    }
+  }
+
+  // Embedding and region rules decide what each visitor can be shown.
+  const rules = await fetchPlayability(found.map((h) => h.videoId));
+  const highlights: Highlight[] = found.map((h) => {
+    const r = rules.get(h.videoId);
+    return {
+      ...h,
+      embeddable: r?.embeddable ?? false,
+      durationSec: r?.durationSec,
+      regionsAllowed: r?.regionsAllowed,
+      regionsBlocked: r?.regionsBlocked,
+    };
+  });
+
+  await repo.upsertHighlights(highlights);
+  result.highlightsAdded = highlights.length;
   return result;
 }

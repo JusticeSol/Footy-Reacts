@@ -2,7 +2,10 @@ import { Masthead } from "@/components/Masthead";
 import { Ticker } from "@/components/Ticker";
 import { FixtureRow } from "@/components/FixtureRow";
 import { MatchdayNav } from "@/components/MatchdayNav";
-import { getBoard, getRecentTakes } from "@/lib/store";
+import { WeekendGoals } from "@/components/Highlights";
+import { getBoard, getMatchdayHighlights, getRecentTakes } from "@/lib/store";
+import { pickMatchdayHighlight } from "@/lib/highlights/select";
+import { viewerCountry } from "@/lib/viewer";
 import { dayHeading, groupByDay } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +18,16 @@ export default async function HomePage({
   const { md } = await searchParams;
   const requested = md && /^\d+$/.test(md) ? Number(md) : undefined;
 
-  const [board, recent] = await Promise.all([getBoard(requested), getRecentTakes(12)]);
+  const [board, recent, country] = await Promise.all([
+    getBoard(requested),
+    getRecentTakes(12),
+    viewerCountry(),
+  ]);
   const days = groupByDay(board.fixtures, (f) => f.kickoffUtc);
+  const weekendGoals =
+    board.matchday !== null
+      ? pickMatchdayHighlight(await getMatchdayHighlights(board.matchday), country)
+      : undefined;
 
   return (
     <main className="min-h-screen">
@@ -26,6 +37,10 @@ export default async function HomePage({
       <div className="mx-auto max-w-5xl">
         {board.matchday !== null && (
           <MatchdayNav matchdays={board.matchdays} active={board.matchday} />
+        )}
+
+        {weekendGoals && board.matchday !== null && (
+          <WeekendGoals highlight={weekendGoals} matchday={board.matchday} />
         )}
 
         {days.length === 0 ? (

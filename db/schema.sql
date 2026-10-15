@@ -97,6 +97,32 @@ create index if not exists take_fixture_phase_idx
 -- The vidiprinter: newest published takes across all fixtures.
 create index if not exists take_published_idx on take (published_at desc);
 
+-- Official highlights: a club's, a broadcaster's or the league's own upload,
+-- embedded like a take. 'match' rows belong to a fixture; 'matchday' rows are
+-- the league's weekly all-goals compilation. Region lists come from YouTube:
+-- Sky's uploads only play in the UK and Ireland, NBC's only in the US.
+create table if not exists highlight (
+  id              text primary key,
+  kind            text not null check (kind in ('match', 'matchday')),
+  fixture_id      text references fixture (id) on delete cascade,
+  matchday        int,
+  source_id       text not null,
+  video_id        text not null unique,
+  title           text not null,
+  thumbnail_url   text,
+  published_at    timestamptz not null,
+  duration_sec    int,
+  extended        boolean not null default false,
+  embeddable      boolean not null default true,
+  regions_allowed text[],
+  regions_blocked text[],
+  created_at      timestamptz not null default now(),
+  check ((kind = 'match' and fixture_id is not null) or (kind = 'matchday' and matchday is not null))
+);
+
+create index if not exists highlight_fixture_idx on highlight (fixture_id);
+create index if not exists highlight_matchday_idx on highlight (matchday);
+
 -- --- Row level security ------------------------------------------------------
 --
 -- RLS is enabled with NO policies, which denies every anon and authenticated
@@ -112,3 +138,4 @@ alter table team        enable row level security;
 alter table fixture     enable row level security;
 alter table creator     enable row level security;
 alter table take        enable row level security;
+alter table highlight   enable row level security;

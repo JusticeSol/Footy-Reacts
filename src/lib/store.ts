@@ -1,7 +1,7 @@
 import { getRepo } from "./repo";
 import { currentMatchday } from "./repo/shared";
 import type { MatchdaySummary } from "./repo/types";
-import type { HydratedFixture, HydratedTake, Phase } from "./types";
+import type { Highlight, HydratedFixture, HydratedTake, Phase } from "./types";
 
 /**
  * Thin facade over the active repo, so pages import one stable module and stay
@@ -61,4 +61,12 @@ export function getRecentTakes(
   limit = 12,
 ): Promise<Array<{ take: HydratedTake; fixture: HydratedFixture }>> {
   return getRepo().getRecentTakes(limit);
+}
+
+export function getFixtureHighlights(fixtureId: string): Promise<Highlight[]> {
+  return getRepo().getFixtureHighlights(fixtureId);
+}
+
+export function getMatchdayHighlights(matchday: number): Promise<Highlight[]> {
+  return getRepo().getMatchdayHighlights(matchday);
 }

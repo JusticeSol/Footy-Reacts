@@ -50,3 +50,13 @@ jobs:
           # Only needed for an organisation-scoped key; harmless when unset.
           ANTHROPIC_WORKSPACE_ID: ${{ secrets.ANTHROPIC_WORKSPACE_ID }}
           TAGGER_MODEL: ${{ vars.TAGGER_MODEL || 'claude-haiku-4-5-20251001' }}
+
+      # Official highlights land in the same hours as reactions, so they ride the
+      # same schedule. Runs even if the take sync failed: the two are independent.
+      - name: Poll official channels for highlights
+        if: ${{ !cancelled() }}
+        run: npm run sync:highlights -- ${{ github.event.inputs.hours || '48' }}
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

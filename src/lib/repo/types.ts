@@ -1,6 +1,7 @@
 import type {
   Creator,
   Fixture,
+  Highlight,
   HydratedFixture,
   HydratedTake,
   Phase,
@@ -40,6 +41,13 @@ export interface Repo {
   getFixtureBySlug(slug: string): Promise<HydratedFixture | null>;
   getTakes(fixtureId: string, phase: Phase): Promise<HydratedTake[]>;
   getRecentTakes(limit?: number): Promise<Array<{ take: HydratedTake; fixture: HydratedFixture }>>;
+  /**
+   * Official highlights for one fixture, and the league's compilations for one
+   * matchday. Both return [] when the store predates highlights, so the pages
+   * keep working before the table exists.
+   */
+  getFixtureHighlights(fixtureId: string): Promise<Highlight[]>;
+  getMatchdayHighlights(matchday: number): Promise<Highlight[]>;
 
   // --- reads for the jobs ---
   listTeams(): Promise<Team[]>;
@@ -49,6 +57,8 @@ export interface Repo {
   listTakeKeys(): Promise<Set<string>>;
   /** Every stored take, including ones withheld from the UI. For re-scoring. */
   listTakes(): Promise<Take[]>;
+  /** Video ids of highlights already stored, so the sync only looks at new uploads. */
+  listHighlightVideoIds(): Promise<Set<string>>;
 
   // --- writes ---
   upsertTeams(teams: Team[]): Promise<void>;
@@ -56,6 +66,7 @@ export interface Repo {
   upsertCreators(creators: Creator[]): Promise<void>;
   /** Must never overwrite a take whose `taggedBy` is "manual". */
   upsertTakes(takes: Take[]): Promise<void>;
+  upsertHighlights(highlights: Highlight[]): Promise<void>;
   setCreatorYouTube(creatorId: string, channelId: string, playlistId: string): Promise<void>;
   /** Removes fixtures and, by cascade, any takes attached to them. */
   deleteFixtures(ids: string[]): Promise<void>;

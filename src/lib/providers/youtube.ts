@@ -249,6 +249,47 @@ export async function fetchSnippets(videoIds: string[]): Promise<Map<string, Vid
   return out;
 }
 
+/**
+ * Whether each video may be embedded, and where it plays, for up to 50 videos
+ * per call (1 unit). Official highlights are often region-locked (Sky to the UK
+ * and Ireland, NBC to the US) and some clubs switch embedding off entirely, so
+ * the match page needs both facts to choose a version a visitor can watch.
+ */
+export interface VideoPlayability {
+  embeddable: boolean;
+  /** Set when YouTube lists the only countries the video plays in. */
+  regionsAllowed?: string[];
+  /** Set when YouTube lists countries the video is blocked in. */
+  regionsBlocked?: string[];
+  durationSec?: number;
+}
+
+export async function fetchPlayability(videoIds: string[]): Promise<Map<string, VideoPlayability>> {
+  const out = new Map<string, VideoPlayability>();
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
+    const body = await call<{
+      items?: Array<{
+        id?: string;
+        status?: { embeddable?: boolean };
+        contentDetails?: { duration?: string; regionRestriction?: { allowed?: string[]; blocked?: string[] } };
+      }>;
+    }>("videos", { part: "status,contentDetails", id: batch.join(",") });
+
+    for (const item of body.items ?? []) {
+      if (!item.id) continue;
+      const rr = item.contentDetails?.regionRestriction;
+      out.set(item.id, {
+        embeddable: item.status?.embeddable ?? false,
+        regionsAllowed: rr?.allowed,
+        regionsBlocked: rr?.blocked,
+        durationSec: item.contentDetails?.duration ? parseDuration(item.contentDetails.duration) : undefined,
+      });
+    }
+  }
+  return out;
+}
+
 export function youtubeWatchUrl(videoId: string): string {
   return `https://www.youtube.com/watch?v=${videoId}`;
 }

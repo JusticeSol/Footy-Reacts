@@ -77,12 +77,46 @@ export interface Take {
   unmatched?: boolean;
 }
 
+/**
+ * An official highlights video: a club, a broadcaster or the league itself.
+ *
+ * Embedded, never re-hosted, exactly like a take. "match" highlights belong to
+ * one fixture; "matchday" ones are the league's weekly all-goals compilation.
+ */
+export type HighlightKind = "match" | "matchday";
+
+export interface Highlight {
+  /** `yt-<videoId>`. */
+  id: string;
+  kind: HighlightKind;
+  /** Set for kind "match". */
+  fixtureId?: string;
+  /** Set for kind "matchday". */
+  matchday?: number;
+  /** Key into HIGHLIGHT_SOURCES, e.g. "club-fd-66" or "sky". */
+  sourceId: string;
+  videoId: string;
+  title: string;
+  thumbnailUrl?: string;
+  publishedAt: string;
+  durationSec?: number;
+  /** "Extended highlights": kept, but the standard cut is preferred. */
+  extended: boolean;
+  embeddable: boolean;
+  /** Only these countries can play it (ISO 3166 alpha-2), when YouTube says so. */
+  regionsAllowed?: string[];
+  /** These countries cannot play it, when YouTube says so. */
+  regionsBlocked?: string[];
+}
+
 export interface Database {
   competitions: Competition[];
   teams: Team[];
   fixtures: Fixture[];
   creators: Creator[];
   takes: Take[];
+  /** Absent in stores written before highlights existed. */
+  highlights?: Highlight[];
 }
 
 /** A take joined to the creator and fixture it belongs to, for rendering. */

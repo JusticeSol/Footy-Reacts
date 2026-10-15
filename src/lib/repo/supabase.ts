@@ -3,6 +3,8 @@ import type {
   Creator,
   Fixture,
   FixtureStatus,
+  Highlight,
+  HighlightKind,
   HydratedFixture,
   HydratedTake,
   Phase,
@@ -202,8 +204,78 @@ const fromTake = (t: Take) => ({
   unmatched: t.unmatched ?? false,
 });
 
+interface HighlightRow {
+  id: string;
+  kind: HighlightKind;
+  fixture_id: string | null;
+  matchday: number | null;
+  source_id: string;
+  video_id: string;
+  title: string;
+  thumbnail_url: string | null;
+  published_at: string;
+  duration_sec: number | null;
+  extended: boolean;
+  embeddable: boolean;
+  regions_allowed: string[] | null;
+  regions_blocked: string[] | null;
+}
+
+const toHighlight = (r: HighlightRow): Highlight => ({
+  id: r.id,
+  kind: r.kind,
+  fixtureId: r.fixture_id ?? undefined,
+  matchday: r.matchday ?? undefined,
+  sourceId: r.source_id,
+  videoId: r.video_id,
+  title: r.title,
+  thumbnailUrl: r.thumbnail_url ?? undefined,
+  publishedAt: new Date(r.published_at).toISOString(),
+  durationSec: r.duration_sec ?? undefined,
+  extended: r.extended,
+  embeddable: r.embeddable,
+  regionsAllowed: r.regions_allowed ?? undefined,
+  regionsBlocked: r.regions_blocked ?? undefined,
+});
+
+const fromHighlight = (h: Highlight) => ({
+  id: h.id,
+  kind: h.kind,
+  fixture_id: h.fixtureId ?? null,
+  matchday: h.matchday ?? null,
+  source_id: h.sourceId,
+  video_id: h.videoId,
+  title: h.title,
+  thumbnail_url: h.thumbnailUrl ?? null,
+  published_at: h.publishedAt,
+  duration_sec: h.durationSec ?? null,
+  extended: h.extended,
+  embeddable: h.embeddable,
+  regions_allowed: h.regionsAllowed ?? null,
+  regions_blocked: h.regionsBlocked ?? null,
+});
+
 function fail(context: string, error: { message: string } | null): void {
   if (error) throw new Error(`Supabase ${context}: ${error.message}`);
+}
+
+/**
+ * The highlight table arrived after launch. Until db/schema.sql has been
+ * re-run, reads come back empty instead of taking the pages down with them.
+ */
+function missingTable(error: { code?: string; message: string } | null): boolean {
+  return Boolean(error && (error.code === "42P01" || error.code === "PGRST205" || /highlight/.test(error.message) && /does not exist|schema cache/.test(error.message)));
+}
+
+async function readHighlights(filter: (q: ReturnType<typeof highlightQuery>) => ReturnType<typeof highlightQuery>): Promise<Highlight[]> {
+  const res = await filter(highlightQuery());
+  if (missingTable(res.error)) return [];
+  fail("read highlights", res.error);
+  return ((res.data ?? []) as HighlightRow[]).map(toHighlight);
+}
+
+function highlightQuery() {
+  return db().from("highlight").select("*");
 }
 
 /** Only takes above the confidence floor are ever shown. */
@@ -395,6 +467,14 @@ export const supabaseRepo: Repo = {
       .filter((x): x is { take: HydratedTake; fixture: HydratedFixture } => x !== null);
   },
 
+  async getFixtureHighlights(fixtureId) {
+    return readHighlights((q) => q.eq("kind", "match").eq("fixture_id", fixtureId));
+  },
+
+  async getMatchdayHighlights(matchday) {
+    return readHighlights((q) => q.eq("kind", "matchday").eq("matchday", matchday));
+  },
+
   async listTeams() {
     const res = await db().from("team").select("*");
     fail("list teams", res.error);
@@ -427,6 +507,15 @@ export const supabaseRepo: Repo = {
     const res = await db().from("take").select("*");
     fail("list takes", res.error);
     return (res.data as TakeRow[]).map(toTake);
+  },
+
+  async listHighlightVideoIds() {
+    const res = await db().from("highlight").select("video_id");
+    if (missingTable(res.error)) {
+      throw new Error("the highlight table does not exist yet: re-run db/schema.sql in the Supabase SQL editor");
+    }
+    fail("list highlight ids", res.error);
+    return new Set((res.data as Array<{ video_id: string }>).map((r) => r.video_id));
   },
 
   async upsertTeams(teams) {
@@ -512,6 +601,12 @@ export const supabaseRepo: Repo = {
 
     const res = await db().from("take").upsert(writable.map(fromTake), { onConflict: "id" });
     fail("upsert takes", res.error);
+  },
+
+  async upsertHighlights(highlights) {
+    if (highlights.length === 0) return;
+    const res = await db().from("highlight").upsert(highlights.map(fromHighlight), { onConflict: "id" });
+    fail("upsert highlights", res.error);
   },
 
   async setCreatorYouTube(creatorId, channelId, playlistId) {

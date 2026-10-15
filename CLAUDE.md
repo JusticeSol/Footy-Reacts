@@ -20,6 +20,7 @@ npm run typecheck
 
 npm run check:tagger   # the test suite: 11 tagging cases, needs no API keys
 npm run check:landing  # which matchday a visitor lands on, across break dates
+npm run check:highlights  # highlight matching and the per-country choice of version
 ```
 
 There is no test runner. `check:tagger` is where regressions get caught; add a
@@ -31,6 +32,7 @@ Ingestion and operations (all need `.env.local`, see `.env.example`):
 ```bash
 npm run sync:fixtures            # rolling window; --back N --ahead N to widen
 npm run sync:takes 96            # poll creators, hours of lookback
+npm run sync:highlights 48       # poll the official highlight channels
 npm run retag                    # re-score stored takes; dry run, --write applies
 npm run db:status -- --fixture <slug>   # every take on a fixture, hidden ones too
 npm run debug:uploads 48         # per-video tag decision, writes nothing
@@ -149,6 +151,35 @@ up changed environment variables**.
 
 `/api/health?key=$CRON_SECRET` reports which configuration actually reached a
 deployment. A failing server component otherwise shows only an opaque digest.
+
+## Highlights (`src/lib/highlights/`)
+
+Official match highlights, embedded from the rights holders' own YouTube
+channels: never uploaded, cut or stitched by us. Premier League footage belongs
+to the league and its broadcasters, who enforce hard; embedding their uploads
+keeps the views and the ad money with them, the same deal as takes.
+
+- **Sources are pinned** in `sources.ts`: the Premier League (its weekly
+  "EVERY Weekend Goal | Matchweek N" compilation only), Sky Sports Premier
+  League, NBC Sports and 18 club channels. Channel ids, not handles, so a poll
+  costs 1 unit per source. Hull City and Nottingham Forest have no confirmed
+  official channel yet.
+- **Matching is stricter than tagging** (`match.ts`). A wrong highlight is the
+  wrong match on screen, so anything uncertain is dropped. It has its own team
+  names: the tagger's bare "city" and "united" would read Coventry City as Man
+  City. A club channel is one side of every match it posts, which is how
+  "TOWN 2 FULHAM 1" on Ipswich's channel still matches.
+- **Region rules come from YouTube** and are stored per video: Sky plays only
+  in the UK and Ireland, NBC only in the US, and Arsenal, Brighton, Coventry
+  and Newcastle switch embedding off. `select.ts` picks per visitor, using
+  Vercel's `x-vercel-ip-country` header (`src/lib/viewer.ts`): a broadcaster
+  that serves the country, then the home club, then the away club; the
+  standard cut before the extended one. With nothing embeddable, the page links
+  to YouTube instead.
+- **The `highlight` table is newer than the site.** Reads return [] when it is
+  missing, so the pages work before `db/schema.sql` has been re-run; the sync
+  fails loudly instead.
+- The sync rides the take sync's GitHub Actions schedule as a second step.
 
 ## UI conventions
 
