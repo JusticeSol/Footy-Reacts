@@ -28,11 +28,11 @@ function Label({ children }: { children: React.ReactNode }) {
 export function WeekendGoals({ highlight, matchday }: { highlight: Highlight; matchday: number }) {
   return (
     <section className="border-b border-ink px-4 py-5 sm:px-5 sm:py-6">
-      <div className="mb-3 flex items-baseline justify-between gap-4">
-        <h2 className="font-display text-2xl leading-none sm:text-3xl">Weekend goals</h2>
+      <div className="mb-3 flex items-baseline justify-between gap-4 sm:max-w-3xl">
+        <h2 className="font-display text-2xl uppercase leading-none sm:text-3xl">Weekend goals</h2>
         <Label>Matchday {matchday} · every goal</Label>
       </div>
-      <div className="border border-rule">
+      <div className="border border-rule sm:max-w-3xl">
         <HighlightPlayer
           videoId={highlight.videoId}
           title={highlight.title}
@@ -54,14 +54,14 @@ export function MatchHighlightsSection({ picked }: { picked: MatchHighlights }) 
 
   return (
     <section className="border-t border-rule px-4 py-5 sm:px-5 sm:py-6">
-      <div className="mb-3 flex items-baseline justify-between gap-4">
-        <h2 className="font-display text-2xl leading-none sm:text-3xl">Highlights</h2>
+      <div className="mb-3 flex items-baseline justify-between gap-4 sm:max-w-3xl">
+        <h2 className="font-display text-2xl uppercase leading-none sm:text-3xl">Highlights</h2>
         <Label>Official · embedded from YouTube</Label>
       </div>
 
       {main ? (
         <>
-          <div className="border border-rule">
+          <div className="border border-rule sm:max-w-3xl">
             <HighlightPlayer
               videoId={main.videoId}
               title={main.title}
