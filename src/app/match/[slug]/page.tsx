@@ -90,11 +90,11 @@ export default async function MatchPage({
               {fixture.homeTeam.shortName}
             </h1>
             {fixture.score ? (
-              <span className="font-mono text-2xl font-bold tabular-nums text-red sm:text-4xl">
+              <span className="shrink-0 whitespace-nowrap font-mono text-2xl font-bold tabular-nums text-red sm:text-4xl">
                 {fixture.score.home}–{fixture.score.away}
               </span>
             ) : (
-              <span className="font-display text-2xl text-ink-3 sm:text-4xl">v</span>
+              <span className="shrink-0 font-display text-2xl text-ink-3 sm:text-4xl">v</span>
             )}
             <h1 className="font-display text-4xl leading-none sm:text-6xl">
               {fixture.awayTeam.shortName}
