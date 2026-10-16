@@ -1,0 +1,38 @@
+{
+  "board": {
+    "docHeight": 1171,
+    "weekend": {
+      "top": 188,
+      "bottom": 212,
+      "left": 16,
+      "width": 143
+    },
+    "munRow": {
+      "top": 76,
+      "bottom": 93,
+      "left": 362,
+      "width": 290
+    }
+  },
+  "match": {
+    "docHeight": 4185,
+    "highlights": {
+      "top": 271,
+      "bottom": 295,
+      "left": 16,
+      "width": 100
+    },
+    "chips": {
+      "top": 561,
+      "bottom": 655,
+      "left": 16,
+      "width": 358
+    },
+    "firstTake": {
+      "top": 753,
+      "bottom": 1076,
+      "left": 16,
+      "width": 358
+    }
+  }
+}

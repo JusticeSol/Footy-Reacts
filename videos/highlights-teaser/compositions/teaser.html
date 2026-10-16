@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+@font-face{font-family:Anton;font-weight:400;src:url("assets/fonts/Anton-400.woff2") format("woff2")}
+@font-face{font-family:"Space Mono";font-weight:400;src:url("assets/fonts/SpaceMono-400.woff2") format("woff2")}
+@font-face{font-family:"Space Mono";font-weight:700;src:url("assets/fonts/SpaceMono-700.woff2") format("woff2")}
+#teaser{position:absolute;inset:0;background:#F4F1EA;overflow:hidden}
+#teaser .hatch{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 20px,rgba(0,0,0,.06) 20px 40px)}
+
+/* captions: one line of copy at a time in the band above the phone */
+#teaser .cap{position:absolute;left:60px;right:60px;top:96px;height:240px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font:400 84px/0.98 Anton,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#16130F;opacity:0}
+#teaser .cap em{font-style:normal;color:#D5202A}
+
+/* the phone: 390x844 CSS screen drawn at 660 wide (x1.6923) */
+#teaser .phone{position:absolute;left:188px;top:372px;width:704px;height:1472px;background:#16130F;border-radius:72px}
+#teaser .screen{position:absolute;left:22px;top:22px;width:660px;height:1428px;border-radius:52px;overflow:hidden;background:#F4F1EA}
+#teaser .notch{position:absolute;left:280px;top:14px;width:100px;height:30px;border-radius:15px;background:#16130F;z-index:5}
+#teaser .layer{position:absolute;left:0;top:0;width:660px;height:1428px}
+#teaser .scroller{position:absolute;left:0;top:0;width:660px}
+#teaser .scroller img{display:block;width:660px}
+#teaser .box{position:absolute;border:6px solid #D5202A;opacity:0}
+#teaser .rowhl{position:absolute;left:0;width:660px;background:rgba(213,32,42,.16);opacity:0}
+#teaser .finger{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:rgba(22,19,15,.28);border:3px solid rgba(255,255,255,.85);opacity:0}
+#teaser .ripple{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:5px solid #D5202A;opacity:0}
+
+/* hook and end cards */
+#teaser .card{position:absolute;inset:0;background:#D5202A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:48px;text-align:center}
+#teaser .hook-t{position:relative;font:400 200px/0.92 Anton,sans-serif;letter-spacing:4px;text-transform:uppercase;color:#16130F}
+#teaser .end-lock{position:relative;display:block;width:820px;height:198px}
+#teaser .end-t{position:relative;font:400 132px/0.95 Anton,sans-serif;letter-spacing:4px;text-transform:uppercase;color:#16130F}
+#teaser .end-url{position:relative;font:700 44px/1 "Space Mono",monospace;color:#16130F;background:#F4F1EA;padding:20px 30px}
+#teaser .end-meta{position:relative;font:700 24px/1 "Space Mono",monospace;letter-spacing:6px;text-transform:uppercase;color:#16130F}
+</style>
+
+<div id="teaser" data-composition-id="teaser" data-width="1080" data-height="1920" data-duration="22.5">
+  <div class="hatch"></div>
+
+  <div class="cap c1">Every goal from<br><em>the weekend</em></div>
+  <div class="cap c2">Tap <em>any match</em></div>
+  <div class="cap c3">Official <em>highlights</em></div>
+  <div class="cap c4">From the clubs &amp;<br><em>broadcasters</em></div>
+  <div class="cap c5">Then every<br><em>creator's take</em></div>
+
+  <div class="phone">
+    <div class="screen">
+      <div class="notch"></div>
+      <div class="layer board" data-layout-allow-overflow>
+        <div class="scroller" data-layout-allow-overflow>
+          <img src="assets/shots/board.png" alt="">
+          <div class="box b-weekend"></div>
+          <div class="rowhl r-mun"></div>
+          <div class="finger"></div>
+          <div class="ripple"></div>
+        </div>
+      </div>
+      <div class="layer match" data-layout-allow-overflow>
+        <div class="scroller" data-layout-allow-overflow>
+          <img src="assets/shots/match.png" alt="">
+          <div class="box b-player"></div>
+          <div class="box b-chips"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card hook" data-layout-allow-overflow><div class="hatch"></div><div class="hook-t">Missed<br>the<br>weekend?</div></div>
+
+  <div class="card end" data-layout-allow-overflow>
+    <div class="hatch"></div>
+    <img class="end-lock" src="assets/brand/lockup-onred.svg" alt="Footy Reacts">
+    <div class="end-t">Highlights<br>are live</div>
+    <div class="end-url">footy-reacts.vercel.app</div>
+    <div class="end-meta">Official · embedded from YouTube</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const S = (s) => "#teaser " + s;
+  // Page coordinates are CSS pixels of a 390-wide phone, measured on the live
+  // site; the screen draws them 1.6923x larger.
+  const K = 660 / 390;
+  const px = (v) => v * K;
+  const place = (sel, [l, t, r, b]) => gsap.set(S(sel), { left: px(l) - 6, top: px(t) - 6, width: px(r - l) + 12, height: px(b - t) + 12 });
+  place(".b-weekend", [17, 227, 373, 427]);
+  place(".b-player", [17, 325, 373, 525]);
+  place(".b-chips", [16, 561, 374, 655]);
+  gsap.set(S(".r-mun"), { top: px(749), height: px(49) });
+  gsap.set(S(".finger, .ripple"), { left: px(160), top: px(773) });
+
+  const tl = gsap.timeline({ paused: true });
+  const cap = (n, at, out) => {
+    tl.fromTo(S(".c" + n), { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, at);
+    if (out != null) tl.to(S(".c" + n), { opacity: 0, y: -20, duration: 0.25, ease: "power1.in" }, out);
+  };
+  const box = (sel, at, out) => {
+    tl.fromTo(S(sel), { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out" }, at);
+    if (out != null) tl.to(S(sel), { opacity: 0, duration: 0.25 }, out);
+  };
+
+  // 0.0 hook
+  tl.fromTo(S(".hook-t"), { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }, 0.1);
+  tl.to(S(".hook"), { yPercent: -100, duration: 0.5, ease: "power3.inOut" }, 2.2);
+  tl.fromTo(S(".phone"), { y: 140, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 2.3);
+
+  // 2.6 the board: every goal from the weekend
+  gsap.set(S(".match"), { xPercent: 100 });
+  cap(1, 2.6, 7.6);
+  tl.fromTo(S(".board .scroller"), { y: 0 }, { y: -px(40), duration: 1.0, ease: "power2.inOut" }, 2.9);
+  box(".b-weekend", 3.6, 6.9);
+
+  // 6.9 down to Man United v Spurs, and tap it
+  // the board page is 1171px tall: 327 is as far as it scrolls
+  tl.to(S(".board .scroller"), { y: -px(320), duration: 1.0, ease: "power2.inOut" }, 6.9);
+  cap(2, 7.9, 9.2);
+  tl.fromTo(S(".finger"), { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" }, 8.15);
+  tl.to(S(".finger"), { scale: 0.82, duration: 0.12, ease: "power1.in" }, 8.5);
+  tl.fromTo(S(".r-mun"), { opacity: 0 }, { opacity: 1, duration: 0.1 }, 8.55);
+  tl.fromTo(S(".ripple"), { opacity: 0.9, scale: 0.6 }, { opacity: 0, scale: 2.4, duration: 0.5, ease: "power2.out", immediateRender: false }, 8.55);
+  tl.to(S(".finger"), { opacity: 0, duration: 0.2 }, 8.75);
+
+  // 9.0 into the match page
+  tl.to(S(".board"), { xPercent: -100, duration: 0.45, ease: "power3.inOut" }, 9.0);
+  tl.to(S(".match"), { xPercent: 0, duration: 0.45, ease: "power3.inOut" }, 9.0);
+  cap(3, 9.45, 10.8);
+  box(".b-player", 9.9, 11.0);
+
+  // 11.0 the clubs and broadcasters
+  cap(4, 11.0, 14.3);
+  box(".b-chips", 11.4, 13.9);
+
+  // 13.9 down into the takes
+  tl.fromTo(S(".match .scroller"), { y: 0 }, { y: -px(690), duration: 1.0, ease: "power2.inOut", immediateRender: false }, 13.9);
+  cap(5, 14.6, 17.9);
+  tl.to(S(".match .scroller"), { y: -px(1500), duration: 3.1, ease: "none" }, 14.9);
+
+  // 18.2 end card
+  tl.fromTo(S(".end"), { yPercent: 100 }, { yPercent: 0, duration: 0.5, ease: "power3.inOut" }, 18.2);
+  ["end-lock", "end-t", "end-url", "end-meta"].forEach((c, i) =>
+    tl.fromTo(S("." + c), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 18.6 + i * 0.22));
+
+  window.__timelines["teaser"] = tl;
+})();
+</script>
+</template>
+</body>
+</html>

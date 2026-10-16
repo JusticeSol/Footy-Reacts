@@ -1,0 +1,15 @@
+{
+  "provider": "heygen",
+  "voice": "7e48c8d406b04a8089c5eb3cd057cb2e",
+  "lang": "en",
+  "speed": 1.0,
+  "lines": [
+    { "id": "v1", "text": "Missed the weekend?" },
+    { "id": "v2", "text": "Footy Reacts now has every goal from the weekend, in one place." },
+    { "id": "v3", "text": "Tap any match for its official highlights," },
+    { "id": "v4", "text": "straight from the clubs and the broadcasters." },
+    { "id": "v5", "text": "Then dive into every creator's take." },
+    { "id": "v6", "text": "Footy Reacts. Highlights are live." }
+  ],
+  "bgm": { "mode": "retrieve", "query": "upbeat energetic sports hype, modern, punchy, short" }
+}

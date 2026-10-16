@@ -1,0 +1,305 @@
+{
+  "tts_provider": "heygen",
+  "voice_id": "7e48c8d406b04a8089c5eb3cd057cb2e",
+  "bgm": {
+    "path": "assets/bgm/track.mp3",
+    "volume": 0.12,
+    "query": "upbeat energetic sports hype, modern, punchy, short",
+    "mode": "retrieve",
+    "duration_s": 28
+  },
+  "bgm_pending": false,
+  "bgm_provider": "heygen",
+  "bgm_pid": null,
+  "bgm_log": null,
+  "bgm_mode": "retrieve",
+  "bgm_target_duration_s": null,
+  "bgm_seed_duration_s": null,
+  "bgm_loop_count": null,
+  "voices": [
+    {
+      "id": "v1",
+      "path": "assets/voice/v1.wav",
+      "duration_s": 1.123,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Missed",
+          "start": 0.299,
+          "end": 0.512
+        },
+        {
+          "id": "w1",
+          "text": "the",
+          "start": 0.555,
+          "end": 0.64
+        },
+        {
+          "id": "w2",
+          "text": "weekend?",
+          "start": 0.683,
+          "end": 1.0716780045351475
+        }
+      ]
+    },
+    {
+      "id": "v2",
+      "path": "assets/voice/v2.wav",
+      "duration_s": 4.127,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Footy",
+          "start": 0.299,
+          "end": 0.512
+        },
+        {
+          "id": "w1",
+          "text": "Reacts",
+          "start": 0.597,
+          "end": 0.9387
+        },
+        {
+          "id": "w2",
+          "text": "now",
+          "start": 1.067,
+          "end": 1.237
+        },
+        {
+          "id": "w3",
+          "text": "has",
+          "start": 1.28,
+          "end": 1.408
+        },
+        {
+          "id": "w4",
+          "text": "every",
+          "start": 1.493,
+          "end": 1.749
+        },
+        {
+          "id": "w5",
+          "text": "goal",
+          "start": 1.877,
+          "end": 2.048
+        },
+        {
+          "id": "w6",
+          "text": "from",
+          "start": 2.133,
+          "end": 2.261
+        },
+        {
+          "id": "w7",
+          "text": "the",
+          "start": 2.304,
+          "end": 2.3467
+        },
+        {
+          "id": "w8",
+          "text": "weekend,",
+          "start": 2.389,
+          "end": 2.795
+        },
+        {
+          "id": "w9",
+          "text": "in",
+          "start": 3.072,
+          "end": 3.2
+        },
+        {
+          "id": "w10",
+          "text": "one",
+          "start": 3.243,
+          "end": 3.413
+        },
+        {
+          "id": "w11",
+          "text": "place.",
+          "start": 3.499,
+          "end": 3.895
+        }
+      ]
+    },
+    {
+      "id": "v3",
+      "path": "assets/voice/v3.wav",
+      "duration_s": 2.508,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Tap",
+          "start": 0.256,
+          "end": 0.469
+        },
+        {
+          "id": "w1",
+          "text": "any",
+          "start": 0.555,
+          "end": 0.8107
+        },
+        {
+          "id": "w2",
+          "text": "match",
+          "start": 0.939,
+          "end": 1.109
+        },
+        {
+          "id": "w3",
+          "text": "for",
+          "start": 1.28,
+          "end": 1.408
+        },
+        {
+          "id": "w4",
+          "text": "its",
+          "start": 1.451,
+          "end": 1.493
+        },
+        {
+          "id": "w5",
+          "text": "official",
+          "start": 1.536,
+          "end": 1.7067
+        },
+        {
+          "id": "w6",
+          "text": "highlights,",
+          "start": 1.877,
+          "end": 2.2815873015873014
+        }
+      ]
+    },
+    {
+      "id": "v4",
+      "path": "assets/voice/v4.wav",
+      "duration_s": 2.9,
+      "words": [
+        {
+          "id": "w0",
+          "text": "straight",
+          "start": 0.341,
+          "end": 0.64
+        },
+        {
+          "id": "w1",
+          "text": "from",
+          "start": 0.683,
+          "end": 0.768
+        },
+        {
+          "id": "w2",
+          "text": "the",
+          "start": 0.811,
+          "end": 0.896
+        },
+        {
+          "id": "w3",
+          "text": "clubs",
+          "start": 0.939,
+          "end": 1.152
+        },
+        {
+          "id": "w4",
+          "text": "and",
+          "start": 1.365,
+          "end": 1.792
+        },
+        {
+          "id": "w5",
+          "text": "the",
+          "start": 1.835,
+          "end": 1.92
+        },
+        {
+          "id": "w6",
+          "text": "broadcasters.",
+          "start": 1.963,
+          "end": 2.664716553287982
+        }
+      ]
+    },
+    {
+      "id": "v5",
+      "path": "assets/voice/v5.wav",
+      "duration_s": 2.821,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Then",
+          "start": 0.299,
+          "end": 0.512
+        },
+        {
+          "id": "w1",
+          "text": "dive",
+          "start": 0.725,
+          "end": 1.0667
+        },
+        {
+          "id": "w2",
+          "text": "into",
+          "start": 1.152,
+          "end": 1.237
+        },
+        {
+          "id": "w3",
+          "text": "every",
+          "start": 1.323,
+          "end": 1.621
+        },
+        {
+          "id": "w4",
+          "text": "creator's",
+          "start": 1.749,
+          "end": 2.2187
+        },
+        {
+          "id": "w5",
+          "text": "take.",
+          "start": 2.261,
+          "end": 2.5718367346938775
+        }
+      ]
+    },
+    {
+      "id": "v6",
+      "path": "assets/voice/v6.wav",
+      "duration_s": 3.213,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Footy",
+          "start": 0.256,
+          "end": 0.5547
+        },
+        {
+          "id": "w1",
+          "text": "Reacts.",
+          "start": 0.64,
+          "end": 1.515
+        },
+        {
+          "id": "w2",
+          "text": "Highlights",
+          "start": 1.835,
+          "end": 2.176
+        },
+        {
+          "id": "w3",
+          "text": "are",
+          "start": 2.347,
+          "end": 2.56
+        },
+        {
+          "id": "w4",
+          "text": "live.",
+          "start": 2.603,
+          "end": 2.966575963718821
+        }
+      ]
+    }
+  ],
+  "sfx": [],
+  "total_duration_s": 16.692
+}
