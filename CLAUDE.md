@@ -152,6 +152,26 @@ up changed environment variables**.
 `/api/health?key=$CRON_SECRET` reports which configuration actually reached a
 deployment. A failing server component otherwise shows only an opaque digest.
 
+## Competitions (`src/lib/competitions.ts`)
+
+The board has two: the Premier League (default) and the Champions League,
+switched with `/?c=ucl`. The Champions League is synced only for matches with a
+Premier League club in them (`FOOTBALL_DATA_EUROPE`, default `CL`, "none" turns
+it off): the same clubs, creators and fans, playing midweek. No new creators.
+
+- **Every matchday read takes a competition id.** Both competitions number their
+  rounds from 1, so an unfiltered "matchday 3" mixes two rounds and confuses
+  `currentMatchday()`. `listMatchdays` and `getMatchdayFixtures` default to the
+  Premier League in `store.ts`.
+- **The tagger knows foreign clubs by the distinctive words of their names**
+  ("Club Atletico de Madrid" answers to "atletico") when they have no curated
+  aliases; generic words (united, city, real, town) never count on their own.
+- **Highlights**: TNT Sports (UK and Ireland) and CBS Sports Golazo (US) for the
+  Champions League, plus the same club channels. UEFA posts no weekly all-goals
+  video, so the Champions League board has no "Weekend goals".
+- football-data.org gives Barcelona and Bayern the same code, "FCB":
+  `ABBR_OVERRIDES` in `providers/fixtures.ts` fixes board codes like that.
+
 ## Highlights (`src/lib/highlights/`)
 
 Official match highlights, embedded from the rights holders' own YouTube

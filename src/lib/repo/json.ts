@@ -107,22 +107,25 @@ export const jsonRepo: Repo = {
       .filter((f): f is HydratedFixture => f !== null);
   },
 
-  async listMatchdays() {
+  async listMatchdays(competitionId) {
     const db = await read();
     const takesByFixture = new Map<string, number>();
     for (const take of visibleTakes(db)) {
       takesByFixture.set(take.fixtureId, (takesByFixture.get(take.fixtureId) ?? 0) + 1);
     }
-    return summariseMatchdays(db.fixtures, takesByFixture);
+    return summariseMatchdays(
+      db.fixtures.filter((f) => !competitionId || f.competitionId === competitionId),
+      takesByFixture,
+    );
   },
 
-  async getMatchdayFixtures(matchday) {
+  async getMatchdayFixtures(matchday, competitionId) {
     const db = await read();
     const teams = indexTeams(db.teams);
     const takes = visibleTakes(db);
 
     return db.fixtures
-      .filter((f) => f.matchday === matchday)
+      .filter((f) => f.matchday === matchday && (!competitionId || f.competitionId === competitionId))
       .sort(byMatchdayOrder)
       .map((f) => hydrateFixture(f, teams, countTakes(takes, f.id)))
       .filter((f): f is HydratedFixture => f !== null);

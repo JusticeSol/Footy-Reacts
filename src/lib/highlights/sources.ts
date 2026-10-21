@@ -9,6 +9,8 @@
  * the channel's title and recent uploads on 2026-10-16.
  *
  * Hull City and Nottingham Forest are missing: no official channel was found.
+ * Champions League highlights come from the same clubs plus TNT and CBS,
+ * checked on 2026-10-21. UEFA posts no weekly all-goals video.
  * Their matches still get highlights from the opponent, Sky or NBC.
  */
 
@@ -39,6 +41,9 @@ export const HIGHLIGHT_SOURCES: HighlightSource[] = [
   // Every match, but only in the UK and Ireland (Sky) or the US (NBC).
   { id: "sky", name: "Sky Sports Premier League", handle: "@SkySportsPremierLeague", channelId: "UCNAf1k0yIjyGu3k9BwAg3lg", kind: "broadcaster" },
   { id: "nbc", name: "NBC Sports", handle: "@NBCSports", channelId: "UCqZQlzSHbVJrwrn5XvzrzcA", kind: "broadcaster" },
+  // The Champions League, for the English clubs in it: UK and Ireland (TNT) or the US (CBS).
+  { id: "tnt", name: "TNT Sports", handle: "@TNTSportsFootball", channelId: "UC4i_9WvfPRTuRWEaWyfKuFw", kind: "broadcaster" },
+  { id: "cbs", name: "CBS Sports Golazo", handle: "@CBSSportsGolazo", channelId: "UCET00YnetHT7tOpu12v8jxg", kind: "broadcaster" },
 
   club("fd-57", "Arsenal", "@arsenal", "UCpryVRk_VDudG8SHXgWcG0w"),
   club("fd-58", "Aston Villa", "@AVFCOfficial", "UCICNP0mvtr0prFwGUQIABfQ"),

@@ -3,6 +3,8 @@ import { Ticker } from "@/components/Ticker";
 import { FixtureRow } from "@/components/FixtureRow";
 import { MatchdayNav } from "@/components/MatchdayNav";
 import { WeekendGoals } from "@/components/Highlights";
+import { CompetitionTabs } from "@/components/CompetitionTabs";
+import { competitionByKey, PREMIER_LEAGUE } from "@/lib/competitions";
 import { getBoard, getMatchdayHighlights, getRecentTakes } from "@/lib/store";
 import { pickMatchdayHighlight } from "@/lib/highlights/select";
 import { viewerCountry } from "@/lib/viewer";
@@ -13,19 +15,21 @@ export const dynamic = "force-dynamic";
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ md?: string }>;
+  searchParams: Promise<{ md?: string; c?: string }>;
 }) {
-  const { md } = await searchParams;
+  const { md, c } = await searchParams;
+  const competition = competitionByKey(c);
   const requested = md && /^\d+$/.test(md) ? Number(md) : undefined;
 
   const [board, recent, country] = await Promise.all([
-    getBoard(requested),
+    getBoard(requested, competition.id),
     getRecentTakes(12),
     viewerCountry(),
   ]);
   const days = groupByDay(board.fixtures, (f) => f.kickoffUtc);
+  // The league's weekly all-goals video: the Champions League has no equivalent.
   const weekendGoals =
-    board.matchday !== null
+    board.matchday !== null && competition.id === PREMIER_LEAGUE.id
       ? pickMatchdayHighlight(await getMatchdayHighlights(board.matchday), country)
       : undefined;
 
@@ -35,8 +39,14 @@ export default async function HomePage({
       <Ticker items={recent} />
 
       <div className="mx-auto max-w-5xl">
+        <CompetitionTabs active={competition} />
+
         {board.matchday !== null && (
-          <MatchdayNav matchdays={board.matchdays} active={board.matchday} />
+          <MatchdayNav
+            matchdays={board.matchdays}
+            active={board.matchday}
+            competitionKey={competition.id === PREMIER_LEAGUE.id ? undefined : competition.key}
+          />
         )}
 
         {weekendGoals && board.matchday !== null && (
@@ -45,9 +55,11 @@ export default async function HomePage({
 
         {days.length === 0 ? (
           <div className="px-4 py-16 text-center">
-            <p className="font-display text-2xl text-ink-2">NO FIXTURES LOADED</p>
+            <p className="font-display text-2xl uppercase text-ink-2">
+              {competition.id === PREMIER_LEAGUE.id ? "No fixtures loaded" : `No ${competition.name} fixtures yet`}
+            </p>
             <p className="mt-2 font-mono text-xs uppercase tracking-wider text-ink-3">
-              run npm run sync:fixtures
+              {competition.id === PREMIER_LEAGUE.id ? "run npm run sync:fixtures" : "they appear as the draw is played"}
             </p>
           </div>
         ) : (

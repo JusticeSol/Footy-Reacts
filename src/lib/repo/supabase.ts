@@ -317,9 +317,10 @@ export const supabaseRepo: Repo = {
       .filter((f): f is HydratedFixture => f !== null);
   },
 
-  async listMatchdays() {
+  async listMatchdays(competitionId) {
+    const fixtureQuery = db().from("fixture").select("id,matchday,kickoff_utc");
     const [fixturesRes, takesRes] = await Promise.all([
-      db().from("fixture").select("id,matchday,kickoff_utc"),
+      competitionId ? fixtureQuery.eq("competition_id", competitionId) : fixtureQuery,
       db()
         .from("take")
         .select("fixture_id")
@@ -346,9 +347,10 @@ export const supabaseRepo: Repo = {
     );
   },
 
-  async getMatchdayFixtures(matchday) {
+  async getMatchdayFixtures(matchday, competitionId) {
+    const fixtureQuery = db().from("fixture").select("*").eq("matchday", matchday);
     const [fixturesRes, teamsRes] = await Promise.all([
-      db().from("fixture").select("*").eq("matchday", matchday),
+      competitionId ? fixtureQuery.eq("competition_id", competitionId) : fixtureQuery,
       db().from("team").select("*"),
     ]);
     fail("matchday fixtures", fixturesRes.error);

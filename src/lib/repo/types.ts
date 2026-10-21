@@ -35,9 +35,13 @@ export interface Repo {
 
   // --- reads for the UI ---
   getFixtureBoard(opts?: { days?: number }): Promise<HydratedFixture[]>;
-  /** Every matchday held in the store, oldest first, for the archive nav. */
-  listMatchdays(): Promise<MatchdaySummary[]>;
-  getMatchdayFixtures(matchday: number): Promise<HydratedFixture[]>;
+  /**
+   * Every matchday held in the store, oldest first, for the archive nav. Pass a
+   * competition id: competitions number their rounds independently, so
+   * "matchday 3" across all of them would mix two different rounds.
+   */
+  listMatchdays(competitionId?: string): Promise<MatchdaySummary[]>;
+  getMatchdayFixtures(matchday: number, competitionId?: string): Promise<HydratedFixture[]>;
   getFixtureBySlug(slug: string): Promise<HydratedFixture | null>;
   getTakes(fixtureId: string, phase: Phase): Promise<HydratedTake[]>;
   getRecentTakes(limit?: number): Promise<Array<{ take: HydratedTake; fixture: HydratedFixture }>>;

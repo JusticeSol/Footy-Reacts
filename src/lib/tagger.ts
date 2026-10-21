@@ -136,6 +136,11 @@ function normalise(value: string): string {
     .trim();
 }
 
+/** Words too common to name a club on their own. */
+const GENERIC_WORDS = new Set([
+  "club", "united", "city", "town", "real", "sporting", "athletic", "football", "calcio", "wanderers", "albion",
+]);
+
 function aliasesFor(team: Team): string[] {
   const key = normalise(team.name).replace(/\b(fc|afc|cf|sc)\b/g, "").trim();
   const known = ALIASES[key];
@@ -145,7 +150,25 @@ function aliasesFor(team: Team): string[] {
     // Creators write board abbreviations too: "LIV v MAN UTD".
     normalise(team.abbr),
   ];
-  return [...new Set([...(known ?? []), ...base].filter((a) => a.length >= 3))];
+  // A club with no curated nicknames (a Champions League opponent, a newly
+  // promoted side) also answers to the distinctive words of its name: the
+  // provider says "Club Atlético de Madrid", creators say "Atletico".
+  const words = known
+    ? []
+    : [...normalise(team.name).split(" "), ...normalise(team.shortName).split(" ")].filter(
+        (w) => w.length >= 4 && !GENERIC_WORDS.has(w),
+      );
+  return [...new Set([...(known ?? []), ...base, ...words].filter((a) => a.length >= 3))];
+}
+
+/**
+ * The first `max` characters, cut on whole characters. A plain .slice() counts
+ * UTF-16 units, so a cut inside an emoji leaves half of it (a lone surrogate);
+ * the Anthropic API rejects that as invalid JSON and the model tie-break fails
+ * silently for any description with an emoji near the cut.
+ */
+function clip(text: string, max: number): string {
+  return Array.from(text).slice(0, max).join("");
 }
 
 /** Whole-word only. Substring matching is what made "preview" contain "review". */
@@ -310,7 +333,7 @@ async function askClaude(
 
 TITLE: ${video.title}
 PUBLISHED: ${video.publishedAt}
-DESCRIPTION: ${video.description.slice(0, 600)}
+DESCRIPTION: ${clip(video.description, 600)}
 
 Which of these matches is it a pre-match or post-match reaction to?
 

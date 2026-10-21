@@ -1,4 +1,5 @@
 import { getRepo } from "./repo";
+import { PREMIER_LEAGUE } from "./competitions";
 import { currentMatchday } from "./repo/shared";
 import type { MatchdaySummary } from "./repo/types";
 import type { Highlight, HydratedFixture, HydratedTake, Phase } from "./types";
@@ -16,12 +17,15 @@ export function getFixtureBoard(opts: { days?: number } = {}): Promise<HydratedF
 
 export type { MatchdaySummary } from "./repo/types";
 
-export function listMatchdays(): Promise<MatchdaySummary[]> {
-  return getRepo().listMatchdays();
+export function listMatchdays(competitionId: string = PREMIER_LEAGUE.id): Promise<MatchdaySummary[]> {
+  return getRepo().listMatchdays(competitionId);
 }
 
-export function getMatchdayFixtures(matchday: number): Promise<HydratedFixture[]> {
-  return getRepo().getMatchdayFixtures(matchday);
+export function getMatchdayFixtures(
+  matchday: number,
+  competitionId: string = PREMIER_LEAGUE.id,
+): Promise<HydratedFixture[]> {
+  return getRepo().getMatchdayFixtures(matchday, competitionId);
 }
 
 /**
@@ -30,12 +34,15 @@ export function getMatchdayFixtures(matchday: number): Promise<HydratedFixture[]
  * carries a matchday number, so the page still works for a competition that
  * does not number its rounds.
  */
-export async function getBoard(requested?: number): Promise<{
+export async function getBoard(
+  requested?: number,
+  competitionId: string = PREMIER_LEAGUE.id,
+): Promise<{
   fixtures: HydratedFixture[];
   matchdays: MatchdaySummary[];
   matchday: number | null;
 }> {
-  const matchdays = await listMatchdays();
+  const matchdays = await listMatchdays(competitionId);
   const fallback = currentMatchday(matchdays);
   const matchday =
     requested !== undefined && matchdays.some((m) => m.matchday === requested)
@@ -43,10 +50,13 @@ export async function getBoard(requested?: number): Promise<{
       : fallback;
 
   if (matchday === null) {
-    return { fixtures: await getFixtureBoard(), matchdays, matchday: null };
+    // The date-window fallback lists every competition, so it is only right
+    // for the default board.
+    const fixtures = competitionId === PREMIER_LEAGUE.id ? await getFixtureBoard() : [];
+    return { fixtures, matchdays, matchday: null };
   }
 
-  return { fixtures: await getMatchdayFixtures(matchday), matchdays, matchday };
+  return { fixtures: await getMatchdayFixtures(matchday, competitionId), matchdays, matchday };
 }
 
 export function getFixtureBySlug(slug: string): Promise<HydratedFixture | null> {

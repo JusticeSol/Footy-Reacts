@@ -82,10 +82,18 @@ function fdTeam(t: FdTeam): Team {
     id: `fd-${t.id}`,
     name,
     shortName: t.shortName ?? name.replace(/\s+(FC|AFC)$/i, ""),
-    abbr: t.tla ?? deriveAbbr(name),
+    abbr: ABBR_OVERRIDES[name] ?? t.tla ?? deriveAbbr(name),
     crestUrl: t.crest,
   };
 }
+
+/**
+ * Board codes the provider gets wrong. It gives Barcelona and Bayern the same
+ * "FCB", which on a Champions League board is two different teams reading as one.
+ */
+const ABBR_OVERRIDES: Record<string, string> = {
+  "FC Barcelona": "BAR",
+};
 
 async function syncFootballData(opts: {
   apiKey: string;
@@ -244,12 +252,27 @@ export async function syncFixtures(
   if (provider === "footballdata") {
     const apiKey = process.env.FOOTBALL_DATA_API_KEY;
     if (!apiKey) throw new Error("FOOTBALL_DATA_API_KEY is not set");
-    return syncFootballData({
+    const league = await syncFootballData({
       apiKey,
       competition: process.env.FOOTBALL_DATA_COMPETITION ?? "PL",
       from,
       to,
     });
+
+    // European nights for the league's own clubs: only matches with one of
+    // them in it, so the board and the creators stay the same. "none" turns it
+    // off. Free-tier football-data.org includes the Champions League.
+    const europe = process.env.FOOTBALL_DATA_EUROPE ?? "CL";
+    if (europe === "none") return league;
+
+    const ours = new Set(league.teams.map((t) => t.id));
+    const cup = await syncFootballData({ apiKey, competition: europe, from, to });
+    const fixtures = cup.fixtures.filter((f) => ours.has(f.homeTeamId) || ours.has(f.awayTeamId));
+    const needed = new Set(fixtures.flatMap((f) => [f.homeTeamId, f.awayTeamId]));
+    const teams = new Map(league.teams.map((t) => [t.id, t]));
+    for (const t of cup.teams) if (needed.has(t.id) && !teams.has(t.id)) teams.set(t.id, t);
+
+    return { teams: [...teams.values()], fixtures: [...league.fixtures, ...fixtures] };
   }
 
   if (provider === "apifootball") {

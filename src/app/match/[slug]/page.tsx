@@ -8,6 +8,7 @@ import { MatchHighlightsSection } from "@/components/Highlights";
 import { getFixtureBySlug, getFixtureHighlights, getTakes } from "@/lib/store";
 import { pickMatchHighlights } from "@/lib/highlights/select";
 import { viewerCountry } from "@/lib/viewer";
+import { competitionById, PREMIER_LEAGUE } from "@/lib/competitions";
 import { dayHeading, kickoffTime } from "@/lib/format";
 import type { Phase } from "@/lib/types";
 
@@ -64,6 +65,8 @@ export default async function MatchPage({
     viewerCountry(),
   ]);
   const picked = pickMatchHighlights(highlights, fixture, country);
+  const competition = competitionById(fixture.competitionId);
+  const european = competition.id !== PREMIER_LEAGUE.id;
 
   return (
     <main className="min-h-screen">
@@ -72,7 +75,7 @@ export default async function MatchPage({
       <div className="mx-auto max-w-5xl">
         <div className="border-b border-rule px-4 py-2 sm:px-5">
           <Link
-            href="/"
+            href={european ? `/?c=${competition.key}` : "/"}
             className="font-mono text-[10px] uppercase tracking-wider text-ink-3 hover:text-ink"
           >
             ← all fixtures
@@ -82,6 +85,7 @@ export default async function MatchPage({
         <section className="px-4 py-6 sm:px-5 sm:py-8">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3 sm:text-xs">
             {dayHeading(fixture.kickoffUtc)} · {kickoffTime(fixture.kickoffUtc)}
+            {european ? ` · ${competition.short}` : ""}
             {fixture.matchday ? ` · MD${fixture.matchday}` : ""}
           </p>
 

@@ -14,10 +14,14 @@ import { dayHeading } from "@/lib/format";
 export function MatchdayNav({
   matchdays,
   active,
+  competitionKey,
 }: {
   matchdays: MatchdaySummary[];
   active: number;
+  /** Set for any board but the default, so the arrows stay in that competition. */
+  competitionKey?: string;
 }) {
+  const href = (md: number) => (competitionKey ? `/?c=${competitionKey}&md=${md}` : `/?md=${md}`);
   const index = matchdays.findIndex((m) => m.matchday === active);
   const previous = index > 0 ? matchdays[index - 1] : null;
   const next = index >= 0 && index < matchdays.length - 1 ? matchdays[index + 1] : null;
@@ -43,7 +47,7 @@ export function MatchdayNav({
     >
       {previous ? (
         <Link
-          href={`/?md=${previous.matchday}`}
+          href={href(previous.matchday)}
           className={`${arrow} bg-paper hover:bg-red hover:text-paper`}
           aria-label={`Matchday ${previous.matchday}`}
         >
@@ -64,7 +68,7 @@ export function MatchdayNav({
 
       {next ? (
         <Link
-          href={`/?md=${next.matchday}`}
+          href={href(next.matchday)}
           className={`${arrow} bg-paper hover:bg-red hover:text-paper`}
           aria-label={`Matchday ${next.matchday}`}
         >

@@ -13,7 +13,7 @@ loadEnv();
  * returns, which is exactly when links are being sent to creators.
  */
 async function main() {
-  const summaries = await getRepo().listMatchdays();
+  const summaries = await getRepo().listMatchdays("comp-pl");
 
   console.log("matchdays in store:");
   for (const s of summaries) {

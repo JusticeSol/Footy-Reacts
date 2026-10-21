@@ -44,10 +44,14 @@ const NAMES: Record<string, string[]> = {
   "fd-563": ["west ham", "hammers"],
 };
 
-/** Not this season's Premier League: other teams, other competitions, other eras. */
+/**
+ * Not this season's Premier League or Champions League: other teams, other
+ * competitions, other eras. ("uefa" alone is fine: it opens every Champions
+ * League title.)
+ */
 const OFF_TOPIC = [
   "u17", "u18", "u19", "u21", "u23", "academy", "next gen", "pl2", "premier league 2",
-  "women", "wsl", "champions league", "europa", "conference league", "uefa",
+  "women", "wsl", "europa", "conference league", "youth league",
   "carabao", "fa cup", "efl", "trophy", "friendly", "pre season", "preseason",
   "classic", "legends", "rewind", "archive", "on this day", "espanol", "en espanol",
 ];
@@ -68,8 +72,28 @@ function hasWord(text: string, phrase: string): boolean {
   return new RegExp(`(^|\\s)${phrase.replace(/\s+/g, "\\s+")}(\\s|$)`).test(text);
 }
 
+/** Words too common to identify a club on their own. */
+const GENERIC = new Set([
+  "fc", "afc", "cf", "sc", "ac", "as", "sv", "fk", "sk", "pae", "cp", "bk", "if", "rc", "club", "de", "del", "la",
+  "united", "city", "real", "sporting", "athletic", "atletico de", "football", "calcio", "1907", "1899",
+]);
+
+/**
+ * Names for a team without a curated entry (the Champions League opponents):
+ * its short name, its full name without suffixes, its three-letter code, and
+ * any distinctive word of four letters or more ("atleti", "atletico", "psg",
+ * "aek", "bayern").
+ */
+function fallbackNames(team: Team): string[] {
+  const short = normaliseTitle(team.shortName);
+  const full = normaliseTitle(team.name);
+  const words = [...short.split(" "), ...full.split(" ")].filter((w) => w.length >= 4 && !GENERIC.has(w));
+  const code = team.abbr && /^[A-Za-z]{3}$/.test(team.abbr) ? [team.abbr.toLowerCase()] : [];
+  return [...new Set([short, full, ...words, ...code])].filter((n) => n.length >= 3 && !GENERIC.has(n));
+}
+
 function namesFor(team: Team): string[] {
-  return NAMES[team.id] ?? [normaliseTitle(team.shortName)];
+  return NAMES[team.id] ?? fallbackNames(team);
 }
 
 /** Team ids named in a title, in the order they first appear. */
@@ -122,24 +146,25 @@ export function matchHighlight(
   }
 
   const named = teamsInTitle(video.title, teams);
-  let pair: [string, string] | null = null;
+  // Candidate pairings. A club's own channel is one side of every match it
+  // posts, even when its title only names the opponent ("TOWN 2 FULHAM 1" on
+  // Ipswich's channel). Otherwise any two named teams: a title can name a third
+  // club in passing, so every pair is tried rather than the first two.
+  const pairs: Array<[string, string]> = [];
   if (source.kind === "club" && source.teamId) {
-    // A club's own channel is one side of every match it posts, even when its
-    // title only names the opponent ("TOWN 2 FULHAM 1" on Ipswich's channel).
-    const opponent = named.find((id) => id !== source.teamId);
-    if (opponent) pair = [source.teamId, opponent];
-  } else if (named.length >= 2) {
-    pair = [named[0], named[1]];
+    for (const id of named) if (id !== source.teamId) pairs.push([source.teamId, id]);
+  } else {
+    for (let i = 0; i < named.length; i += 1) for (let j = i + 1; j < named.length; j += 1) pairs.push([named[i], named[j]]);
   }
-  if (!pair) return { kind: "reject", reason: `needs two teams, found ${named.length}` };
+  if (pairs.length === 0) return { kind: "reject", reason: `needs two teams, found ${named.length}` };
 
-  // The most recent meeting of the pair, kicked off before the upload.
-  const fixture = fixtures
-    .filter((f) => {
-      const ids = [f.homeTeamId, f.awayTeamId];
-      const kickoff = Date.parse(f.kickoffUtc);
-      return ids.includes(pair[0]) && ids.includes(pair[1]) && kickoff <= published && published - kickoff <= MATCH_WINDOW_MS;
-    })
+  // The most recent meeting of a named pair, kicked off before the upload.
+  const recent = fixtures.filter((f) => {
+    const kickoff = Date.parse(f.kickoffUtc);
+    return kickoff <= published && published - kickoff <= MATCH_WINDOW_MS;
+  });
+  const fixture = recent
+    .filter((f) => pairs.some(([a, b]) => [f.homeTeamId, f.awayTeamId].includes(a) && [f.homeTeamId, f.awayTeamId].includes(b) && a !== b))
     .sort((a, b) => Date.parse(b.kickoffUtc) - Date.parse(a.kickoffUtc))[0];
   if (!fixture) return { kind: "reject", reason: "no fixture between those teams in the last 5 days" };
 
