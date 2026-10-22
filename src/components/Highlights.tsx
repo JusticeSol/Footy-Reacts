@@ -137,7 +137,7 @@ export function MatchHighlightsSection({
                 />
               </div>
               <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-                Every goal from matchday {compilation.matchday}, this match&apos;s included · {credit(compilation)}
+                Every goal from matchday {compilation.matchday}, this match included · {credit(compilation)}
               </p>
             </div>
           )}
