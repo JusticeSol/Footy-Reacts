@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Anton, Space_Mono, Work_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -32,12 +32,26 @@ export const metadata: Metadata = {
     title: "Footy Reacts — every take on every match",
     description: TAGLINE,
   },
+  // Installed on an iPhone home screen: full screen, and the page draws under
+  // a see-through status bar (the red strip below keeps the clock readable).
+  appleWebApp: { capable: true, title: "Footy Reacts", statusBarStyle: "black-translucent" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#d5202a",
+  // Lets env(safe-area-inset-top) report the notch and clock area on iPhones.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${anton.variable} ${workSans.variable} ${spaceMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {/* Zero height in a browser tab. In the installed app it sits behind the
+            iPhone clock so white status text stays on red while the page scrolls. */}
+        <div aria-hidden className="fixed inset-x-0 top-0 z-30 h-[env(safe-area-inset-top)] bg-red" />
+        {children}
+      </body>
     </html>
   );
 }

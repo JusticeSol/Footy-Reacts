@@ -1,3 +1,4 @@
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { Masthead } from "@/components/Masthead";
 import { Ticker } from "@/components/Ticker";
 import { FixtureRow } from "@/components/FixtureRow";
@@ -37,6 +38,7 @@ export default async function HomePage({
     <main className="min-h-screen">
       <Masthead />
       <Ticker items={recent} />
+      <InstallPrompt />
 
       <div className="mx-auto max-w-5xl">
         <CompetitionTabs active={competition} />
@@ -65,7 +67,7 @@ export default async function HomePage({
         ) : (
           days.map(([key, dayFixtures]) => (
             <section key={key}>
-              <h2 className="sticky top-0 z-10 border-b border-ink bg-paper px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-2 sm:px-5 sm:text-xs">
+              <h2 className="sticky top-[env(safe-area-inset-top)] z-10 border-b border-ink bg-paper px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-2 sm:px-5 sm:text-xs">
                 {dayHeading(dayFixtures[0].kickoffUtc)}
               </h2>
               {dayFixtures.map((fixture) => (

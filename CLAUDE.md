@@ -208,3 +208,11 @@ fixtures are announced in and also prevents hydration drift. Takes are
 round-robined across creators so one channel's upload spree cannot own a match
 page, and `TakeList` cuts the first screen at one take per creator. Take cards
 are thumbnail facades that only mount the iframe on click.
+
+The site is installable (`src/app/manifest.ts`, icons in `public/icons` and
+`src/app/{icon,apple-icon}.png`, rendered from `brand/avatar.svg`). On an
+iPhone home screen the page draws under a see-through status bar, so anything
+pinned to the top of the screen offsets by `env(safe-area-inset-top)`; a fixed
+red strip in the layout sits behind the clock. `InstallPrompt` is the home
+page's dismissible "add to home screen" strip. There is no service worker and no
+offline mode.
