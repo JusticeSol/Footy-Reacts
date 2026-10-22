@@ -28,10 +28,11 @@ export default async function HomePage({
     viewerCountry(),
   ]);
   const days = groupByDay(board.fixtures, (f) => f.kickoffUtc);
-  // The league's weekly all-goals video: the Champions League has no equivalent.
+  // The competition's own all-goals video: the Premier League's for the
+  // weekend, UEFA's for the Champions League matchday.
   const weekendGoals =
-    board.matchday !== null && competition.id === PREMIER_LEAGUE.id
-      ? pickMatchdayHighlight(await getMatchdayHighlights(board.matchday), country)
+    board.matchday !== null
+      ? pickMatchdayHighlight(await getMatchdayHighlights(board.matchday, competition.id), country)
       : undefined;
 
   return (
@@ -52,7 +53,11 @@ export default async function HomePage({
         )}
 
         {weekendGoals && board.matchday !== null && (
-          <WeekendGoals highlight={weekendGoals} matchday={board.matchday} />
+          <WeekendGoals
+            highlight={weekendGoals}
+            matchday={board.matchday}
+            heading={competition.id === PREMIER_LEAGUE.id ? "Weekend goals" : "Matchday goals"}
+          />
         )}
 
         {days.length === 0 ? (

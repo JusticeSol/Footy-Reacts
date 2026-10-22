@@ -111,6 +111,27 @@ export function teamsInTitle(title: string, teams: Team[]): string[] {
   return found.sort((a, b) => a.at - b.at).map((f) => f.id);
 }
 
+/**
+ * UEFA's all-goals video: "EVERY Champions League Goal From Matchday 3 |
+ * Highlights". Not its best-goals picks, which skip most matches, and not the
+ * Europa League or women's versions (those are off-topic already).
+ */
+function uefaMatchday(text: string): number | null {
+  if (!hasWord(text, "every champions league goal")) return null;
+  const day = /(?:^|\s)matchday (\d{1,2})(?:\s|$)/.exec(text);
+  return day ? Number(day[1]) : null;
+}
+
+/** Does the title carry this result, either way round ("2-2", "(1 - 3)", "3:1")? */
+function hasScore(title: string, score: { home: number; away: number }): boolean {
+  for (const m of title.matchAll(/(?:^|[^\d])(\d{1,2})\s*[-–:]\s*(\d{1,2})(?![\d])/g)) {
+    const a = Number(m[1]);
+    const b = Number(m[2]);
+    if ((a === score.home && b === score.away) || (a === score.away && b === score.home)) return true;
+  }
+  return false;
+}
+
 /** The league's weekly all-goals video: "EVERY Weekend Goal | Matchweek 6 | ...". */
 function compilationMatchday(text: string): number | null {
   const week = /(?:^|\s)(?:matchweek|match week|mw|gameweek|gw)\s?(\d{1,2})(?:\s|$)/.exec(text);
@@ -132,16 +153,25 @@ export function matchHighlight(
   const published = Date.parse(video.publishedAt);
 
   if (source.kind === "league") {
-    const matchday = compilationMatchday(text);
+    const matchday = source.competitionId === "comp-cl" ? uefaMatchday(text) : compilationMatchday(text);
     if (matchday === null) return { kind: "reject", reason: "not a matchweek compilation" };
-    // Only a matchday that has actually been played, and recently.
+    // Only a matchday of that competition that has actually been played, and recently.
     const played = fixtures.some(
-      (f) => f.matchday === matchday && Date.parse(f.kickoffUtc) <= published && published - Date.parse(f.kickoffUtc) <= MATCH_WINDOW_MS,
+      (f) =>
+        f.competitionId === source.competitionId &&
+        f.matchday === matchday &&
+        Date.parse(f.kickoffUtc) <= published &&
+        published - Date.parse(f.kickoffUtc) <= MATCH_WINDOW_MS,
     );
     return played ? { kind: "matchday", matchday } : { kind: "reject", reason: `matchweek ${matchday} not just played` };
   }
 
-  if (!hasWord(text, "highlights") && !hasWord(text, "highlight")) {
+  // A club's own channel sometimes titles its cut by the goals and the score
+  // instead ("EZE AND RICE GOALS IN CRAZY GAME | Bayern Munich vs Arsenal (2-2)").
+  // Accepted further down only if that score is the match's actual result.
+  const isHighlights = hasWord(text, "highlights") || hasWord(text, "highlight");
+  const goalsCut = !isHighlights && source.kind === "club" && hasWord(text, "goals");
+  if (!isHighlights && !goalsCut) {
     return { kind: "reject", reason: "not a highlights upload" };
   }
 
@@ -167,6 +197,9 @@ export function matchHighlight(
     .filter((f) => pairs.some(([a, b]) => [f.homeTeamId, f.awayTeamId].includes(a) && [f.homeTeamId, f.awayTeamId].includes(b) && a !== b))
     .sort((a, b) => Date.parse(b.kickoffUtc) - Date.parse(a.kickoffUtc))[0];
   if (!fixture) return { kind: "reject", reason: "no fixture between those teams in the last 5 days" };
+  if (goalsCut && !(fixture.score && hasScore(video.title, fixture.score))) {
+    return { kind: "reject", reason: "goals clip without the match's result in its title" };
+  }
 
   return { kind: "match", fixtureId: fixture.id, extended: hasWord(text, "extended") };
 }

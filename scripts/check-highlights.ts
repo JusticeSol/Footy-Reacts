@@ -34,7 +34,7 @@ const TEAMS: Team[] = [
 ];
 
 const fixture = (id: string, home: string, away: string, kickoffUtc: string, matchday = 6): Fixture => ({
-  id, slug: id, competitionId: "PL", homeTeamId: home, awayTeamId: away, kickoffUtc, status: "finished", matchday,
+  id, slug: id, competitionId: "comp-pl", homeTeamId: home, awayTeamId: away, kickoffUtc, status: "finished", matchday,
 });
 const FIXTURES: Fixture[] = [
   fixture("mun-tot", "fd-66", "fd-73", "2026-10-10T16:30:00Z"),
@@ -48,6 +48,7 @@ const FIXTURES: Fixture[] = [
   { ...fixture("lask-liv", "fd-1877", "fd-64", "2026-10-14T16:45:00Z", 2), competitionId: "comp-cl" },
   { ...fixture("mci-psg", "fd-65", "fd-524", "2026-10-14T19:00:00Z", 2), competitionId: "comp-cl" },
   { ...fixture("mci-aek", "fd-65", "fd-774", "2026-10-20T19:00:00Z", 3), competitionId: "comp-cl" },
+  { ...fixture("fcb-ars", "fd-5", "fd-57", "2026-10-21T19:00:00Z", 3), competitionId: "comp-cl", score: { home: 2, away: 2 } },
 ];
 
 const SAT_NIGHT = "2026-10-10T20:00:00Z";
@@ -77,6 +78,16 @@ const cases: Array<{ title: string; source: string; published: string; expect: s
   // A real match, but the upload is too long after it to be its highlights.
   { title: "Man Utd 1-1 Spurs | Highlights", source: "club-fd-66", published: "2026-10-20T12:00:00Z", expect: "reject" },
   // The league: weekly compilations only.
+  // A club's goals cut without the word "highlights": only with the real result.
+  { title: "EZE AND RICE GOALS IN CRAZY GAME 🤯 | Bayern Munich vs Arsenal (2-2) | Champions League", source: "club-fd-57", published: "2026-10-21T23:00:00Z", expect: "match fcb-ars" },
+  { title: "ALL THE GOALS | Arsenal 5-1 Bayern Munich | Emirates special", source: "club-fd-57", published: "2026-10-21T23:00:00Z", expect: "reject" },
+  { title: "QUICK FEET! ARSENAL SCORE VS BAYERN MUNICH", source: "club-fd-57", published: "2026-10-21T08:00:00Z", expect: "reject" },
+  { title: "Kane goals vs Arsenal (2-2) | Bayern Munich", source: "tnt", published: "2026-10-21T23:00:00Z", expect: "reject" },
+  // UEFA's every-goal video for the Champions League matchday.
+  { title: "EVERY Champions League Goal From Matchday 3 | Highlights", source: "uefa", published: "2026-10-22T14:00:00Z", expect: "matchday 3" },
+  { title: "EVERY Women's Champions League Goal From Matchday 3 | Highlights", source: "uefa", published: "2026-10-22T14:00:00Z", expect: "reject" },
+  { title: "You Won't Believe These Champions League Matchday 3 Goals!", source: "uefa", published: "2026-10-22T14:00:00Z", expect: "reject" },
+  { title: "EVERY Champions League Goal From Matchday 6 | Highlights", source: "uefa", published: "2026-10-22T14:00:00Z", expect: "reject" },
   { title: "EVERY Weekend Goal | Matchweek 6 | 2026/27 Premier League Highlights", source: "league", published: "2026-10-12T09:00:00Z", expect: "matchday 6" },
   { title: "THRILLER At Goodison! | Everton v Chelsea | Classic Premier League", source: "league", published: SUN_NIGHT, expect: "reject" },
   { title: "EVERY Weekend Goal | Matchweek 9 | 2026/27 Premier League Highlights", source: "league", published: "2026-10-12T09:00:00Z", expect: "reject" },

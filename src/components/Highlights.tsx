@@ -24,12 +24,20 @@ function Label({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** "Weekend goals": the league's own all-goals compilation for the matchday on the board. */
-export function WeekendGoals({ highlight, matchday }: { highlight: Highlight; matchday: number }) {
+/** "Weekend goals": the competition's own all-goals compilation for the matchday on the board. */
+export function WeekendGoals({
+  highlight,
+  matchday,
+  heading,
+}: {
+  highlight: Highlight;
+  matchday: number;
+  heading: string;
+}) {
   return (
     <section className="border-b border-ink px-4 py-5 sm:px-5 sm:py-6">
       <div className="mb-3 flex items-baseline justify-between gap-4 sm:max-w-3xl">
-        <h2 className="font-display text-2xl uppercase leading-none sm:text-3xl">Weekend goals</h2>
+        <h2 className="font-display text-2xl uppercase leading-none sm:text-3xl">{heading}</h2>
         <Label>Matchday {matchday} · every goal</Label>
       </div>
       <div className="border border-rule sm:max-w-3xl">
@@ -47,10 +55,20 @@ export function WeekendGoals({ highlight, matchday }: { highlight: Highlight; ma
   );
 }
 
-/** The match page's highlights: the version this visitor can play, plus the rest. */
-export function MatchHighlightsSection({ picked }: { picked: MatchHighlights }) {
+/**
+ * The match page's highlights: the version this visitor can play, plus the rest.
+ * When no version of this match plays here, `compilation` is the matchday's
+ * every-goal video, which has this match's goals in it.
+ */
+export function MatchHighlightsSection({
+  picked,
+  compilation,
+}: {
+  picked: MatchHighlights;
+  compilation?: Highlight;
+}) {
   const { main, more, watchOnYouTube } = picked;
-  if (!main && !watchOnYouTube) return null;
+  if (!main && !watchOnYouTube && !compilation) return null;
 
   return (
     <section className="border-t border-rule px-4 py-5 sm:px-5 sm:py-6">
@@ -88,25 +106,42 @@ export function MatchHighlightsSection({ picked }: { picked: MatchHighlights }) 
           )}
         </>
       ) : (
-        watchOnYouTube && (
-          // The rights holder has switched embedding off: send the visitor to them.
-          <a
-            href={youtubeWatchUrl(watchOnYouTube.videoId)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center justify-between gap-4 border border-ink px-4 py-4 hover:bg-ink hover:text-paper"
-          >
-            <span>
-              <span className="block font-display text-lg leading-tight">Watch the highlights on YouTube</span>
-              <span className="mt-1 block font-mono text-[10px] uppercase tracking-wider opacity-70">
-                {credit(watchOnYouTube)} plays its highlights on YouTube only
+        <>
+          {watchOnYouTube && (
+            // The rights holder has switched embedding off: send the visitor to them.
+            <a
+              href={youtubeWatchUrl(watchOnYouTube.videoId)}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-between gap-4 border border-ink px-4 py-4 hover:bg-ink hover:text-paper"
+            >
+              <span>
+                <span className="block font-display text-lg leading-tight">Watch the highlights on YouTube</span>
+                <span className="mt-1 block font-mono text-[10px] uppercase tracking-wider opacity-70">
+                  {credit(watchOnYouTube)} plays its highlights on YouTube only
+                </span>
               </span>
-            </span>
-            <span className="font-mono text-lg" aria-hidden>
-              ↗
-            </span>
-          </a>
-        )
+              <span className="font-mono text-lg" aria-hidden>
+                ↗
+              </span>
+            </a>
+          )}
+          {compilation && (
+            <div className={watchOnYouTube ? "mt-4" : undefined}>
+              <div className="border border-rule sm:max-w-3xl">
+                <HighlightPlayer
+                  videoId={compilation.videoId}
+                  title={compilation.title}
+                  thumbnailUrl={compilation.thumbnailUrl}
+                  durationSec={compilation.durationSec}
+                />
+              </div>
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-ink-3">
+                Every goal from matchday {compilation.matchday}, this match&apos;s included · {credit(compilation)}
+              </p>
+            </div>
+          )}
+        </>
       )}
     </section>
   );

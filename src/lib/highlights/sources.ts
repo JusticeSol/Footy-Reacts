@@ -10,7 +10,9 @@
  *
  * Hull City and Nottingham Forest are missing: no official channel was found.
  * Champions League highlights come from the same clubs plus TNT and CBS,
- * checked on 2026-10-21. UEFA posts no weekly all-goals video.
+ * checked on 2026-10-21. TNT and CBS are region-locked and some clubs post no
+ * Champions League cut, so UEFA's every-goal video per matchday (worldwide,
+ * checked 2026-10-22) is the fallback everywhere else.
  * Their matches still get highlights from the opponent, Sky or NBC.
  */
 
@@ -24,6 +26,8 @@ export interface HighlightSource {
   kind: HighlightSourceKind;
   /** For a club channel: the team it speaks for, which is one side of every match it posts. */
   teamId?: string;
+  /** For a league channel: the competition its all-goals compilation covers. */
+  competitionId?: string;
 }
 
 const club = (teamId: string, name: string, handle: string, channelId: string): HighlightSource => ({
@@ -37,7 +41,9 @@ const club = (teamId: string, name: string, handle: string, channelId: string): 
 
 export const HIGHLIGHT_SOURCES: HighlightSource[] = [
   // The league posts one all-goals compilation per matchweek, playable worldwide.
-  { id: "league", name: "Premier League", handle: "@premierleague", channelId: "UCG5qGWdu8nIRZqJ_GgDwQ-w", kind: "league" },
+  { id: "league", name: "Premier League", handle: "@premierleague", channelId: "UCG5qGWdu8nIRZqJ_GgDwQ-w", kind: "league", competitionId: "comp-pl" },
+  // UEFA's equivalent: "EVERY Champions League Goal From Matchday 3", the day after.
+  { id: "uefa", name: "UEFA", handle: "@UEFA", channelId: "UCyGa1YEx9ST66rYrJTGIKOw", kind: "league", competitionId: "comp-cl" },
   // Every match, but only in the UK and Ireland (Sky) or the US (NBC).
   { id: "sky", name: "Sky Sports Premier League", handle: "@SkySportsPremierLeague", channelId: "UCNAf1k0yIjyGu3k9BwAg3lg", kind: "broadcaster" },
   { id: "nbc", name: "NBC Sports", handle: "@NBCSports", channelId: "UCqZQlzSHbVJrwrn5XvzrzcA", kind: "broadcaster" },

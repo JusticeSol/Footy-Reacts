@@ -5,8 +5,8 @@ import { Masthead } from "@/components/Masthead";
 import { PhaseTabs } from "@/components/PhaseTabs";
 import { TakeList } from "@/components/TakeList";
 import { MatchHighlightsSection } from "@/components/Highlights";
-import { getFixtureBySlug, getFixtureHighlights, getTakes } from "@/lib/store";
-import { pickMatchHighlights } from "@/lib/highlights/select";
+import { getFixtureBySlug, getFixtureHighlights, getMatchdayHighlights, getTakes } from "@/lib/store";
+import { pickMatchdayHighlight, pickMatchHighlights } from "@/lib/highlights/select";
 import { viewerCountry } from "@/lib/viewer";
 import { competitionById, PREMIER_LEAGUE } from "@/lib/competitions";
 import { dayHeading, kickoffTime } from "@/lib/format";
@@ -65,6 +65,12 @@ export default async function MatchPage({
     viewerCountry(),
   ]);
   const picked = pickMatchHighlights(highlights, fixture, country);
+  // Every version of this match is region-locked here (TNT and CBS outside the
+  // UK and US, say): offer the matchday's every-goal video instead.
+  const compilation =
+    !picked.main && played && fixture.matchday
+      ? pickMatchdayHighlight(await getMatchdayHighlights(fixture.matchday, fixture.competitionId), country)
+      : undefined;
   const competition = competitionById(fixture.competitionId);
   const european = competition.id !== PREMIER_LEAGUE.id;
 
@@ -113,7 +119,7 @@ export default async function MatchPage({
           )}
         </section>
 
-        <MatchHighlightsSection picked={picked} />
+        <MatchHighlightsSection picked={picked} compilation={compilation} />
 
         <PhaseTabs slug={fixture.slug} active={phase} counts={fixture.counts} />
 

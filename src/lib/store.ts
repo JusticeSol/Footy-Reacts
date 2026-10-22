@@ -1,6 +1,7 @@
 import { getRepo } from "./repo";
 import { PREMIER_LEAGUE } from "./competitions";
 import { currentMatchday } from "./repo/shared";
+import { sourceById } from "./highlights/sources";
 import type { MatchdaySummary } from "./repo/types";
 import type { Highlight, HydratedFixture, HydratedTake, Phase } from "./types";
 
@@ -77,6 +78,15 @@ export function getFixtureHighlights(fixtureId: string): Promise<Highlight[]> {
   return getRepo().getFixtureHighlights(fixtureId);
 }
 
-export function getMatchdayHighlights(matchday: number): Promise<Highlight[]> {
-  return getRepo().getMatchdayHighlights(matchday);
+/**
+ * A matchday's all-goals compilations from that competition's own channel.
+ * Stored rows carry only the matchday number, and Premier League matchweek 3
+ * is not Champions League matchday 3, so the source decides.
+ */
+export async function getMatchdayHighlights(
+  matchday: number,
+  competitionId: string = PREMIER_LEAGUE.id,
+): Promise<Highlight[]> {
+  const all = await getRepo().getMatchdayHighlights(matchday);
+  return all.filter((h) => sourceById(h.sourceId)?.competitionId === competitionId);
 }

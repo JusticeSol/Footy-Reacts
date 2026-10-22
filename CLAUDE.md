@@ -181,21 +181,28 @@ keeps the views and the ad money with them, the same deal as takes.
 
 - **Sources are pinned** in `sources.ts`: the Premier League (its weekly
   "EVERY Weekend Goal | Matchweek N" compilation only), Sky Sports Premier
-  League, NBC Sports and 18 club channels. Channel ids, not handles, so a poll
-  costs 1 unit per source. Hull City and Nottingham Forest have no confirmed
-  official channel yet.
+  League, NBC Sports and 18 club channels; for the Champions League, TNT, CBS
+  Sports Golazo and UEFA (its "EVERY Champions League Goal From Matchday N"
+  only). Channel ids, not handles, so a poll costs 1 unit per source. Hull City
+  and Nottingham Forest have no confirmed official channel yet.
 - **Matching is stricter than tagging** (`match.ts`). A wrong highlight is the
   wrong match on screen, so anything uncertain is dropped. It has its own team
   names: the tagger's bare "city" and "united" would read Coventry City as Man
   City. A club channel is one side of every match it posts, which is how
-  "TOWN 2 FULHAM 1" on Ipswich's channel still matches.
+  "TOWN 2 FULHAM 1" on Ipswich's channel still matches. A club upload without
+  the word "highlights" ("EZE AND RICE GOALS ... (2-2)") counts only if it says
+  "goals" and carries the match's actual result.
 - **Region rules come from YouTube** and are stored per video: Sky plays only
   in the UK and Ireland, NBC only in the US, and Arsenal, Brighton, Coventry
   and Newcastle switch embedding off. `select.ts` picks per visitor, using
   Vercel's `x-vercel-ip-country` header (`src/lib/viewer.ts`): a broadcaster
   that serves the country, then the home club, then the away club; the
   standard cut before the extended one. With nothing embeddable, the page links
-  to YouTube instead.
+  to YouTube instead, and when no version plays in the visitor's country it
+  also offers the matchday's every-goal compilation. TNT and CBS cover only the
+  UK and US, so outside them that compilation is often the only Champions
+  League footage. Compilations are stored by matchday number alone; the
+  source's `competitionId` keeps PL matchweek 3 apart from UCL matchday 3.
 - **The `highlight` table is newer than the site.** Reads return [] when it is
   missing, so the pages work before `db/schema.sql` has been re-run; the sync
   fails loudly instead.
