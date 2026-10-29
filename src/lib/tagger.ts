@@ -20,25 +20,25 @@ import type { YouTubeVideo } from "./providers/youtube";
 /** Nicknames and shorthand the crests and API names never contain. */
 const ALIASES: Record<string, string[]> = {
   arsenal: ["arsenal", "gunners", "afc", "ars"],
-  chelsea: ["chelsea", "blues", "cfc"],
-  liverpool: ["liverpool", "lfc", "reds"],
-  "manchester city": ["man city", "mancity", "city", "mcfc", "citizens"],
-  "manchester united": ["man utd", "man united", "manutd", "united", "mufc", "red devils"],
-  tottenham: ["tottenham", "spurs", "thfc"],
-  "newcastle united": ["newcastle", "nufc", "magpies", "toon"],
-  "aston villa": ["villa", "avfc"],
+  chelsea: ["chelsea", "blues", "cfc", "stamford bridge"],
+  liverpool: ["liverpool", "lfc", "reds", "anfield"],
+  "manchester city": ["man city", "mancity", "city", "mcfc", "citizens", "etihad"],
+  "manchester united": ["man utd", "man united", "manutd", "united", "mufc", "red devils", "old trafford"],
+  "tottenham hotspur": ["tottenham", "spurs", "thfc"],
+  "newcastle united": ["newcastle", "nufc", "magpies", "toon", "st james park"],
+  "aston villa": ["villa", "avfc", "villa park"],
   "west ham united": ["west ham", "whufc", "hammers", "irons"],
-  everton: ["everton", "efc", "toffees"],
+  everton: ["everton", "efc", "toffees", "goodison"],
   "wolverhampton wanderers": ["wolves", "wwfc"],
   "brighton hove albion": ["brighton", "bhafc", "seagulls"],
-  "nottingham forest": ["forest", "nffc"],
-  "crystal palace": ["palace", "cpfc", "eagles"],
-  fulham: ["fulham", "ffc", "cottagers"],
+  "nottingham forest": ["forest", "nffc", "city ground"],
+  "crystal palace": ["palace", "cpfc", "eagles", "selhurst"],
+  fulham: ["fulham", "ffc", "cottagers", "craven cottage"],
   brentford: ["brentford", "bees"],
   bournemouth: ["bournemouth", "afcb", "cherries"],
-  "leeds united": ["leeds", "lufc", "whites"],
-  sunderland: ["sunderland", "safc", "black cats"],
-  burnley: ["burnley", "clarets"],
+  "leeds united": ["leeds", "lufc", "whites", "elland road"],
+  sunderland: ["sunderland", "safc", "black cats", "stadium of light"],
+  burnley: ["burnley", "clarets", "turf moor"],
 };
 
 /**
@@ -103,6 +103,30 @@ const POST_WORDS = [
   "verdict",
   "instant",
 ];
+
+/**
+ * Title wording that marks a video as build-up to a specific game, for the
+ * pre-match rule below. Wider than PRE_WORDS (which also decides the phase):
+ * "press conference" is said after a game too, so it may not set the phase,
+ * but before kickoff it means the manager's pre-match presser.
+ */
+const BUILD_UP_WORDS = [
+  ...PRE_WORDS,
+  "press conference",
+  "presser",
+  "predicted",
+  "starting 11",
+  "starting eleven",
+  "injury news",
+  "injury update",
+  "injury updates",
+  "matchday",
+  "match day",
+  "vs",
+];
+
+/** Inside this long before kickoff, a club's creator is talking about the game. */
+const MATCHDAY_BUILD_UP_MS = 30 * 3_600_000;
 
 /** Typical window a match occupies, kickoff → final whistle. */
 const MATCH_DURATION_MS = 115 * 60_000;
@@ -178,6 +202,23 @@ function containsWord(haystack: string, needle: string): boolean {
 
 function mentions(haystack: string, team: Team): boolean {
   return aliasesFor(team).some((alias) => containsWord(haystack, alias));
+}
+
+/**
+ * Nicknames shared between clubs or with ordinary English: "city" (Hull,
+ * Coventry), "united" (Newcastle, Leeds), "afc" (Bournemouth), "sky blues"
+ * (Coventry). Fine as a hint for the fixture in hand, useless as evidence of a
+ * different club.
+ */
+const SHARED_NICKNAMES = new Set(["city", "united", "afc", "blues", "reds", "whites", "eagles"]);
+
+/**
+ * Names a club unambiguously: no shared nickname, and no three-letter code
+ * ("bar", "new", "not", "sun", "eve", "cry" are words: "Off The Bar" is a
+ * show, not Barcelona).
+ */
+function namesClearly(haystack: string, team: Team): boolean {
+  return aliasesFor(team).some((a) => a.length > 3 && !SHARED_NICKNAMES.has(a) && containsWord(haystack, a));
 }
 
 function phaseFromText(text: string): { phase: Phase | null; hit: string | null } {
@@ -284,6 +325,38 @@ export function prefilter(
     if (containsWord(title, "news") && !containsWord(title, "team news")) {
       score -= 0.25;
       reasons.push("news bulletin");
+    }
+
+    // A preview is about the game. Days out, a club's creator posts about the
+    // club in general (the manager's future, the owners, last week's cup tie),
+    // and naming the club or the opponent somewhere in the description got that
+    // published as pre-match. So before the matchday build-up starts, the title
+    // itself must name the opponent or read as build-up.
+    if (phase === "pre" && kickoff - published > MATCHDAY_BUILD_UP_MS) {
+      const opponentInTitle =
+        coversHome && !coversAway ? awayInTitle : coversAway && !coversHome ? homeInTitle : homeInTitle || awayInTitle;
+      const buildUp = BUILD_UP_WORDS.some((w) => containsWord(title, w));
+      if (!opponentInTitle && !buildUp) {
+        score = Math.min(score, 0.45);
+        reasons.push("days before kickoff, title neither names the opponent nor reads as a preview — capped");
+      }
+    }
+
+    // Before a game, a title that names a club outside the fixture is usually
+    // about that club's game: "Liverpool knock Chelsea out on penalties" is a
+    // cup tie we do not track, not a preview of Chelsea's next league match.
+    // Not after one: reactions name table rivals ("City go 3 clear of Arsenal").
+    // A weekend preview that runs through several games ("WEEKEND PREVIEW:
+    // Chelsea, Arsenal...") says so, and is exempt.
+    const saysPreview = PRE_WORDS.some((w) => containsWord(title, w));
+    if (phase === "pre" && !saysPreview && !(homeInTitle && awayInTitle)) {
+      const outsider = [...teams.values()].find(
+        (t) => t.id !== fixture.homeTeamId && t.id !== fixture.awayTeamId && namesClearly(title, t),
+      );
+      if (outsider) {
+        score -= 0.3;
+        reasons.push(`title names ${outsider.shortName}, not in this fixture`);
+      }
     }
 
     // Affinity plus timing alone must never be enough to publish. Without a

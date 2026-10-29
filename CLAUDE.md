@@ -94,6 +94,18 @@ Scoring rules worth knowing before editing:
 - No club named anywhere **and** no phase wording caps the score below the
   floor. Otherwise affinity plus timing alone publishes anything posted near a
   kickoff.
+- More than 30 hours before kickoff, a pre-match take's **title** must name the
+  opponent or read as build-up (preview, team news, predicted line-up, press
+  conference). Days out, a club's creators post general club talk (the
+  manager's future, the owners), and naming the clubs in the description used
+  to publish it as a preview.
+- Before a game, a title naming a club outside the fixture costs 0.3 (a cup tie
+  we do not track, say), unless it says "preview". Only unambiguous names count:
+  no shared nicknames ("city", "united", "afc") and no three-letter codes
+  ("Off The Bar" is not Barcelona).
+- Aliases are keyed by the provider's name with FC/AFC removed: "Tottenham
+  Hotspur", not "Tottenham". A wrong key silently falls back to name words,
+  which is how "Spurs" went unrecognised.
 - A take marked `taggedBy: "manual"` is never overwritten by a sync or a retag.
 
 After changing this file, run `npm run retag`. The sync only ever looks at

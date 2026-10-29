@@ -131,6 +131,51 @@ async function main() {
       clubs: ["fd-61"],
       expectBelowFloor: true,
     },
+    // Live false positives on Chelsea v Man United (2026-10-31): a Man United
+    // creator's general club talk days out, with the fixture's clubs named only
+    // in the description, published as pre-match.
+    {
+      name: "club talk days before kickoff stays hidden",
+      title: "The Truth About Michael Carrick's Manchester United Tenure",
+      description: "Where does Carrick go from here with Liverpool up next for Manchester United?",
+      publishedAt: at("seed-2", -3 * 24 * 60),
+      clubs: ["fd-66"],
+      expectBelowFloor: true,
+    },
+    {
+      name: "a rant days before kickoff stays hidden",
+      title: "This Club Is A joke!",
+      description: "Man United v Liverpool on Sunday and the club is in chaos.",
+      publishedAt: at("seed-2", -3.5 * 24 * 60),
+      clubs: ["fd-66"],
+      expectBelowFloor: true,
+    },
+    {
+      // A cup tie we do not track, attached to Chelsea's next league game.
+      name: "another club's game is not this fixture's preview",
+      title: "Liverpool Knock Chelsea out on Penalties. Terrible performance!!!",
+      publishedAt: at("seed-1", -3 * 24 * 60),
+      clubs: ["fd-57", "fd-66", "fd-61", "fd-64", "fd-65"],
+      expectBelowFloor: true,
+    },
+    {
+      // The rule must still let a real preview through days out.
+      name: "a preview naming the opponent days out still counts",
+      title: "Our Predicted Line-Up For Liverpool",
+      publishedAt: at("seed-2", -2 * 24 * 60),
+      clubs: ["fd-66"],
+      expectFixture: "seed-2",
+      expectPhase: "pre",
+    },
+    {
+      // "Off The Bar" is a show's name: BAR, Barcelona's code, is not a club here.
+      name: "a three-letter word is not another club",
+      title: "Is Carrick's Job On The Line Against Liverpool?! | Off The Bar",
+      publishedAt: at("seed-2", -2 * 24 * 60),
+      clubs: ["fd-66"],
+      expectFixture: "seed-2",
+      expectPhase: "pre",
+    },
   ];
 
   let failures = 0;

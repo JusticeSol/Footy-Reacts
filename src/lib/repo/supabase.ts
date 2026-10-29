@@ -260,6 +260,28 @@ function fail(context: string, error: { message: string } | null): void {
 }
 
 /**
+ * Every row of a table. PostgREST returns at most 1,000 rows per request and
+ * says nothing when it cuts off: once the take table passed 1,000, the sync's
+ * "already seen" set and retag both silently missed the newest takes.
+ */
+async function selectAll<T>(
+  table: string,
+  columns: string,
+  context: string,
+): Promise<{ rows: T[]; error: { message: string; code?: string } | null }> {
+  const PAGE = 1000;
+  const rows: T[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const res = await db().from(table).select(columns).order("id").range(from, from + PAGE - 1);
+    if (res.error) return { rows, error: res.error };
+    rows.push(...((res.data ?? []) as T[]));
+    if (!res.data || res.data.length < PAGE) return { rows, error: null };
+  }
+  // Unreachable; keeps the compiler's return analysis happy.
+  throw new Error(`Supabase ${context}: paging ended unexpectedly`);
+}
+
+/**
  * The highlight table arrived after launch. Until db/schema.sql has been
  * re-run, reads come back empty instead of taking the pages down with them.
  */
@@ -496,28 +518,24 @@ export const supabaseRepo: Repo = {
   },
 
   async listTakeKeys() {
-    const res = await db().from("take").select("source,external_id");
+    const res = await selectAll<{ source: string; external_id: string }>("take", "source,external_id", "list take keys");
     fail("list take keys", res.error);
-    return new Set(
-      (res.data as Array<{ source: string; external_id: string }>).map(
-        (r) => `${r.source}:${r.external_id}`,
-      ),
-    );
+    return new Set(res.rows.map((r) => `${r.source}:${r.external_id}`));
   },
 
   async listTakes() {
-    const res = await db().from("take").select("*");
+    const res = await selectAll<TakeRow>("take", "*", "list takes");
     fail("list takes", res.error);
-    return (res.data as TakeRow[]).map(toTake);
+    return res.rows.map(toTake);
   },
 
   async listHighlightVideoIds() {
-    const res = await db().from("highlight").select("video_id");
+    const res = await selectAll<{ video_id: string }>("highlight", "video_id", "list highlight ids");
     if (missingTable(res.error)) {
       throw new Error("the highlight table does not exist yet: re-run db/schema.sql in the Supabase SQL editor");
     }
     fail("list highlight ids", res.error);
-    return new Set((res.data as Array<{ video_id: string }>).map((r) => r.video_id));
+    return new Set(res.rows.map((r) => r.video_id));
   },
 
   async upsertTeams(teams) {
