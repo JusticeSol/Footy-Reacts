@@ -216,6 +216,11 @@ round-robined across creators so one channel's upload spree cannot own a match
 page, and `TakeList` cuts the first screen at one take per creator. Take cards
 are thumbnail facades that only mount the iframe on click.
 
+Images are served unoptimized (`next.config.ts`). Vercel's Hobby plan allows
+5,000 image transformations a month and counts each thumbnail at each srcset
+width; with hundreds of takes a week that ran out in October 2026 and new
+thumbnails returned 402. Do not turn optimization back on without a paid plan.
+
 The site is installable (`src/app/manifest.ts`, icons in `public/icons` and
 `src/app/{icon,apple-icon}.png`, rendered from `brand/avatar.svg`). On an
 iPhone home screen the page draws under a see-through status bar, so anything
