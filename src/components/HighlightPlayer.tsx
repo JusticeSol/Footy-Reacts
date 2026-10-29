@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { sizedThumbnail } from "@/lib/thumbnails";
 import { useState } from "react";
 import { runtime } from "@/lib/format";
 import { youtubeEmbedUrl } from "@/lib/providers/youtube";
@@ -44,7 +45,7 @@ export function HighlightPlayer({
         >
           {thumbnailUrl ? (
             <Image
-              src={thumbnailUrl}
+              src={sizedThumbnail(thumbnailUrl, "player")}
               alt=""
               fill
               sizes="(max-width: 1024px) 100vw, 1024px"

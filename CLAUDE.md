@@ -220,6 +220,9 @@ Images are served unoptimized (`next.config.ts`). Vercel's Hobby plan allows
 5,000 image transformations a month and counts each thumbnail at each srcset
 width; with hundreds of takes a week that ran out in October 2026 and new
 thumbnails returned 402. Do not turn optimization back on without a paid plan.
+Because nothing is resized, `src/lib/thumbnails.ts` picks YouTube's own smaller
+files instead: hqdefault (~26 KB) for take cards, sddefault for the highlight
+player, rather than the stored maxresdefault (~270 KB).
 
 The site is installable (`src/app/manifest.ts`, icons in `public/icons` and
 `src/app/{icon,apple-icon}.png`, rendered from `brand/avatar.svg`). On an

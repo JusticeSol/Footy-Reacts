@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { sizedThumbnail } from "@/lib/thumbnails";
 import { useState } from "react";
 import type { HydratedTake } from "@/lib/types";
 import { runtime, timeAgo } from "@/lib/format";
@@ -41,7 +42,7 @@ export function TakeCard({ take }: { take: HydratedTake }) {
           >
             {take.thumbnailUrl ? (
               <Image
-                src={take.thumbnailUrl}
+                src={sizedThumbnail(take.thumbnailUrl, "card")}
                 alt=""
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
