@@ -76,7 +76,8 @@ whatever the heuristic gave that candidate. Letting its own number stand
 overrode every heuristic penalty and pushed transfer news, La Liga opinion and
 international-break talk onto match pages. Asked to choose between plausible
 fixtures, a model usually chooses one, so its "no" is far stronger evidence than
-its "yes".
+its "yes". It does not pick the phase either: that comes from the upload time,
+since it filed live watchalongs and starting-XI streams as post-match.
 
 Without `ANTHROPIC_API_KEY` the heuristic decides alone; the pipeline never
 hard-depends on the model. An organisation-scoped key also needs
@@ -106,10 +107,17 @@ Scoring rules worth knowing before editing:
 - Aliases are keyed by the provider's name with FC/AFC removed: "Tottenham
   Hotspur", not "Tottenham". A wrong key silently falls back to name words,
   which is how "Spurs" went unrecognised.
+- A title with both clubs and a score is post-match when posted within 12 hours
+  of kickoff (a live stream keeps its scheduled time), and capped below the
+  floor when posted more than 30 hours out (another meeting's result, usually a
+  cup tie).
 - A take marked `taggedBy: "manual"` is never overwritten by a sync or a retag.
 
 After changing this file, run `npm run retag`. The sync only ever looks at
-videos it has not seen, so stored takes keep their old scores otherwise.
+videos it has not seen, so stored takes keep their old scores otherwise. Retag
+re-scores with the stored `publishedAt`, not YouTube's current one, which moves
+to the end of a finished live stream. The model runs at temperature 0; even so,
+a few borderline takes can flip between runs.
 
 ## YouTube quota is the pipeline's design constraint
 

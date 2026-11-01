@@ -104,6 +104,12 @@ const POST_WORDS = [
   "instant",
 ];
 
+/** "3-1", "2 v 1", "2 - 0": a result, so the video comes after the match. */
+const SCORE = /\b\d{1,2}\s*(?:-|–|v|vs)\s*\d{1,2}\b/i;
+
+/** How far ahead of kickoff a post-match live stream may be scheduled. */
+const STREAM_SCHEDULED_MS = 12 * 60 * 60 * 1000;
+
 /**
  * Title wording that marks a video as build-up to a specific game, for the
  * pre-match rule below. Wider than PRE_WORDS (which also decides the phase):
@@ -301,8 +307,36 @@ export function prefilter(
     else if (published <= kickoff) phase = "pre";
     else phase = textPhase.phase ?? "pre";
 
-    // Wording that contradicts the timing is a real signal that we matched the
-    // wrong fixture (e.g. a "reaction" published before this kickoff).
+    // A live stream keeps the time it was scheduled, often hours before a
+    // post-match show. A title naming both teams and a score can only be
+    // about the result. Wording alone is not enough: a "press conference
+    // reaction" is pre-match, and "must start ahead of" is not a preview.
+    // Only on the day: a score posted days out is another match's result
+    // (a cup tie between the same clubs) or a prediction.
+    if (
+      phase === "pre" &&
+      kickoff - published < STREAM_SCHEDULED_MS &&
+      homeInTitle &&
+      awayInTitle &&
+      SCORE.test(video.title)
+    ) {
+      phase = "post";
+    }
+
+    // Both clubs and a score, days before this kickoff: the result of another
+    // meeting between them, usually a cup tie the calendar does not hold.
+    if (
+      kickoff - published > MATCHDAY_BUILD_UP_MS &&
+      homeInTitle &&
+      awayInTitle &&
+      SCORE.test(video.title)
+    ) {
+      score = Math.min(score, 0.45);
+      reasons.push("a result between these clubs, days before kickoff — capped");
+    }
+
+    // Otherwise it is a real signal that we matched the wrong fixture (e.g. a
+    // "reaction" published before this kickoff).
     if (textPhase.phase && textPhase.phase !== phase) {
       score -= 0.2;
       reasons.push(`wording says ${textPhase.phase}`);
@@ -415,16 +449,17 @@ ${candidates.length + 1}. None of these
 
 Pick a match ONLY if the video is about that specific game: a preview, build-up,
 team news for it, watchalong, live reaction, review, player ratings, or analysis
-of that match.
+of that match. Fans often title a reaction after a player or a feeling rather
+than the fixture ("TONALI'S BEST GAME IN A SPURS SHIRT!", "Fail to hold a lead
+AGAIN!"): published within a day or so of the final whistle, that is a reaction
+to the match.
 
 Pick "None of these" for everything else, even when a listed club is named or
 discussed at length — transfer news and rumours, injury news, contract news,
 international call-ups and squad announcements, general club or manager news,
 season-long opinion, other competitions, and other matches.
 
-Answer with JSON only: {"choice": <number>, "phase": "pre"|"post", "confidence": <0-1>, "reason": "<8 words max>"}
-"pre" = published before kickoff (preview, team news, predictions).
-"post" = published after the final whistle (reaction, review, ratings).`;
+Answer with JSON only: {"choice": <number>, "confidence": <0-1>, "reason": "<8 words max>"}`;
 
   // An organisation-scoped key must name the workspace to bill against; a
   // workspace-scoped key already implies one and needs no header.
@@ -441,6 +476,9 @@ Answer with JSON only: {"choice": <number>, "phase": "pre"|"post", "confidence":
     body: JSON.stringify({
       model: process.env.TAGGER_MODEL ?? "claude-haiku-4-5-20251001",
       max_tokens: 200,
+      // A classifier should give the same answer twice. At the default
+      // temperature two retag runs disagreed on dozens of takes.
+      temperature: 0,
       messages: [{ role: "user", content: prompt }],
     }),
   });
@@ -462,7 +500,6 @@ Answer with JSON only: {"choice": <number>, "phase": "pre"|"post", "confidence":
   try {
     const parsed = JSON.parse(json) as {
       choice: number;
-      phase: Phase;
       confidence: number;
       reason?: string;
     };
@@ -478,7 +515,10 @@ Answer with JSON only: {"choice": <number>, "phase": "pre"|"post", "confidence":
     }
     return {
       fixtureId: picked.fixture.id,
-      phase: parsed.phase === "pre" || parsed.phase === "post" ? parsed.phase : picked.phase,
+      // The phase comes from the upload time, never the model. Left to choose,
+      // it filed watchalongs and "Matchday Starting XI" streams posted hours
+      // before kickoff as post-match.
+      phase: picked.phase,
       confidence: Math.max(0, Math.min(1, parsed.confidence)),
       taggedBy: "agent",
       reason: parsed.reason ?? "model choice",

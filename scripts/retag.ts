@@ -57,7 +57,15 @@ async function main() {
     }
 
     const creator = creatorById.get(take.creatorId);
-    const tag = await tagVideo(snippet, creator?.clubAffinity ?? [], fixtures, teams);
+    // Keep the time we first saw. YouTube moves a finished live stream's
+    // publishedAt to when it ended, which turned every starting-XI stream and
+    // watchalong into a post-match take.
+    const tag = await tagVideo(
+      { ...snippet, publishedAt: take.publishedAt },
+      creator?.clubAffinity ?? [],
+      fixtures,
+      teams,
+    );
 
     const changedFixture = tag.fixtureId !== take.fixtureId;
     const changedPhase = tag.phase !== take.phase;
