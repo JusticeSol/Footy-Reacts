@@ -1,6 +1,6 @@
 import { getRepo } from "./repo";
 import { PREMIER_LEAGUE } from "./competitions";
-import { currentMatchday } from "./repo/shared";
+import { currentMatchday, pairedMatchday } from "./repo/shared";
 import { sourceById } from "./highlights/sources";
 import type { MatchdaySummary } from "./repo/types";
 import type { Highlight, HydratedFixture, HydratedTake, Phase } from "./types";
@@ -29,6 +29,13 @@ export function getMatchdayFixtures(
   return getRepo().getMatchdayFixtures(matchday, competitionId);
 }
 
+/** First kickoff of the Premier League round the default board is showing. */
+async function currentLeagueRoundStart(): Promise<string | null> {
+  const league = await listMatchdays(PREMIER_LEAGUE.id);
+  const md = currentMatchday(league);
+  return league.find((m) => m.matchday === md)?.firstKickoff ?? null;
+}
+
 /**
  * The board a visitor lands on: the requested matchday if it exists, otherwise
  * the one being played. Falls back to the rolling date window when no fixture
@@ -44,7 +51,10 @@ export async function getBoard(
   matchday: number | null;
 }> {
   const matchdays = await listMatchdays(competitionId);
-  const fallback = currentMatchday(matchdays);
+  const fallback =
+    competitionId === PREMIER_LEAGUE.id
+      ? currentMatchday(matchdays)
+      : pairedMatchday(matchdays, await currentLeagueRoundStart());
   const matchday =
     requested !== undefined && matchdays.some((m) => m.matchday === requested)
       ? requested

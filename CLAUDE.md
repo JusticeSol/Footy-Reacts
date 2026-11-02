@@ -148,6 +148,12 @@ takes** → else nearest by date. The middle rule carries the site through an
 international break; landing on the nearest by date would show an empty upcoming
 round for a week. `check:landing` pins this behaviour.
 
+The Champions League tab uses `pairedMatchday()` instead: the round being played
+→ else the first round ending after the current Premier League round began (the
+midweek after that weekend) → else `currentMatchday()`. On the PL rule alone it
+sat on the last round with takes, a fortnight old, until the new round's
+previews arrived the night before.
+
 The archive only contains matchdays that have been synced. A default
 `sync:fixtures` run never reaches rounds played before the project existed. Use
 `--back` to backfill.

@@ -1,6 +1,6 @@
 import { loadEnv } from "./env";
 import { getRepo } from "../src/lib/repo";
-import { currentMatchday } from "../src/lib/repo/shared";
+import { currentMatchday, pairedMatchday } from "../src/lib/repo/shared";
 
 loadEnv();
 
@@ -50,6 +50,32 @@ async function main() {
   console.log("\nlanding matchday:");
   for (const [label, when, data] of cases) {
     console.log(`  ${currentMatchday(data, Date.parse(when))}  ← ${label} (${when.slice(0, 10)})`);
+  }
+
+  // The Champions League tab follows the league weekend: the midweek round
+  // after the Premier League round on the front page.
+  const cl = await getRepo().listMatchdays("comp-cl");
+  console.log("\nChampions League rounds in store:");
+  for (const s of cl) {
+    console.log(
+      `  MD${s.matchday}  ${String(s.fixtures).padStart(2)} fixtures  ` +
+        `${String(s.takes).padStart(3)} takes  ${s.firstKickoff.slice(0, 10)} → ${s.lastKickoff.slice(0, 10)}`,
+    );
+  }
+  const leagueStart = (when: string) => {
+    const md = currentMatchday(summaries, Date.parse(when));
+    return summaries.find((s) => s.matchday === md)?.firstKickoff ?? null;
+  };
+  const clCases: Array<[string, string]> = [
+    ["PL MD9 weekend, CL MD4 days away", "2026-11-01T18:00:00Z"],
+    ["Monday before CL MD4", "2026-11-02T12:00:00Z"],
+    ["CL MD4 being played", "2026-11-04T19:00:00Z"],
+    ["CL MD3 being played", "2026-10-21T19:00:00Z"],
+  ];
+  console.log("\nChampions League landing matchday:");
+  for (const [label, when] of clCases) {
+    const md = pairedMatchday(cl, leagueStart(when), Date.parse(when));
+    console.log(`  ${md}  ← ${label} (${when.slice(0, 10)})`);
   }
 }
 

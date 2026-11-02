@@ -202,6 +202,42 @@ export function currentMatchday(
   return nearest.matchday;
 }
 
+/**
+ * The matchday of a midweek competition (the Champions League) that belongs
+ * with the league weekend a visitor is looking at.
+ *
+ *   1. The one being played.
+ *   2. Otherwise the first round that ends after the league weekend begins:
+ *      the midweek games that follow that weekend.
+ *   3. Otherwise the usual rule, for when no such round has been synced.
+ *
+ * Without rule 2 the tab sat on the last round with takes, so a fortnight-old
+ * round showed beside this weekend's league games until previews for the new
+ * one happened to arrive, usually the night before kickoff.
+ */
+export function pairedMatchday(
+  summaries: Array<{ matchday: number; takes?: number; firstKickoff: string; lastKickoff: string }>,
+  leagueRoundStart: string | null,
+  now: number = Date.now(),
+): number | null {
+  if (summaries.length === 0) return null;
+
+  for (const s of summaries) {
+    const end = Date.parse(s.lastKickoff) + MATCH_DURATION_MS + 2 * 86_400_000;
+    if (now >= Date.parse(s.firstKickoff) && now <= end) return s.matchday;
+  }
+
+  if (leagueRoundStart) {
+    const anchor = Date.parse(leagueRoundStart);
+    const next = summaries
+      .filter((s) => Date.parse(s.lastKickoff) >= anchor)
+      .sort((a, b) => Date.parse(a.firstKickoff) - Date.parse(b.firstKickoff))[0];
+    if (next) return next.matchday;
+  }
+
+  return currentMatchday(summaries, now);
+}
+
 /** Live games first, then soonest kickoff. */
 export function byMatchdayOrder(a: Fixture, b: Fixture): number {
   if (a.status === "live" && b.status !== "live") return -1;
