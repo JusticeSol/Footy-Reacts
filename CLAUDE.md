@@ -149,8 +149,9 @@ international break; landing on the nearest by date would show an empty upcoming
 round for a week. `check:landing` pins this behaviour.
 
 The Champions League tab uses `pairedMatchday()` instead: the round being played
-→ else the first round ending after the current Premier League round began (the
-midweek after that weekend) → else `currentMatchday()`. On the PL rule alone it
+→ else the next round if it starts within a week of the current Premier League
+round (the midweek after that weekend) → else the last round played, which holds
+through weeks with no European games → else `currentMatchday()`. On the PL rule alone it
 sat on the last round with takes, a fortnight old, until the new round's
 previews arrived the night before.
 

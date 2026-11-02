@@ -77,6 +77,22 @@ async function main() {
     const md = pairedMatchday(cl, leagueStart(when), Date.parse(when));
     console.log(`  ${md}  ← ${label} (${when.slice(0, 10)})`);
   }
+
+  // A week with no European games: MD4 must hold until the league weekend
+  // straight before MD5's midweek. MD5 and the league dates are simulated.
+  const withMd5 = [
+    ...cl.filter((s) => s.matchday !== 5),
+    { matchday: 5, fixtures: 5, takes: 0, firstKickoff: "2026-11-24T17:45:00Z", lastKickoff: "2026-11-25T20:00:00Z" },
+  ];
+  const gapCases: Array<[string, string, string]> = [
+    ["PL MD10 weekend, no CL that midweek", "2026-11-08T15:00:00Z", "2026-11-07T12:30:00Z"],
+    ["international break", "2026-11-15T12:00:00Z", "2026-11-07T12:30:00Z"],
+    ["PL MD11 weekend, CL MD5 that midweek", "2026-11-21T15:00:00Z", "2026-11-21T12:30:00Z"],
+  ];
+  console.log("\nChampions League with a week off (MD4 then MD5):");
+  for (const [label, when, leagueRound] of gapCases) {
+    console.log(`  ${pairedMatchday(withMd5, leagueRound, Date.parse(when))}  ← ${label} (${when.slice(0, 10)})`);
+  }
 }
 
 main().catch((err: Error) => {

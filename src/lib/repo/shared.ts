@@ -207,9 +207,11 @@ export function currentMatchday(
  * with the league weekend a visitor is looking at.
  *
  *   1. The one being played.
- *   2. Otherwise the first round that ends after the league weekend begins:
- *      the midweek games that follow that weekend.
- *   3. Otherwise the usual rule, for when no such round has been synced.
+ *   2. Otherwise the next round, if it is the midweek straight after the
+ *      league weekend (it starts within a week of that weekend's first game).
+ *   3. Otherwise the last round played, which stays up through weeks with no
+ *      European games, international breaks included.
+ *   4. Otherwise the usual rule, before any round has been played.
  *
  * Without rule 2 the tab sat on the last round with takes, so a fortnight-old
  * round showed beside this weekend's league games until previews for the new
@@ -221,19 +223,23 @@ export function pairedMatchday(
   now: number = Date.now(),
 ): number | null {
   if (summaries.length === 0) return null;
+  const byStart = [...summaries].sort(
+    (a, b) => Date.parse(a.firstKickoff) - Date.parse(b.firstKickoff),
+  );
 
-  for (const s of summaries) {
+  for (const s of byStart) {
     const end = Date.parse(s.lastKickoff) + MATCH_DURATION_MS + 2 * 86_400_000;
     if (now >= Date.parse(s.firstKickoff) && now <= end) return s.matchday;
   }
 
   if (leagueRoundStart) {
     const anchor = Date.parse(leagueRoundStart);
-    const next = summaries
-      .filter((s) => Date.parse(s.lastKickoff) >= anchor)
-      .sort((a, b) => Date.parse(a.firstKickoff) - Date.parse(b.firstKickoff))[0];
-    if (next) return next.matchday;
+    const next = byStart.find((s) => Date.parse(s.firstKickoff) >= anchor);
+    if (next && Date.parse(next.firstKickoff) - anchor <= 7 * 86_400_000) return next.matchday;
   }
+
+  const played = byStart.filter((s) => Date.parse(s.firstKickoff) <= now).pop();
+  if (played) return played.matchday;
 
   return currentMatchday(summaries, now);
 }
