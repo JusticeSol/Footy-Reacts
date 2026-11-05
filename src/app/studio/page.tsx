@@ -22,8 +22,8 @@ const SECTIONS: Array<{ kind: Draft["kind"]; heading: string; hint: string }> = 
 
 /**
  * The X account's daily post pack: drafts built from the last two days of
- * takes, to edit and post from a phone. Gated by the cron secret, because it
- * is a working tool, not a page for readers.
+ * takes, to edit and post from a phone. Gated by its own key, STUDIO_KEY,
+ * because it is a working tool, not a page for readers.
  */
 export default async function StudioPage({
   searchParams,
@@ -31,7 +31,7 @@ export default async function StudioPage({
   searchParams: Promise<{ key?: string }>;
 }) {
   const { key } = await searchParams;
-  const secret = process.env.CRON_SECRET;
+  const secret = process.env.STUDIO_KEY;
   if (!secret || key !== secret) notFound();
 
   const pack = await getPostPack(SITE_URL);

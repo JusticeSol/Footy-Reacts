@@ -259,11 +259,12 @@ red strip in the layout sits behind the clock. `InstallPrompt` is the home
 page's dismissible "add to home screen" strip. There is no service worker and no
 offline mode.
 
-## Studio (`/studio?key=$CRON_SECRET`)
+## Studio (`/studio?key=$STUDIO_KEY`)
 
 A private phone page of daily drafts for the Footy Reacts X account, built by
 `src/lib/studio.ts` from the last 48 hours of visible takes: post-match lines
 in the account's house style ("AFTV after Arsenal's 2-1 win over Slavia
 Praha 👀"), previews, names three or more channels share that day, and the
 most-reacted game (the only draft with a link). It is noindex, 404s without
-the key, and posts nothing itself: "Post on X" opens the composer filled in.
+the key (`STUDIO_KEY` in Vercel; only a redeploy picks it up), and posts
+nothing itself: "Post on X" opens the composer filled in.
