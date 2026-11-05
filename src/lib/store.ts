@@ -2,6 +2,7 @@ import { getRepo } from "./repo";
 import { PREMIER_LEAGUE } from "./competitions";
 import { currentMatchday, pairedMatchday } from "./repo/shared";
 import { sourceById } from "./highlights/sources";
+import { buildPostPack, type PostPack } from "./studio";
 import type { MatchdaySummary } from "./repo/types";
 import type { Highlight, HydratedFixture, HydratedTake, Phase } from "./types";
 
@@ -82,6 +83,20 @@ export function getRecentTakes(
   limit = 12,
 ): Promise<Array<{ take: HydratedTake; fixture: HydratedFixture }>> {
   return getRepo().getRecentTakes(limit);
+}
+
+/** Today's drafts for the X account, for /studio. */
+export async function getPostPack(siteUrl: string, now: number = Date.now()): Promise<PostPack> {
+  const recent = (await getRepo().getRecentTakes(150)).filter(
+    ({ take }) => now - Date.parse(take.publishedAt) <= 48 * 3_600_000,
+  );
+  // Recent takes carry their fixture without take counts; the most-reacted
+  // draft needs the real ones.
+  const slugs = [...new Set(recent.map(({ fixture }) => fixture.slug))];
+  const full = await Promise.all(slugs.map((s) => getRepo().getFixtureBySlug(s)));
+  const byId = new Map(full.filter((f) => f !== null).map((f) => [f.id, f]));
+  const rows = recent.map((r) => ({ ...r, fixture: byId.get(r.fixture.id) ?? r.fixture }));
+  return buildPostPack(rows, siteUrl, now);
 }
 
 export function getFixtureHighlights(fixtureId: string): Promise<Highlight[]> {
