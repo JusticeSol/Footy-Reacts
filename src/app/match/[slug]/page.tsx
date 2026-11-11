@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Masthead } from "@/components/Masthead";
+import { SiteFooter } from "@/components/SiteFooter";
 import { PhaseTabs } from "@/components/PhaseTabs";
 import { TakeList } from "@/components/TakeList";
 import { MatchHighlightsSection } from "@/components/Highlights";
@@ -138,6 +139,7 @@ export default async function MatchPage({
           <TakeList takes={takes} />
         )}
       </div>
+      <SiteFooter />
     </main>
   );
 }

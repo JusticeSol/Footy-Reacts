@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { HydratedFixture, HydratedTake } from "@/lib/types";
+import { LinkPending } from "./LinkPending";
 
 /**
  * The vidiprinter. A black teletext strip announcing takes as the tagging
@@ -22,7 +23,7 @@ export function Ticker({
           <Link
             key={`${take.id}-${i}`}
             href={`/match/${fixture.slug}?phase=${take.phase}`}
-            className="group flex items-center gap-2 px-5 font-mono text-[11px] uppercase tracking-wider sm:text-xs"
+            className="group relative flex items-center gap-2 px-5 font-mono text-[11px] uppercase tracking-wider sm:text-xs"
           >
             <span className={take.phase === "post" ? "text-red" : "text-paper/50"}>
               {take.phase === "post" ? "FT" : "PRE"}
@@ -32,6 +33,7 @@ export function Ticker({
             </span>
             <span className="opacity-60 group-hover:opacity-100">{take.creator.name}</span>
             <span className="opacity-30">///</span>
+            <LinkPending />
           </Link>
         ))}
       </div>

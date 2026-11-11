@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { HydratedFixture } from "@/lib/types";
 import { kickoffTime } from "@/lib/format";
+import { LinkPending } from "./LinkPending";
 
 /**
  * One line of the Saturday results coupon: abbreviations in condensed display
@@ -14,7 +15,7 @@ export function FixtureRow({ fixture }: { fixture: HydratedFixture }) {
   return (
     <Link
       href={`/match/${fixture.slug}`}
-      className="group grid grid-cols-[3.5rem_1fr_auto] items-center gap-3 border-b border-rule px-4 py-3 transition-colors hover:bg-paper-2 sm:gap-4 sm:px-5 sm:py-4"
+      className="group relative grid grid-cols-[3.5rem_1fr_auto] items-center gap-3 border-b border-rule px-4 py-3 transition-colors hover:bg-paper-2 sm:gap-4 sm:px-5 sm:py-4"
     >
       <div className="font-mono text-xs text-ink-3">
         {status === "live" ? (
@@ -60,6 +61,7 @@ export function FixtureRow({ fixture }: { fixture: HydratedFixture }) {
         )}
         <span className="text-ink-3 transition-transform group-hover:translate-x-0.5">→</span>
       </div>
+      <LinkPending />
     </Link>
   );
 }

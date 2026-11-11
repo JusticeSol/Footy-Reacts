@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Space_Mono, Work_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton" });
@@ -51,6 +52,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             iPhone clock so white status text stays on red while the page scrolls. */}
         <div aria-hidden className="fixed inset-x-0 top-0 z-30 h-[env(safe-area-inset-top)] bg-red" />
         {children}
+        {/* Cookie-free page views. Does nothing until Web Analytics is
+            switched on for the project in the Vercel dashboard. */}
+        <Analytics />
       </body>
     </html>
   );

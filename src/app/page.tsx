@@ -1,4 +1,6 @@
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { SiteFooter } from "@/components/SiteFooter";
+import { Welcome } from "@/components/Welcome";
 import { Masthead } from "@/components/Masthead";
 import { Ticker } from "@/components/Ticker";
 import { FixtureRow } from "@/components/FixtureRow";
@@ -39,6 +41,7 @@ export default async function HomePage({
     <main className="min-h-screen">
       <Masthead />
       <Ticker items={recent} />
+      <Welcome />
       <InstallPrompt />
 
       <div className="mx-auto max-w-5xl">
@@ -83,12 +86,7 @@ export default async function HomePage({
         )}
       </div>
 
-      <footer className="mx-auto max-w-5xl px-4 py-10 sm:px-5">
-        <p className="font-mono text-[10px] uppercase leading-relaxed tracking-wider text-ink-3">
-          Footy Reacts embeds — it never re-hosts. Every view counts on the creator&apos;s own
-          channel.
-        </p>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

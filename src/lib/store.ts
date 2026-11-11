@@ -85,6 +85,15 @@ export function getRecentTakes(
   return getRepo().getRecentTakes(limit);
 }
 
+/** Match pages for sitemap.xml: every synced fixture bar postponed ones, newest first. */
+export async function listFixturesForSitemap(): Promise<Array<{ slug: string; kickoffUtc: string }>> {
+  const fixtures = await getRepo().listFixtures();
+  return fixtures
+    .filter((f) => f.status !== "postponed")
+    .sort((a, b) => Date.parse(b.kickoffUtc) - Date.parse(a.kickoffUtc))
+    .map(({ slug, kickoffUtc }) => ({ slug, kickoffUtc }));
+}
+
 /** Today's drafts for the X account, for /studio. */
 export async function getPostPack(siteUrl: string, now: number = Date.now()): Promise<PostPack> {
   const recent = (await getRepo().getRecentTakes(150)).filter(

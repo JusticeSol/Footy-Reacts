@@ -243,6 +243,13 @@ round-robined across creators so one channel's upload spree cannot own a match
 page, and `TakeList` cuts the first screen at one take per creator. Take cards
 are thumbnail facades that only mount the iframe on click.
 
+There is deliberately no `loading.tsx`. It streams the response, so a missing
+match answered 200 (a soft 404) instead of 404. Tapped links show `LinkPending`
+(a red bar from `useLinkStatus`) instead. `/privacy` describes exactly what the
+site collects: update it before adding anything that touches visitors.
+Analytics is `@vercel/analytics`, which records nothing until Web Analytics is
+switched on in the Vercel dashboard.
+
 Images are served unoptimized (`next.config.ts`). Vercel's Hobby plan allows
 5,000 image transformations a month and counts each thumbnail at each srcset
 width; with hundreds of takes a week that ran out in October 2026 and new
