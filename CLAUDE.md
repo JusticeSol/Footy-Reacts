@@ -176,6 +176,11 @@ poll. `vercel.json` has no `crons` block, deliberately. Secrets for the jobs liv
 in GitHub; Vercel only needs the two Supabase values, and **only a redeploy picks
 up changed environment variables**.
 
+Scores refresh inside the take sync, every 15 minutes on weekends and every 30
+on weekday evenings, as well as in the daily fixture job. GitHub runs scheduled
+jobs hours late when it is busy: on its own, the 05:00 daily run once landed at
+13:16 and left a whole Saturday without full-time scores.
+
 `/api/health?key=$CRON_SECRET` reports which configuration actually reached a
 deployment. A failing server component otherwise shows only an opaque digest.
 
