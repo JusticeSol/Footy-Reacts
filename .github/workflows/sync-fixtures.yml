@@ -1,7 +1,8 @@
 name: Sync fixtures
 
-# The calendar changes slowly: kickoff times move, matches get postponed, and
-# full-time scores land. Once a day before the early kickoffs is plenty.
+# The calendar changes slowly: kickoff times move and matches get postponed.
+# This daily run keeps it current on days without games; on matchdays the take
+# sync refreshes scores every 15-30 minutes as well (sync-takes.yml).
 on:
   schedule:
     - cron: "0 5 * * *"

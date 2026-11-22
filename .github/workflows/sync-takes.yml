@@ -39,6 +39,20 @@ jobs:
 
       - run: npm ci
 
+      # Scores ride this schedule too. The daily fixture job alone left a whole
+      # Saturday without full-time scores: GitHub ran its 05:00 slot at 13:16,
+      # mid-way through the first game. Highlights matching reads the score, so
+      # this goes first. A failure here never blocks the takes.
+      - name: Refresh scores and kickoff times
+        continue-on-error: true
+        run: npm run sync:fixtures
+        env:
+          FIXTURES_PROVIDER: ${{ vars.FIXTURES_PROVIDER || 'footballdata' }}
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+          FOOTBALL_DATA_COMPETITION: ${{ vars.FOOTBALL_DATA_COMPETITION || 'PL' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
       - name: Poll creator uploads and tag them
         run: npm run sync:takes -- ${{ github.event.inputs.hours || '48' }}
         env:
