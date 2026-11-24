@@ -1,0 +1,52 @@
+name: Live scores
+
+# One job that stays running while games are on, because GitHub cannot be
+# relied on to start one at full time. Anything may start it: it exits within
+# a minute when there is no game to wait for, and only one runs at a time.
+on:
+  schedule:
+    # Off the hour, where GitHub drops fewest runs.
+    - cron: "23 6-22 * * *"
+  workflow_run:
+    workflows: ["Sync fixtures", "Sync takes"]
+    types: [completed]
+  workflow_dispatch:
+
+concurrency:
+  group: live-scores
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  # To start its own successor at the time limit.
+  actions: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Refresh scores until the games are over
+        id: watch
+        run: npm run watch:scores
+        env:
+          FIXTURES_PROVIDER: ${{ vars.FIXTURES_PROVIDER || 'footballdata' }}
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+          FOOTBALL_DATA_COMPETITION: ${{ vars.FOOTBALL_DATA_COMPETITION || 'PL' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Hand over to a fresh run
+        if: ${{ steps.watch.outputs.more == 'true' }}
+        run: gh workflow run live-scores.yml --ref main -R "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}

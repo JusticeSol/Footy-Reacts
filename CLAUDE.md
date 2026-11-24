@@ -176,10 +176,13 @@ poll. `vercel.json` has no `crons` block, deliberately. Secrets for the jobs liv
 in GitHub; Vercel only needs the two Supabase values, and **only a redeploy picks
 up changed environment variables**.
 
-Scores refresh inside the take sync, every 15 minutes on weekends and every 30
-on weekday evenings, as well as in the daily fixture job. GitHub runs scheduled
-jobs hours late when it is busy: on its own, the 05:00 daily run once landed at
-13:16 and left a whole Saturday without full-time scores.
+**GitHub does not honour these schedules.** Measured 9-24 November 2026, the
+take sync ran one to three times a day, hours late, against dozens scheduled.
+Nothing time-critical may rely on a cron line. Scores are kept by
+`live-scores.yml`: one job that stays running (`watch:scores`) from up to six
+hours before a kickoff until every game has a result, and starts its successor
+near GitHub's six-hour limit. Its schedule, and the end of either sync, only
+give it chances to start. `check:scores` pins when it waits and stops.
 
 `/api/health?key=$CRON_SECRET` reports which configuration actually reached a
 deployment. A failing server component otherwise shows only an opaque digest.
